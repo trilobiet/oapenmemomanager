@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -17,12 +18,20 @@ import javax.persistence.Table;
 import org.hibernate.annotations.JoinFormula;
 import org.hibernate.annotations.Type;
 
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Setter @Getter @ToString
+@Setter @Getter @ToString 
+@RequiredArgsConstructor 
+@NoArgsConstructor // JPA needs this 
+@EqualsAndHashCode(onlyExplicitlyIncluded=true)
 @Table(name = "task")
 public class Task implements Serializable {
 	
@@ -31,19 +40,26 @@ public class Task implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO) //.SEQUENCE?
 	@Type(type="uuid-char")
+	@EqualsAndHashCode.Include
     private UUID id; 
     
-	private String  fileName, extension, description, frequency, notes;
-	private LocalDate startDate; 
+	@Column(nullable = false)
+	@NonNull
+	private String fileName, extension;
+	
+	private String description, notes;
+	private LocalDate startDate = LocalDate.now();
+	private String frequency = "M";
 	private boolean isActive, isPublic;
 	
 	@ManyToOne()
 	@JoinColumn(name="id_homedir",nullable=false)
 	@ToString.Exclude // To String would create an infinite loop
+	@NonNull
 	private Homedir homedir;
 	
-	@OneToOne(optional = true)
-	@JoinColumn(name="id")
+	@OneToOne
+	@JoinColumn(name="id_script")
 	private Script script;
 	
 	public LocalDate getNextUpdate() {
@@ -77,6 +93,7 @@ public class Task implements Serializable {
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinFormula("(SELECT rl.id FROM runlog rl WHERE rl.id_task = id ORDER BY rl.date DESC LIMIT 1)")
+	@Setter(AccessLevel.NONE) // read only
 	private RunLog latestLog;
-	
+
 }

@@ -3,22 +3,31 @@ package org.oapen.memoproject.manager.entities;
 import java.io.Serializable;
 import java.util.UUID;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Setter @Getter @ToString
+@Setter @Getter @ToString 
+@RequiredArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded=true) 
 @Table(name = "script")
 public class Script implements Serializable {
 	
@@ -27,12 +36,20 @@ public class Script implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Type(type="uuid-char")
+	@EqualsAndHashCode.Include
     private UUID id; 
     
-	private String  name, type, body, params, notes;
+	@Column(nullable=false)
+	@NonNull
+	private String name, type;
+	private String body, params, notes;
 	
 	@ManyToOne()
 	@JoinColumn(name = "id_query")
 	private Query query;
 	
+	@OneToOne(optional = true)
+	@JoinColumn(name = "id_task")
+	@ToString.Exclude
+	private Task task;
 }

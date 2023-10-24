@@ -1,25 +1,31 @@
 package org.oapen.memoproject.manager.entities;
 
 import java.io.Serializable;
-import java.util.Set;
 import java.util.UUID;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 
 @Entity
 @Setter @Getter @ToString 
+@RequiredArgsConstructor 
+@NoArgsConstructor // JPA needs this 
+@EqualsAndHashCode(onlyExplicitlyIncluded=true)
 @Table(name = "homedir")
 public class Homedir implements Serializable { 
 
@@ -28,12 +34,21 @@ public class Homedir implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Type(type="uuid-char")
-	// Overbodig? @Column(name="id", columnDefinition = "VARCHAR(36)")	
+	@EqualsAndHashCode.Include	
     private UUID id;	
 	
-	private String name, username, password, notes, accessKey;
+	@Column(nullable = false, unique = true)
+	@NonNull
+	private String username; 
+
+	@Column(nullable = false)
+	@NonNull
+	private String name; 
+
+	private String password, notes;
+	
+	@Column(unique = true)
+	private String accessKey;
 	private boolean isEditable;
 	
-	@OneToMany(mappedBy="homedir")
-	private Set<Task> tasks;
 }

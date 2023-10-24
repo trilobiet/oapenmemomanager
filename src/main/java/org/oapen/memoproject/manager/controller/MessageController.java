@@ -9,6 +9,7 @@ import org.oapen.memoproject.manager.entities.RunLog;
 import org.oapen.memoproject.manager.jpa.HomedirRepository;
 import org.oapen.memoproject.manager.jpa.QueryRepository;
 import org.oapen.memoproject.manager.jpa.RunLogRepository;
+import org.oapen.memoproject.manager.jpa.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,9 @@ public class MessageController {
 
 	@Autowired
 	RunLogRepository runLogRepository;
+
+	@Autowired
+	TaskRepository taskRepository;
 
 	@Autowired
 	QueryRepository queryRepository;
@@ -42,7 +46,7 @@ public class MessageController {
     	
     	System.out.println(homedir);
     	
-    	homedir.getTasks().stream().forEach(task -> {
+    	taskRepository.findByHomedir(homedir).stream().forEach(task -> {
     		
     		List<RunLog> r = runLogRepository.findByTask(task);
     		
