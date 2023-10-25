@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -33,23 +35,34 @@ public class Script implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
+	public enum ScriptType {
+		MAIN, SNIP
+	}
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Type(type="uuid-char")
 	@EqualsAndHashCode.Include
     private UUID id; 
     
+	@Column(nullable=false, unique=true)
+	@NonNull
+	private String name;
+
+	@Enumerated(EnumType.STRING)
 	@Column(nullable=false)
 	@NonNull
-	private String name, type;
+	private ScriptType type;
+	
 	private String body, params, notes;
 	
 	@ManyToOne()
-	@JoinColumn(name = "id_query")
+	@JoinColumn(name="id_query")
 	private Query query;
 	
-	@OneToOne(optional = true)
-	@JoinColumn(name = "id_task")
+	@OneToOne(optional=true, mappedBy="script")
 	@ToString.Exclude
 	private Task task;
+	
+	
 }

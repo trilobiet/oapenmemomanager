@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -35,5 +37,6 @@ public class RunLog implements Serializable {
 	@ManyToOne()
 	@JoinColumn(name = "id_task", nullable = false)
 	@ToString.Exclude // To String would create an infinite loop
+	@JsonIgnore // Avoids infinite loop also
 	Task task;
 }

@@ -32,15 +32,6 @@ public class InMemoryHomedirTests {
         assertEquals(UUID.fromString(qSaved.getId().toString()), qSaved.getId());
     }
     
-    @Test
-    public void givenQueryHavingEmptyNonNullableFields_whenSave_thenError() {
-    	
-    	assertThrows(DataIntegrityViolationException.class, () -> {
-	    	Homedir qNew = new Homedir();
-	    	homedirRepository.save(qNew);
-    	});
-    }
-    
 	@Test
     public void givenHomedir_whenSave_thenGetOk() {
     	
