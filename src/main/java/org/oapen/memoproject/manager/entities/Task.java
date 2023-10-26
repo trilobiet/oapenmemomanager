@@ -75,15 +75,18 @@ public class Task implements Serializable {
 	
 	public LocalDate getNextUpdate() {
 		
-		LocalDate d = latestLog.getDate();
+		if (latestLog == null) return startDate;
+		else {
+			LocalDate d = latestLog.getDate();
 
-		switch (frequency) {
-		
-			case W: return d.plusWeeks(1);
-			case M: return d.plusMonths(1);
-			case Y: return d.plusYears(1);
-			default: return d.plusDays(1);
-		}
+			switch (frequency) {
+			
+				case W: return d.plusWeeks(1);
+				case M: return d.plusMonths(1);
+				case Y: return d.plusYears(1);
+				default: return d.plusDays(1);
+			}
+		}	
 	}
 	
 	public String getFrequencyAsText() {

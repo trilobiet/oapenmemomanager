@@ -12,6 +12,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,10 +47,13 @@ public class Homedir implements Serializable {
 	@NonNull
 	private String name; 
 
-	private String password, notes;
+	@JsonIgnore // not to be shown in any output
+	private String password;
 	
 	@Column(unique = true)
 	private String accessKey;
 	private boolean isEditable;
+	
+	String notes;
 	
 }

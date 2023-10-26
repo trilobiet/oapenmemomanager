@@ -17,6 +17,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -62,6 +64,7 @@ public class Script implements Serializable {
 	
 	@OneToOne(optional=true, mappedBy="script")
 	@ToString.Exclude
+	@JsonIgnore // Avoid back ref
 	private Task task;
 	
 	

@@ -28,15 +28,15 @@ public class RunLog implements Serializable {
 	
 	@Id
 	@EqualsAndHashCode.Include
-	Integer id;
+	private Integer id;
 	
-	String message;
-	Boolean isSuccess;
-	LocalDate date; 
+	private String message;
+	private Boolean isSuccess;
+	private LocalDate date; 
 	
 	@ManyToOne()
 	@JoinColumn(name = "id_task", nullable = false)
 	@ToString.Exclude // To String would create an infinite loop
 	@JsonIgnore // Avoids infinite loop also
-	Task task;
+	private Task task;
 }

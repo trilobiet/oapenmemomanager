@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import org.oapen.memoproject.manager.entities.Homedir;
 import org.oapen.memoproject.manager.entities.Task;
-import org.oapen.memoproject.manager.jpa.HomedirRepository;
 import org.oapen.memoproject.manager.jpa.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,9 +24,6 @@ public class TaskController {
 	@Autowired
 	TaskRepository taskRepository;
 
-	@Autowired
-	HomedirRepository homedirRepository;
-	
 	@GetMapping("")
 	@ResponseBody
     public List<Task> listAll(){
@@ -41,12 +37,9 @@ public class TaskController {
     	@PathVariable(required=true) String id
     ){
 		
-		Optional<Homedir> homedir = homedirRepository.findById(UUID.fromString(id));
-		
-		if (homedir.isPresent())
-			return taskRepository.findByHomedir(homedir.get());
-		else
-			throw new EntityNotFoundException(id);
+		Homedir homedir = new Homedir();
+		homedir.setId(UUID.fromString(id));
+		return taskRepository.findByHomedir(homedir);
 	}
 	
 	@GetMapping("/{id}")
