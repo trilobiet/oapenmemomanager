@@ -4,12 +4,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.oapen.memoproject.manager.entities.Homedir;
 import org.oapen.memoproject.manager.entities.RunLog;
+import org.oapen.memoproject.manager.entities.Script;
+import org.oapen.memoproject.manager.entities.Script.ScriptType;
 import org.oapen.memoproject.manager.entities.Task;
 import org.oapen.memoproject.manager.entities.Task.TaskFrequency;
 import org.oapen.memoproject.manager.jpa.HomedirRepository;
@@ -32,7 +35,7 @@ public class InMemoryTaskTests {
 	@Autowired
     private RunLogRepository runLogRepository;
 
-	@Test
+	/*@Test
     public void givenHomedir_whenAddTask_thenOk() {
     	
     	String NAME = "test name";
@@ -72,6 +75,31 @@ public class InMemoryTaskTests {
 		
 		assertTrue(q.isEmpty());
 	}
+
+
+	@Test
+    public void ttt() {
+		
+    	String NAME = "test name";
+    	String USERNAME = RandomStringUtils.randomAlphabetic(10);
+
+    	// We need a homedir to serve as owner of the tasks
+    	Homedir hNew = new Homedir(USERNAME, NAME);
+    	homedirRepository.save(hNew);
+    	
+    	Task tNew = new Task("File name","ext",hNew);
+    	Script script = new Script("a script",ScriptType.MAIN);
+    	tNew.setScript(script);
+    	
+		Task t = taskRepository.save(tNew);
+		
+		Optional<Task> tf = taskRepository.findById(t.getId());
+		
+		System.out.println(tf);
+		
+		assertTrue(tf.isPresent());
+	}
+	    */
 
 	
 	

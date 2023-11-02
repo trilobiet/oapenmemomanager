@@ -1,23 +1,22 @@
 package org.oapen.memoproject.manager.controller;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.oapen.memoproject.manager.entities.Query;
 import org.oapen.memoproject.manager.jpa.QueryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/setting")
+@RequestMapping("/api")
 public class QueryController {
 
 	@Autowired
@@ -31,25 +30,32 @@ public class QueryController {
 		//return homedirRepository.findAll(Sort.by("username").ascending());
 	}
 	
-	@GetMapping("/{id}")
+	@GetMapping("/query/{id}")
 	@ResponseBody
-    public Query getById(
+    public Query getQuery(
     	@PathVariable(required=true) String id
     ){
-		Optional<Query> query = queryRepository.findById(UUID.fromString(id));
-		
-		if (query.isPresent()) 
-			return query.get(); 
-		else 
-			throw new EntityNotFoundException(id);
+		return queryRepository.findById(UUID.fromString(id))
+		.orElseThrow(() -> new EntityNotFoundException("Query not found [id=" + id + "]"));
 	}
 	
-	@ExceptionHandler(EntityNotFoundException.class)
-	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@DeleteMapping("/query/{id}")
 	@ResponseBody
-	public Error settingNotFound(EntityNotFoundException e) {
-		
-		return new Error(404,"Query [" + e.getId() + "] not found");
+    public void deleteQuery(
+    	@PathVariable(required=true) UUID id
+    ){
+		queryRepository.deleteById(id);
+	}
+
+    @PostMapping("/query")
+	public Query save(@RequestBody Query query) {
+    	
+    	// Content-type: application/json
+    	// Sample request body:
+    	// {"id":"6145e100-82b1-11ec-a8a3-0242ac120002","name":"Test","body":"SELECT * from Table","params":"a=b","notes":"how do you do?"}
+    	
+    	query = queryRepository.save(query);
+    	return query;
 	}
 	
 }

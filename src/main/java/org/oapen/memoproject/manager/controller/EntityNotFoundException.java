@@ -3,14 +3,14 @@ package org.oapen.memoproject.manager.controller;
 public class EntityNotFoundException extends RuntimeException{
 	
 	private static final long serialVersionUID = 1L;
-	private final String id;
+	private final String message;
 
-	public EntityNotFoundException(String id) {
-		this.id = id;
+	public EntityNotFoundException(String message) {
+		this.message = message;
 	}
 	 
-	public String getId() {
-		return id;
+	public String getMessage() {
+		return message;
 	}
 	
 	

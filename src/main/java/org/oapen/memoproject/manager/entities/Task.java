@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -62,17 +63,18 @@ public class Task implements Serializable {
 	private TaskFrequency frequency = TaskFrequency.M;
 	private boolean isActive, isPublic;
 	
-	@ManyToOne()
+	@ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
 	@JoinColumn(name="id_homedir",nullable=false)
 	@ToString.Exclude // To String would create an infinite loop
 	@NonNull
-	@JsonIgnore // Avoid back ref
+	//@JsonIgnore // Avoid back ref
 	private Homedir homedir;
 	
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="id_script")
 	private Script script;
 	
+	@JsonIgnore
 	public LocalDate getNextUpdate() {
 		
 		if (latestLog == null) return startDate;
@@ -89,6 +91,7 @@ public class Task implements Serializable {
 		}	
 	}
 	
+	@JsonIgnore
 	public String getFrequencyAsText() {
 		
 		switch (frequency) {
@@ -98,11 +101,6 @@ public class Task implements Serializable {
 			case Y: return "yearly";
 			default: return "daily";
 		}
-	}
-	
-	public String getPath() {
-		
-		return homedir.getUsername() + "/" + fileName;
 	}
 	
 	@ManyToOne(fetch = FetchType.EAGER)

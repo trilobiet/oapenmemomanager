@@ -1,28 +1,27 @@
 package org.oapen.memoproject.manager.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.oapen.memoproject.manager.entities.Setting;
 import org.oapen.memoproject.manager.jpa.SettingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/setting")
+@RequestMapping("/api")
 public class SettingController {
 
 	@Autowired
 	SettingRepository settingRepository;
 	
-	@GetMapping()
+	@GetMapping("/setting")
 	@ResponseBody
     public List<Setting> listAll() {
 		
@@ -30,25 +29,31 @@ public class SettingController {
 		//return homedirRepository.findAll(Sort.by("username").ascending());
 	}
 	
-	@GetMapping("/{key}")
+	@DeleteMapping("/setting/{id}")
 	@ResponseBody
-    public Setting getByKey(
+    public void deleteSetting(
     	@PathVariable(required=true) String key
     ){
-		Optional<Setting> setting = settingRepository.findById(key);
-		
-		if (setting.isPresent()) 
-			return setting.get(); 
-		else 
-			throw new EntityNotFoundException(key);
+		settingRepository.deleteById(key);
 	}
 	
-	@ExceptionHandler(EntityNotFoundException.class)
-	@ResponseStatus(HttpStatus.NOT_FOUND)
+    @PostMapping("/setting")
+	public Setting save(@RequestBody Setting setting) {
+    	
+    	// Content-type: application/json
+    	// Sample request body:
+    	// {"key":"a","value":"b"}
+    	
+    	return settingRepository.save(setting);
+	}
+	
+	@GetMapping("/setting/{key}")
 	@ResponseBody
-	public Error settingNotFound(EntityNotFoundException e) {
-		
-		return new Error(404,"Setting [" + e.getId() + "] not found");
+    public Setting getSetting(
+    	@PathVariable(required=true) String key
+    ){
+		return settingRepository.findById(key)
+		.orElseThrow(() -> new EntityNotFoundException("Setting not found [key=" + key + "]"));
 	}
 	
 }
