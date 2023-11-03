@@ -63,15 +63,15 @@ public class Task implements Serializable {
 	private TaskFrequency frequency = TaskFrequency.M;
 	private boolean isActive, isPublic;
 	
-	@ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
-	@JoinColumn(name="id_homedir",nullable=false)
-	@ToString.Exclude // To String would create an infinite loop
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_homedir", nullable = false)
+	//@ToString.Exclude // To String would create an infinite loop
 	@NonNull
 	//@JsonIgnore // Avoid back ref
 	private Homedir homedir;
 	
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name="id_script")
+	@JoinColumn(name = "id_script")
 	private Script script;
 	
 	@JsonIgnore

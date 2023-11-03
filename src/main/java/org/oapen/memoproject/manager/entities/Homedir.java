@@ -12,7 +12,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -47,7 +48,7 @@ public class Homedir implements Serializable {
 	@NonNull
 	private String name; 
 
-	@JsonIgnore // not to be shown in any output
+	@JsonProperty(access = Access.WRITE_ONLY) // exclude for display! 
 	private String password;
 	
 	@Column(unique = true)

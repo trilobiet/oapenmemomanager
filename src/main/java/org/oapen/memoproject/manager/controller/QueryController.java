@@ -24,7 +24,7 @@ public class QueryController {
 	
 	@GetMapping()
 	@ResponseBody
-    public List<Query> listAll() {
+    public List<Query> list() {
 		
 		return queryRepository.findAllByOrderByNameAsc();
 		//return homedirRepository.findAll(Sort.by("username").ascending());
@@ -32,7 +32,7 @@ public class QueryController {
 	
 	@GetMapping("/query/{id}")
 	@ResponseBody
-    public Query getQuery(
+    public Query get(
     	@PathVariable(required=true) String id
     ){
 		return queryRepository.findById(UUID.fromString(id))
@@ -41,7 +41,7 @@ public class QueryController {
 	
 	@DeleteMapping("/query/{id}")
 	@ResponseBody
-    public void deleteQuery(
+    public void delete(
     	@PathVariable(required=true) UUID id
     ){
 		queryRepository.deleteById(id);

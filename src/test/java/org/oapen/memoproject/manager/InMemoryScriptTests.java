@@ -76,15 +76,10 @@ public class InMemoryScriptTests {
 
     	// We need a homedir to serve as owner of the tasks
     	Homedir hNew = new Homedir(USERNAME, NAME);
-    	homedirRepository.save(hNew);
+    	hNew = homedirRepository.save(hNew);
     	
     	Task tNew = new Task("File Name","ext",hNew);
-	
     	Script sNew = new Script("A Name",ScriptType.MAIN);
-    	
-    	// Task holds a reference to script, so save the script first
-    	scriptRepository.save(sNew);
-    	
     	tNew.setScript(sNew);
     	
     	taskRepository.save(tNew);
@@ -94,6 +89,7 @@ public class InMemoryScriptTests {
     	assertTrue(tasks.size() == 1);
     	assertEquals(sNew, tasks.get(0).getScript());
     	
+    	System.out.println(tasks);
 	}	
 	
 

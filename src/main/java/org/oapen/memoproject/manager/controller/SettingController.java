@@ -23,15 +23,24 @@ public class SettingController {
 	
 	@GetMapping("/setting")
 	@ResponseBody
-    public List<Setting> listAll() {
+    public List<Setting> list() {
 		
 		return settingRepository.findAllByOrderByKeyAsc();
 		//return homedirRepository.findAll(Sort.by("username").ascending());
 	}
 	
+	@GetMapping("/setting/{key}")
+	@ResponseBody
+    public Setting get(
+    	@PathVariable(required=true) String key
+    ){
+		return settingRepository.findById(key)
+		.orElseThrow(() -> new EntityNotFoundException("Setting not found [key=" + key + "]"));
+	}
+	
 	@DeleteMapping("/setting/{id}")
 	@ResponseBody
-    public void deleteSetting(
+    public void delete(
     	@PathVariable(required=true) String key
     ){
 		settingRepository.deleteById(key);
@@ -45,15 +54,6 @@ public class SettingController {
     	// {"key":"a","value":"b"}
     	
     	return settingRepository.save(setting);
-	}
-	
-	@GetMapping("/setting/{key}")
-	@ResponseBody
-    public Setting getSetting(
-    	@PathVariable(required=true) String key
-    ){
-		return settingRepository.findById(key)
-		.orElseThrow(() -> new EntityNotFoundException("Setting not found [key=" + key + "]"));
 	}
 	
 }

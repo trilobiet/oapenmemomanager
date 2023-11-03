@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -31,14 +30,14 @@ public class TaskController {
 	
 	@GetMapping("/tasks")
 	@ResponseBody
-    public List<Task> listTasks(){
+    public List<Task> list(){
 		
 		return taskRepository.findAll(); 
 	}
 	
 	@GetMapping("/homedir/{id}/tasks")
 	@ResponseBody
-    public List<Task> listTasksForHomedir(
+    public List<Task> listForHomedir(
     	@PathVariable(required=true) String id
     ){
 		
@@ -49,7 +48,7 @@ public class TaskController {
 	
 	@GetMapping("/task/{id}")
 	@ResponseBody
-    public Task getTask(
+    public Task get(
     	@PathVariable(required=true) UUID id
     ){
 		return taskRepository.findById(id)
@@ -59,7 +58,7 @@ public class TaskController {
 	
 	@DeleteMapping("/task/{id}")
 	@ResponseBody
-    public void deleteTask(
+    public void delete(
     	@PathVariable(required=true) UUID id
     ){
 		taskRepository.deleteById(id);
@@ -68,7 +67,7 @@ public class TaskController {
 	
 	// Save task to a homedir
     @PostMapping("/homedir/{id}/task")
-	public Task addTask(
+	public Task save(
 		@PathVariable("id") UUID hId,
 		@RequestBody final Task task 
 	){
@@ -83,20 +82,6 @@ public class TaskController {
     		return taskRepository.save(task);
     	})
     	.orElseThrow(() -> new EntityNotFoundException("Homedir not found [id=" + hId + "]"));
-	}
-	
-
-	// Update task
-    @PutMapping("/task/{id}")
-	public Task updateTask(
-		@PathVariable("id") UUID id,
-		@RequestBody final Task task 
-	){
-    	
-    	return taskRepository.findById(id).map(t -> {
-    		return taskRepository.save(t);
-    	})
-    	.orElseThrow(() -> new EntityNotFoundException("Task not found [id=" + id + "]"));
 	}
 	
 }

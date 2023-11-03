@@ -35,7 +35,7 @@ public class InMemoryTaskTests {
 	@Autowired
     private RunLogRepository runLogRepository;
 
-	/*@Test
+	@Test
     public void givenHomedir_whenAddTask_thenOk() {
     	
     	String NAME = "test name";
@@ -99,7 +99,6 @@ public class InMemoryTaskTests {
 		
 		assertTrue(tf.isPresent());
 	}
-	    */
 
 	
 	
