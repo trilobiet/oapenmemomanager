@@ -71,24 +71,26 @@ public class InMemoryTaskTests {
     	
 		taskRepository.save(tNew);
 		
-		List<RunLog> q = runLogRepository.findByTask(tNew);
+		List<RunLog> q = runLogRepository.findTop10ByTaskOrderByDateDesc(tNew);
 		
 		assertTrue(q.isEmpty());
 	}
 
 
 	@Test
-    public void ttt() {
+    public void givenTask_whenAddScript_thenOk() {
 		
-    	String NAME = "test name";
+    	String HOMEDIRNAME = RandomStringUtils.randomAlphabetic(10);
     	String USERNAME = RandomStringUtils.randomAlphabetic(10);
+    	String TASK = RandomStringUtils.randomAlphabetic(10);
+    	String SCRIPT = RandomStringUtils.randomAlphabetic(10);
 
     	// We need a homedir to serve as owner of the tasks
-    	Homedir hNew = new Homedir(USERNAME, NAME);
+    	Homedir hNew = new Homedir(USERNAME, HOMEDIRNAME);
     	homedirRepository.save(hNew);
     	
-    	Task tNew = new Task("File name","ext",hNew);
-    	Script script = new Script("a script",ScriptType.MAIN);
+    	Task tNew = new Task(TASK, "ext", hNew);
+    	Script script = new Script(SCRIPT, ScriptType.MAIN);
     	tNew.setScript(script);
     	
 		Task t = taskRepository.save(tNew);
@@ -98,6 +100,7 @@ public class InMemoryTaskTests {
 		System.out.println(tf);
 		
 		assertTrue(tf.isPresent());
+		assertEquals(tf.get().getScript().getName(),SCRIPT);
 	}
 
 	

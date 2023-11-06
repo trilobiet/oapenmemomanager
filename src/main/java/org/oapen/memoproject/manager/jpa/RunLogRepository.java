@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RunLogRepository extends JpaRepository<RunLog, UUID> {
 	
-	List<RunLog> findByTask(Task task);
+	List<RunLog> findByTaskOrderByDateDesc(Task task);
+	List<RunLog> findTop10ByTaskOrderByDateDesc(Task task);
 
 }
