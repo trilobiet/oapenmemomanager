@@ -28,14 +28,14 @@ public class TaskController {
 	HomedirRepository homedirRepository;
 	
 	
-	@GetMapping("/tasks")
+	@GetMapping("/task")
 	@ResponseBody
     public List<Task> list(){
 		
 		return taskRepository.findAll(); 
 	}
 	
-	@GetMapping("/homedir/{id}/tasks")
+	@GetMapping("/homedir/{id}/task")
 	@ResponseBody
     public List<Task> listForHomedir(
     	@PathVariable(required=true) String id

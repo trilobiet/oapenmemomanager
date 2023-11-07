@@ -12,5 +12,8 @@ module.exports = defineConfig({
           }
       }
   },
-  transpileDependencies: true
+  transpileDependencies: [
+    'vuetify'
+  ],
+  // publicPath: './' // if relative
 })
