@@ -12,8 +12,8 @@
               v-model="tableSearch"
               append-icon="mdi-magnify"
               label="Search"
-              single-line 
-              hide-details></v-text-field>
+              variant="underlined"
+              clearable></v-text-field>
         </v-card-text>      
         <v-card-text> 
           <v-data-table 

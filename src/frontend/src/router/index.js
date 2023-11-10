@@ -1,17 +1,23 @@
 import { createWebHistory, createRouter } from "vue-router";
 import Home from "@/views/Home.vue";
-import About from "@/views/About.vue";
+import Queries from "@/views/Queries.vue";
+import Settings from "@/views/Settings.vue";
 
 const routes = [
   {
-    path: "/",
-    name: "Home",
+    path: "/", // default page
+    name: "home",
     component: Home,
   },
   {
-    path: "/about",
-    name: "About",
-    component: About,
+    path: "/queries",
+    name: "queries",
+    component: Queries,
+  },
+  {
+    path: "/settings",
+    name: "settings",
+    component: Settings,
   },
 ];
 

@@ -23,11 +23,11 @@
                   <v-dialog v-model="dialog" width="1024" max-width="90%" scrollable>
                   
                     <template v-slot:activator="{ on, attrs }">
-                      <v-btn variant="tonal"  class="bg-primary" v-bind="attrs" v-on="on">New Client</v-btn>
+                      <v-btn variant="tonal"  class="bg-primary" v-bind="attrs" v-on="on">New Setting</v-btn>
                     </template>
 
-                    <user-form :item="editedItem" @cancel="cancel" @save="saveClient" :isOpen="dialog"
-                      :title="formClient" :takenUsernames="userNames" />
+                    <setting-form :insetting="editedSetting" @cancel="cancel" @save="saveSetting" :isOpen="dialog"
+                      :title="formSetting" :takenKeys="keys" />
 
                   </v-dialog>
 
@@ -41,23 +41,22 @@
                     label="Search"
                     variant="underlined"></v-text-field>
 
-                <!-- single-expand show-expand item-key="username" -->  
                 <v-data-table 
-                  :sort-by="['name','username']"
+                  :sort-by="['key','value']" hover="true"
                   :loading="loading" :search="tableSearch" 
-                  :headers="headers" :items="items"   
+                  :headers="headers" :items="settings"   
                   :footer-props="{'items-per-page-options': [10, 25, 50, 100, -1]}"
                   calculate-widths>
 
-                  <template v-slot:[`item.name`]="{ item }">
-                    <span style="cursor:pointer" @click="editItem(item)"
+                  <template v-slot:[`item.key`]="{ item }">
+                    <span style="cursor:pointer" @click="editSetting(item)"
                      class="blue--text text--darken-4"
-                    >{{item.name}}</span>
+                    >{{item.key}}</span>
                   </template> 
 
-                  <template v-slot:[`item.actions`]="{ item }">
-                    <v-hover v-slot="{ hover }" v-if="item.username!='administrator'">
-                      <v-icon @click="deleteItem(item)"
+                  <template v-slot:[`item.actions`]="{ setting }">
+                    <v-hover v-slot="{ hover }">
+                      <v-icon @click="deleteSetting(setting)"
                       :class="hover?'red--text text--darken-3':'gray--text'">mdi-close-circle-outline</v-icon>
                     </v-hover>  
                   </template>
@@ -81,7 +80,7 @@
     <v-dialog v-model="dialogDelete" max-width="500px">
 
       <v-card>
-        <v-card-title class="text-h5">Are you sure you want to delete this user?</v-card-title>
+        <v-card-title class="text-h5">Are you sure you want to delete this setting?</v-card-title>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="cancelDelete">Cancel</v-btn>
@@ -98,11 +97,11 @@
 
 <script>
 import axios from 'axios';
-//import UserForm from '../views/UserForm.vue';
+import SettingForm from '../views/forms/SettingForm.vue';
 
 export default {
 
-  //components: { UserForm },
+  components: { SettingForm },
   
   data() {
     return {
@@ -114,18 +113,15 @@ export default {
       dialogSaved: false, 
       dialogErrorDetail: "",     
       headers: [],
-      items:[], 
+      settings:[], 
       editedIndex: -1,      
-      editedItem: {
-        name: '',
-        username: '',
-        password: '',
-        id: '',
+      editedSetting: {
+        key: '',
+        value: ''
       },
-      defaultItem: {
-        name: '',
-        username: '',
-        password: '',
+      defaultSetting: {
+        key: '',
+        value: ''
       },   
     }    
   },
@@ -133,27 +129,27 @@ export default {
   computed: {
     formTitle() {
       return this.editedIndex === -1 
-        ? 'new client'  
-        : this.editedItem.username 
+        ? 'new setting'  
+        : this.editedSetting.key
     },
 
-    userNames() {
-      return this.items.map(i => i.username)
+    keys() {
+      return this.settings.map(s => s.key)
     }
   },
 
   mounted() {
-    this.loadClients();
+    this.loadSettings();
   },
   
   methods: {
 
-    loadClients() {
+    loadSettings() {
 
       this.loading = true; 
-      axios.get(`/api/homedir`)
+      axios.get(`/api/setting`)
       .then(resp => {
-         this.items=resp.data;
+         this.settings=resp.data;
          this.headers=this.getHeaders(resp.data);
       })
       .catch(error => console.log(error))
@@ -163,31 +159,32 @@ export default {
     getHeaders() {
 
       let arr = [
-        { title: "Name", key: "name" },
-				{ title: "User name", key: "username" },
+        { title: "Key", key: "key" },
+				{ title: "Value", key: "value" },
+        { title: 'Remove', key: 'actions', sortable: false }
       ];
 
       return arr;
     },
 
-    editItem (item) {
-      this.editedIndex = this.items.indexOf(item)
-      this.editedItem = Object.assign({}, item)
+    editSetting (setting) {
+      this.editedIndex = this.settings.indexOf(setting)
+      this.editedSetting = Object.assign({}, setting)
       this.dialog = true
     },
 
-    deleteItem (item) {
-      this.editedIndex = this.items.indexOf(item)
-      this.editedItem = Object.assign({}, item)
+    deleteSetting (setting) {
+      this.editedIndex = this.settings.indexOf(setting)
+      this.editedSetting = Object.assign({}, setting)
       this.dialogDelete = true
     },
 
     confirmDelete () {
 
       // TODO
-      axios.post(`/api/TODOdelete-user`, this.editedItem)
+      axios.delete(`/api/setting`, this.editedSetting)
         .then( resp => {
-          this.items.splice(this.editedIndex, 1)
+          this.settings.splice(this.editedIndex, 1)
           console.log(resp)
         })
         .catch( err => {
@@ -212,20 +209,20 @@ export default {
       this.setDefault();      
     },
 
-    saveClient () {
+    saveSetting () {
 
       //if (this.editedItem.password.length==0) delete this.editedItem['password'];
 
       // Content-type: application/json
-      axios.post(`/api/homedir`, this.editedItem)
+      axios.post(`/api/setting`, this.editedSetting)
         .then( resp => {
           console.log(resp)
           if (this.editedIndex > -1) {
-            Object.assign(this.items[this.editedIndex], this.editedItem)
+            Object.assign(this.settings[this.editedIndex], this.editedSetting)
           }  
           else {
-            this.items.push(this.editedItem)
-            this.editedItem.id = resp.data.id
+            this.settings.push(this.editedSetting)
+            this.editedSetting.id = resp.data.id
           }  
           this.dialogSaved = true;
         })
@@ -245,7 +242,7 @@ export default {
     },    
 
     setDefault() {
-      this.editedItem = Object.assign({}, this.defaultItem)
+      this.editedSetting = Object.assign({}, this.defaultItem)
       this.editedIndex = -1
     },
 

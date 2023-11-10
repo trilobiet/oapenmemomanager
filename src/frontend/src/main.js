@@ -9,16 +9,6 @@ import {globalfunctions} from './globalFunctions.js'
 
 // vuetify
 import vuetify from "./plugins/vuetify";
-//import 'vuetify/styles'
-//import { createVuetify } from 'vuetify'
-//import * as components from 'vuetify/components'
-//import * as directives from 'vuetify/directives'
-//
-//const vuetify = createVuetify({
-//  components,
-//  directives,
-//})
-
 
 // Preload some api lookup data
 const promises = []
