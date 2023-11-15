@@ -80,7 +80,19 @@ export default {
 <style lang="scss">
 
   // font Roboto
-  @import '../node_modules/@fontsource/roboto/index.css';
+  @import '../node_modules/@fontsource/roboto/400.css';
+  @import '../node_modules/@fontsource/roboto/500.css';
+  @import '../node_modules/@fontsource/roboto/700.css';
+
+  #main {
+    background: rgb(232, 234, 246);
+  }
+
+  .bg-actions {
+    .v-btn { 
+      color: #1565c0; 
+    }  
+  }
 
   // application wide v-data-table styling
   .v-data-table {
@@ -110,6 +122,12 @@ export default {
         }
       }
     }
+
+    .v-data-table-footer {
+      padding: 5px;
+      background: #f8f4fb;
+    }
+
   }
   
 </style>

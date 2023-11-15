@@ -46,7 +46,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,classes = Application.class)
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false /* bypass security */)
 @EnableAutoConfiguration(exclude=SecurityAutoConfiguration.class)
 public class QueryControllerTests {
 

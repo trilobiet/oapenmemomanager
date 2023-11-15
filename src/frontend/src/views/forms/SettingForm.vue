@@ -7,9 +7,9 @@
   >
     <v-card>
 
-      <v-card-title class="white--text" :style="'background-color:'+headerColor"> 
+      <v-card-title class="bg-primary"> 
         <span class="text-h5">
-          <v-icon dark large>{{headerIcon}}</v-icon> {{ title }}
+          <v-icon lighten-5 large>mdi-square-edit-outline</v-icon> {{ title }}
         </span>
       </v-card-title>
 
@@ -21,11 +21,10 @@
 
           <v-row>
             <v-col cols="12" sm="6" md="4">
-              <v-text-field v-model="setting.key" label="Key" :rules="validation.key"
-               :disabled="!isNewSetting"></v-text-field>
+              <v-text-field :disabled="!isNew" v-model="setting.key" label="Key" :rules="validation.key" />
             </v-col>
             <v-col cols="12" sm="6" md="4">
-              <v-select v-model="setting.value" :items="roles" label="Value" :rules="validation.value" />
+              <v-text-field v-model="setting.value" label="Value" :rules="validation.value" />
             </v-col>
           </v-row>  
 
@@ -33,20 +32,20 @@
 
       </v-card-text>
 
-      <v-divider></v-divider>
+      <v-divider class="border-dark"></v-divider>
 
-      <v-card-actions class="blue-grey lighten-5" >
+      <v-card-actions class="bg-actions">
         <v-container>
           <v-row >
             <v-col>
-              <span class="text-left red--text caption" v-if="!isValidForm">
-                <v-icon color="red" >mdi-alert-circle-outline</v-icon>
+              <span v-if="!isValidForm" class="text-red">
+                <v-icon>mdi-alert-circle-outline</v-icon>
                 Please fix validation issues before saving
               </span>
             </v-col>
             <v-col class="text-right">
-                <v-btn color="blue darken-3" text @click="cancel">Cancel</v-btn>
-                <v-btn color="blue darken-3" text @click="save" :disabled="!isValidForm">Save</v-btn>
+                <v-btn @click="cancel" text="Cancel"/>
+                <v-btn @click="save" text="Save" :disabled="!isValidForm"/>
             </v-col>
           </v-row>   
         </v-container>
@@ -64,55 +63,42 @@
   export default {
 
     props: {
-  //      isOpen: {type: Boolean, default: null},
         insetting: {type: Object, default: null},
-  //      title: {type: String, default: ''},
+        title: {type: String, default: ''},
         takenKeys: {type: Array, default: ()=>[]},
-        headerColor: {type: String, default: 'gray'},
-        headerIcon: {type: String, default: 'mdi-account-edit'},
     },
 
     data() {
       return {
+        isNew: false,
         isValidForm: false,
-        //editedSetting: "",
-        setting: this.insetting  // cannot edit props locally (unexpected mutation of prop)
+        setting: {},
       }      
     },
 
-    watch: {
-      isOpen: function(newVal,oldVal) {
-        //if (newVal==true) {
-          this.$refs.settingForm.resetValidation()
-        //}
-        console.log('Prop changed: ', newVal, ' | was: ', oldVal)
-        console.log(JSON.stringify(this.setting))
-        this.editedSetting = this.setting.key
-      },
-    },  
+    mounted() {
+
+      this.setting = this.insetting  // copy from input -> cannot edit props locally (´unexpected mutation of prop´)
+
+      console.log("MOUNTED")
+
+      if (this.setting.key == null || this.setting.key.length == 0) 
+      this.isNew = true;
+
+    },
 
     computed: {
-
-      /*setting: {
-         get: function() { return this.insetting}, 
-         set: function(value) {this.$emit(value)}
-      },*/
-
-
-      isNewSetting() {
-         return this.setting.key == null || this.setting.key.length == 0
-      },
 
       validation() {
 
         return {
 
-          key: [
+          key: [ 
             v => !!v || 'Key is required',
             v => (v && v.length >= 4) || 'Key cannot be shorter than 4 characters',
             v => (v && v.length <= 32) || 'Key cannot be longer than 32 characters',
+            v => this.validateKeyFree(v) || 'Key is already in use. Choose another key.',
             v => (v && !/\s/g.test(v)) || 'Key must not contain whitespace',
-            v => this.validateKeyFree(v) || 'Key is already in use. Choose another key.'
           ],
           value: [
             v => !!v || 'Value is required'
@@ -145,7 +131,10 @@
 
       validateKeyFree(val) {
 
-        if (this.isNewSetting) {
+        console.log("VALUE="+val)
+        console.log("TAKEN="+this.takenKeys)
+
+        if (this.isNew) {
 
           if (!val) return false;
           const posInList = this.takenKeys.indexOf(val.trim())

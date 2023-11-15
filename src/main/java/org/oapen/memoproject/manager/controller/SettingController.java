@@ -38,7 +38,7 @@ public class SettingController {
 		.orElseThrow(() -> new EntityNotFoundException("Setting not found [key=" + key + "]"));
 	}
 	
-	@DeleteMapping("/setting/{id}")
+	@DeleteMapping("/setting/{key}")
 	@ResponseBody
     public void delete(
     	@PathVariable(required=true) String key
@@ -47,12 +47,14 @@ public class SettingController {
 	}
 	
     @PostMapping("/setting")
+    @ResponseBody
 	public Setting save(@RequestBody Setting setting) {
     	
     	// Content-type: application/json
     	// Sample request body:
     	// {"key":"a","value":"b"}
     	
+    	System.out.println(setting);
     	return settingRepository.save(setting);
 	}
 	

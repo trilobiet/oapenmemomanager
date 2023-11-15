@@ -15,21 +15,21 @@
 
           <v-card class="elevation-5">
 
-            <v-toolbar density="normal" color="transparent" >  
+            <v-toolbar color="transparent" >  
 
-                  <v-toolbar-title style="font-weight:bold">Vuetify</v-toolbar-title>
+              <v-toolbar-title class="font-weight-bold">Clients</v-toolbar-title>
                   
-                  <!-- Edit Client Dialog ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-                  <v-dialog v-model="dialog" width="1024" max-width="90%" scrollable>
-                  
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn variant="tonal"  class="bg-primary" v-bind="attrs" v-on="on">New Setting</v-btn>
-                    </template>
+                <!-- Edit Client Dialog ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+                <v-dialog v-model="dialog" width="1024" max-width="90%" scrollable @click:outside="cancelForm">
+                
+                  <template v-slot:activator="{ props }">
+                    <v-btn variant="tonal" class="bg-primary" v-bind="props">New Setting</v-btn>
+                  </template>
 
-                    <setting-form :insetting="editedSetting" @cancel="cancel" @save="saveSetting" :isOpen="dialog"
-                      :title="formSetting" :takenKeys="keys" />
+                  <setting-form :insetting="editedSetting" @cancel="cancelForm" @save="saveSetting" 
+                    :title="formTitle" :takenKeys="keys" />
 
-                  </v-dialog>
+                </v-dialog>
 
               </v-toolbar>
 
@@ -38,26 +38,24 @@
                 <v-text-field
                     v-model="tableSearch"
                     append-icon="mdi-magnify"
-                    label="Search"
-                    variant="underlined"></v-text-field>
+                    label="Search" single-line
+                    variant="underlined">
+                </v-text-field>
 
                 <v-data-table 
-                  :sort-by="['key','value']" hover="true"
+                  :sort-by="['key','value']" :hover="true"
                   :loading="loading" :search="tableSearch" 
-                  :headers="headers" :items="settings"   
-                  :footer-props="{'items-per-page-options': [10, 25, 50, 100, -1]}"
-                  calculate-widths>
+                  :headers="headers" :items="settings">
 
                   <template v-slot:[`item.key`]="{ item }">
                     <span style="cursor:pointer" @click="editSetting(item)"
-                     class="blue--text text--darken-4"
-                    >{{item.key}}</span>
+                     class="text-blue-darken-4">{{item.key}}</span>
                   </template> 
 
-                  <template v-slot:[`item.actions`]="{ setting }">
-                    <v-hover v-slot="{ hover }">
-                      <v-icon @click="deleteSetting(setting)"
-                      :class="hover?'red--text text--darken-3':'gray--text'">mdi-close-circle-outline</v-icon>
+                  <template v-slot:[`item.actions`]="{ item }">
+                    <v-hover v-slot="{ isHovering, props }">
+                      <v-icon @click="deleteSetting(item)" v-bind="props"
+                       :color="isHovering ? 'red': 'grey-darken-2'">mdi-close-circle-outline</v-icon>
                     </v-hover>  
                   </template>
 
@@ -79,13 +77,14 @@
     <!-- DELETE Dialog ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
     <v-dialog v-model="dialogDelete" max-width="500px">
 
-      <v-card>
-        <v-card-title class="text-h5">Are you sure you want to delete this setting?</v-card-title>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="cancelDelete">Cancel</v-btn>
-          <v-btn color="blue darken-1" text @click="confirmDelete">OK</v-btn>
-          <v-spacer></v-spacer>
+      <v-card class="mx-auto" title="Delete setting" subtitle="Are you sure you want to delete this setting?" density="'comfortable'">
+        <template v-slot:prepend>
+          <v-icon icon="mdi-alert-circle-outline" color="red" size="x-large"></v-icon>
+        </template>
+        <v-divider></v-divider>
+        <v-card-actions class="justify-center px-6 py-3">
+          <v-btn class="flex-grow-1" @click="cancelDelete">Cancel</v-btn>
+          <v-btn class="flex-grow-1" @click="confirmDelete">OK</v-btn>
         </v-card-actions>
       </v-card>
 
@@ -127,6 +126,7 @@ export default {
   },
   
   computed: {
+    // Title of form
     formTitle() {
       return this.editedIndex === -1 
         ? 'new setting'  
@@ -181,8 +181,10 @@ export default {
 
     confirmDelete () {
 
+      console.log("DELETING ==== " + this.editedSetting.key)
+
       // TODO
-      axios.delete(`/api/setting`, this.editedSetting)
+      axios.delete(`/api/setting/${this.editedSetting.key}`)
         .then( resp => {
           this.settings.splice(this.editedIndex, 1)
           console.log(resp)
@@ -199,9 +201,10 @@ export default {
       this.dialogDelete = false
     },
 
-    cancel () {
+    cancelForm () {
       this.dialog = false
-      this.setDefault();      
+      this.setDefault();   
+      console.log("Dialog canceled")   
     },
 
     cancelDelete () {
@@ -210,8 +213,6 @@ export default {
     },
 
     saveSetting () {
-
-      //if (this.editedItem.password.length==0) delete this.editedItem['password'];
 
       // Content-type: application/json
       axios.post(`/api/setting`, this.editedSetting)

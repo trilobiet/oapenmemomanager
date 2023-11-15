@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,classes = Application.class)
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false /* bypass security */)
 @EnableAutoConfiguration(exclude=SecurityAutoConfiguration.class)
 public class ScriptControllerTests {
 	
