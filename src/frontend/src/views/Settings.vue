@@ -3,7 +3,7 @@
   <div class="home">
 
       <!-- TODO toggle from axios on save if an error occurs -->  
-      <v-alert v-if="dialogError" type="error" dismissible >
+      <v-alert v-if="dialogError" type="error" closable=true >
         <span @click="alertErrorDetail">A problem occurred when saving (click for details)</span>
       </v-alert>
 
@@ -17,13 +17,13 @@
 
             <v-toolbar color="transparent" >  
 
-              <v-toolbar-title class="font-weight-bold">Clients</v-toolbar-title>
+              <v-toolbar-title class="font-weight-bold">Settings</v-toolbar-title>
                   
                 <!-- Edit Client Dialog ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
                 <v-dialog v-model="dialog" width="1024" max-width="90%" scrollable @click:outside="cancelForm">
                 
                   <template v-slot:activator="{ props }">
-                    <v-btn variant="tonal" class="bg-primary" v-bind="props">New Setting</v-btn>
+                    <v-btn class="bg-primary" v-bind="props">New Setting</v-btn>
                   </template>
 
                   <setting-form :insetting="editedSetting" @cancel="cancelForm" @save="saveSetting" 
@@ -77,7 +77,7 @@
     <!-- DELETE Dialog ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
     <v-dialog v-model="dialogDelete" max-width="500px">
 
-      <v-card class="mx-auto" title="Delete setting" subtitle="Are you sure you want to delete this setting?" density="'comfortable'">
+      <v-card class="mx-auto" title="Delete setting" subtitle="Are you sure you want to delete this setting?">
         <template v-slot:prepend>
           <v-icon icon="mdi-alert-circle-outline" color="red" size="x-large"></v-icon>
         </template>
@@ -228,10 +228,11 @@ export default {
           this.dialogSaved = true;
         })
         .catch( err => {
-          console.log(err.response)
+          console.log(err)
           // Show error on alert
           // TODO show logout message on session expiration
-          this.dialogErrorDetail = err.response
+          console.log("ERROR: " + err)
+          this.dialogErrorDetail = err.message
           this.dialogError = true
         })
         .finally(() => {

@@ -66,7 +66,7 @@ export default {
     theme() {
       return (this.$vuetify.theme.dark) ? 'dark' : 'light'
     },
-    /*isLoggedIn(){
+    /*isLoggedIn(){ TODO
       return this.$store.getters.getUser 
     },
     user(){

@@ -3,7 +3,7 @@
   <div class="home">
 
       <!-- TODO toggle from axios on save if an error occurs -->  
-      <v-alert v-if="dialogError" type="error" dismissible >
+      <v-alert v-if="dialogError" type="error" closable=true>
         <span @click="alertErrorDetail">A problem occurred when saving (click for details)</span>
       </v-alert>
 
@@ -15,11 +15,12 @@
 
           <v-card class="elevation-5">
 
-            <v-toolbar density="normal" color="transparent" >  
+            <v-toolbar color="transparent" >  
 
-                  <v-toolbar-title style="font-weight:bold">Vuetify</v-toolbar-title>
+                  <v-toolbar-title class="font-weight-bold">Clients</v-toolbar-title>
                   
                   <!-- Edit Client Dialog ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+                  TODO remove dialog
                   <v-dialog v-model="dialog" width="1024" max-width="90%" scrollable>
                   
                     <template v-slot:activator="{ on, attrs }">
@@ -38,26 +39,27 @@
                 <v-text-field
                     v-model="tableSearch"
                     append-icon="mdi-magnify"
-                    label="Search"
-                    variant="underlined"></v-text-field>
+                    label="Search" single-line
+                    variant="underlined">
+                </v-text-field>
 
                 <!-- single-expand show-expand item-key="username" -->  
                 <v-data-table 
                   :sort-by="['name','username']"
                   :loading="loading" :search="tableSearch" 
-                  :headers="headers" :items="items"   
+                  :headers="headers" :items="clients"   
                   :footer-props="{'items-per-page-options': [10, 25, 50, 100, -1]}"
                   calculate-widths>
 
                   <template v-slot:[`item.name`]="{ item }">
-                    <span style="cursor:pointer" @click="editItem(item)"
-                     class="blue--text text--darken-4"
+                    <span style="cursor:pointer" @click="editClient(item)"
+                     class="text-blue-darken-4"
                     >{{item.name}}</span>
                   </template> 
 
                   <template v-slot:[`item.actions`]="{ item }">
                     <v-hover v-slot="{ hover }" v-if="item.username!='administrator'">
-                      <v-icon @click="deleteItem(item)"
+                      <v-icon @click="deleteClient(item)"
                       :class="hover?'red--text text--darken-3':'gray--text'">mdi-close-circle-outline</v-icon>
                     </v-hover>  
                   </template>
@@ -114,15 +116,15 @@ export default {
       dialogSaved: false, 
       dialogErrorDetail: "",     
       headers: [],
-      items:[], 
+      clients:[], 
       editedIndex: -1,      
-      editedItem: {
+      editedClient: {
         name: '',
         username: '',
         password: '',
         id: '',
       },
-      defaultItem: {
+      defaultClient: {
         name: '',
         username: '',
         password: '',
@@ -134,11 +136,11 @@ export default {
     formTitle() {
       return this.editedIndex === -1 
         ? 'new client'  
-        : this.editedItem.username 
+        : this.editedClient.username 
     },
 
     userNames() {
-      return this.items.map(i => i.username)
+      return this.clients.map(i => i.username)
     }
   },
 
@@ -153,7 +155,7 @@ export default {
       this.loading = true; 
       axios.get(`/api/homedir`)
       .then(resp => {
-         this.items=resp.data;
+         this.clients=resp.data;
          this.headers=this.getHeaders(resp.data);
       })
       .catch(error => console.log(error))
@@ -170,24 +172,26 @@ export default {
       return arr;
     },
 
-    editItem (item) {
-      this.editedIndex = this.items.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      this.dialog = true
+    editClient (client) {
+      /*this.editedIndex = this.clients.indexOf(client)
+      this.editedClient = Object.assign({}, client)
+      this.dialog = true*/
+      console.log("CLIENT: " + client.id)
+      this.$router.push({ name: 'editClient', params: {id: client.id} })
     },
 
-    deleteItem (item) {
-      this.editedIndex = this.items.indexOf(item)
-      this.editedItem = Object.assign({}, item)
+    deleteItem (client) {
+      this.editedIndex = this.clients.indexOf(client)
+      this.editedClient = Object.assign({}, client)
       this.dialogDelete = true
     },
 
     confirmDelete () {
 
       // TODO
-      axios.post(`/api/TODOdelete-user`, this.editedItem)
+      axios.post(`/api/TODOdelete-user`, this.editedClient)
         .then( resp => {
-          this.items.splice(this.editedIndex, 1)
+          this.clients.splice(this.editedIndex, 1)
           console.log(resp)
         })
         .catch( err => {
@@ -221,11 +225,11 @@ export default {
         .then( resp => {
           console.log(resp)
           if (this.editedIndex > -1) {
-            Object.assign(this.items[this.editedIndex], this.editedItem)
+            Object.assign(this.clients[this.editedIndex], this.editedClient)
           }  
           else {
-            this.items.push(this.editedItem)
-            this.editedItem.id = resp.data.id
+            this.clients.push(this.editedClient)
+            this.editedClient.id = resp.data.id
           }  
           this.dialogSaved = true;
         })
@@ -245,7 +249,7 @@ export default {
     },    
 
     setDefault() {
-      this.editedItem = Object.assign({}, this.defaultItem)
+      this.editedClient = Object.assign({}, this.defaultClient)
       this.editedIndex = -1
     },
 

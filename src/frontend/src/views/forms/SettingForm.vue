@@ -3,13 +3,13 @@
   <v-form
     ref="settingForm"
     v-model="isValidForm"
-    lazy-validation
+    validate-on="lazy input"
   >
     <v-card>
 
       <v-card-title class="bg-primary"> 
         <span class="text-h5">
-          <v-icon lighten-5 large>mdi-square-edit-outline</v-icon> {{ title }}
+          <v-icon>mdi-square-edit-outline</v-icon> {{ title }}
         </span>
       </v-card-title>
 
@@ -21,10 +21,10 @@
 
           <v-row>
             <v-col cols="12" sm="6" md="4">
-              <v-text-field :disabled="!isNew" v-model="setting.key" label="Key" :rules="validation.key" />
+              <v-text-field :disabled="isNew===false" v-model="setting.key" label="Key" :rules="isNew ? validation.key : []"/>
             </v-col>
             <v-col cols="12" sm="6" md="4">
-              <v-text-field v-model="setting.value" label="Value" :rules="validation.value" />
+              <v-text-field v-model="setting.value" label="Value" :rules="validation.value"/>
             </v-col>
           </v-row>  
 
@@ -35,20 +35,25 @@
       <v-divider class="border-dark"></v-divider>
 
       <v-card-actions class="bg-actions">
+
         <v-container>
           <v-row >
+
             <v-col>
-              <span v-if="!isValidForm" class="text-red">
+              <span v-if="isValidForm===false" class="text-red">
                 <v-icon>mdi-alert-circle-outline</v-icon>
                 Please fix validation issues before saving
               </span>
             </v-col>
+
             <v-col class="text-right">
                 <v-btn @click="cancel" text="Cancel"/>
                 <v-btn @click="save" text="Save" :disabled="!isValidForm"/>
             </v-col>
+
           </v-row>   
         </v-container>
+
       </v-card-actions>
 
     </v-card>
@@ -90,6 +95,8 @@
     computed: {
 
       validation() {
+
+        console.log()
 
         return {
 
