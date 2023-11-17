@@ -2,80 +2,74 @@
 
   <div class="home">
 
-      <!-- TODO toggle from axios on save if an error occurs -->  
-      <v-alert v-if="dialogError" type="error" closable=true>
-        <span @click="alertErrorDetail">A problem occurred when saving (click for details)</span>
-      </v-alert>
+    <!-- TODO toggle from axios on save if an error occurs -->  
+    <v-alert v-if="dialogError" type="error" closable=true>
+      <span @click="alertErrorDetail">A problem occurred when saving (click for details)</span>
+    </v-alert>
 
-      <v-container fluid>
+    <v-container fluid>
 
-      <v-row>
+      <v-card class="elevation-5">
 
-        <v-col>
+        <v-toolbar color="transparent" >  
 
-          <v-card class="elevation-5">
+            <v-toolbar-title class="font-weight-bold">Clients</v-toolbar-title>
+            
+            <!-- Edit Client Dialog ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+            TODO remove dialog
+            <v-dialog v-model="dialog" width="1024" max-width="90%" scrollable>
+            
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn variant="tonal"  class="bg-primary" v-bind="attrs" v-on="on">New Client</v-btn>
+              </template>
 
-            <v-toolbar color="transparent" >  
+              <user-form :item="editedItem" @cancel="cancel" @save="saveClient" :isOpen="dialog"
+                :title="formClient" :takenUsernames="userNames" />
 
-                  <v-toolbar-title class="font-weight-bold">Clients</v-toolbar-title>
-                  
-                  <!-- Edit Client Dialog ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-                  TODO remove dialog
-                  <v-dialog v-model="dialog" width="1024" max-width="90%" scrollable>
-                  
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn variant="tonal"  class="bg-primary" v-bind="attrs" v-on="on">New Client</v-btn>
-                    </template>
+            </v-dialog>
 
-                    <user-form :item="editedItem" @cancel="cancel" @save="saveClient" :isOpen="dialog"
-                      :title="formClient" :takenUsernames="userNames" />
+        </v-toolbar>
 
-                  </v-dialog>
+        <v-card-text> 
 
-              </v-toolbar>
+          <v-text-field
+              v-model="tableSearch"
+              append-icon="mdi-magnify"
+              label="Search" single-line
+              variant="underlined">
+          </v-text-field>
 
-              <v-card-text> 
+          <!-- single-expand show-expand item-key="username" -->  
+          <v-data-table 
+            :sort-by="['name','username']"
+            :loading="loading" :search="tableSearch" 
+            :headers="headers" :items="clients"   
+            :footer-props="{'items-per-page-options': [10, 25, 50, 100, -1]}"
+            calculate-widths>
 
-                <v-text-field
-                    v-model="tableSearch"
-                    append-icon="mdi-magnify"
-                    label="Search" single-line
-                    variant="underlined">
-                </v-text-field>
+            <template v-slot:[`item.name`]="{ item }">
+              <span style="cursor:pointer" @click="editClient(item)"
+                class="text-blue-darken-4"
+              >{{item.name}}</span>
+            </template> 
 
-                <!-- single-expand show-expand item-key="username" -->  
-                <v-data-table 
-                  :sort-by="['name','username']"
-                  :loading="loading" :search="tableSearch" 
-                  :headers="headers" :items="clients"   
-                  :footer-props="{'items-per-page-options': [10, 25, 50, 100, -1]}"
-                  calculate-widths>
+            <template v-slot:[`item.actions`]="{ item }">
+              <v-hover v-slot="{ hover }" v-if="item.username!='administrator'">
+                <v-icon @click="deleteClient(item)"
+                :class="hover?'red--text text--darken-3':'gray--text'">mdi-close-circle-outline</v-icon>
+              </v-hover>  
+            </template>
 
-                  <template v-slot:[`item.name`]="{ item }">
-                    <span style="cursor:pointer" @click="editClient(item)"
-                     class="text-blue-darken-4"
-                    >{{item.name}}</span>
-                  </template> 
+            <template v-slot:no-data>
+              No data available. Your session may have expired.
+              <br/><a href="/login">Login again to start a new session</a>
+            </template>                  
 
-                  <template v-slot:[`item.actions`]="{ item }">
-                    <v-hover v-slot="{ hover }" v-if="item.username!='administrator'">
-                      <v-icon @click="deleteClient(item)"
-                      :class="hover?'red--text text--darken-3':'gray--text'">mdi-close-circle-outline</v-icon>
-                    </v-hover>  
-                  </template>
+          </v-data-table>
 
-                  <template v-slot:no-data>
-                    No data available. Your session may have expired.
-                    <br/><a href="/login">Login again to start a new session</a>
-                  </template>                  
+        </v-card-text>
 
-                </v-data-table>
-
-              </v-card-text>
-          </v-card>    
-
-        </v-col>
-      </v-row>
+      </v-card>    
 
     </v-container>
 

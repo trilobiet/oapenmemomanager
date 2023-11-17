@@ -1,66 +1,104 @@
 <template>
 
-    <v-form
-      ref="clientForm"
-      v-model="isValidForm"
-      validate-on="lazy input"
-    >
-      <v-card>
-  
-        <v-card-title class="bg-primary"> 
-          <span class="text-h5">
-            <v-icon>mdi-square-edit-outline</v-icon> {{ title }}
-          </span>
-        </v-card-title>
-  
-        <v-divider></v-divider>
-  
-        <v-card-text>
-  
-          <v-container>
-  
+  <div class="client-form">
+
+    <v-container fluid>
+
+      <v-form
+        ref="clientForm"
+        v-model="isValidForm"
+        validate-on="lazy input" 
+      >
+
+      <v-card class="elevation-5" >
+
+          <!-- TODO toggle from axios on save if an error occurs -->  
+          <v-alert v-if="dialogError" type="error" closable=true>
+            <span @click="alertErrorDetail">A problem occurred when saving (click for details)</span>
+          </v-alert>
+
+          <v-toolbar color="transparent" >  
+            <v-toolbar-title class="font-weight-bold">
+              <v-icon>mdi-square-edit-outline</v-icon> {{ this.client.name }}
+            </v-toolbar-title>
+          </v-toolbar>
+
+          <v-divider></v-divider>
+
+          <v-card-text class="pa-16" >
+
+            <div style="width: 1280px; max-width:90%; margin: auto">
+
             <v-row>
-              <v-col cols="12" sm="6" md="4">
-                <v-text-field todo />
-              </v-col>
-              <v-col cols="12" sm="6" md="4">
-                <v-text-field todo />
+              <v-col cols="4">
+                <v-text-field label="client name" />
               </v-col>
             </v-row>  
-  
-          </v-container>
-  
-        </v-card-text>
-  
-        <v-divider class="border-dark"></v-divider>
-  
-        <v-card-actions class="bg-actions">
-  
-          <v-container>
-            <v-row >
-  
-              <v-col>
-                <span v-if="isValidForm===false" class="text-red">
-                  <v-icon>mdi-alert-circle-outline</v-icon>
-                  Please fix validation issues before saving
-                </span>
+
+            <v-row>
+              <v-col cols="4">
+                <v-text-field label="username" />
               </v-col>
-  
-              <v-col class="text-right">
-                  <v-btn @click="cancel" text="Cancel"/>
-                  <v-btn @click="save" text="Save" :disabled="!isValidForm"/>
+              <v-col cols="4">
+                <v-btn text="generate from client name" />
               </v-col>
+            </v-row>  
+
+            <v-row>
+              <v-col cols="4">
+                <v-text-field label="password" />
+              </v-col>
+              <v-col cols="8">
+                <v-btn text="generate new" />
+                &nbsp;
+                <v-btn text="copy login data" />
+              </v-col>
+            </v-row>  
+
+            <v-row>
+              <v-col cols="12">
+                <v-textarea label="notes" rows="8" />
+              </v-col>
+            </v-row>  
+
+          </div>
+
+
+          </v-card-text>
+
+          <v-divider class="border-dark"></v-divider>
+
+          <v-card-actions class="bg-actions">
+
+            <v-container>
+              <v-row >
+
+                <v-col>
+                  <span v-if="isValidForm===false" class="text-red">
+                    <v-icon>mdi-alert-circle-outline</v-icon>
+                    Please fix validation issues before saving
+                  </span>
+                </v-col>
+
+                <v-col class="text-right">
+                    <v-btn @click="cancel" text="Cancel"/>
+                    <v-btn @click="save" text="Save" :disabled="!isValidForm"/>
+                </v-col>
+
+              </v-row>   
+            </v-container>
+
+          </v-card-actions>
+
+        </v-card>
+
+      </v-form>
+      
+    </v-container>
+
+  </div>
   
-            </v-row>   
-          </v-container>
-  
-        </v-card-actions>
-  
-      </v-card>
-  
-    </v-form>  
-  
-  </template>
+</template>
   
 <script>
 
@@ -114,7 +152,6 @@
         axios.get(`/api/homedir/`+this.id)
           .then(resp => {
             this.client=resp.data;
-            //this.headers=this.getHeaders(resp.data);
             console.log(this.client.name)
           })
           .catch(error => console.log(error))
