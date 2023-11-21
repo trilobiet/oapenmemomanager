@@ -19,7 +19,7 @@ import "@fortawesome/fontawesome-free/css/all.css";
 const myLightTheme = {
 	dark: false,
 	colors: {
-		background: '#FFFFFF',
+		background: 'rgb(232, 234, 246)',
 		surface: '#FFFFFF',
 		primary: '#9C27B0',
 		'primary-darken-1': '#3700B3',
@@ -47,6 +47,13 @@ const vuetify = createVuetify({
 			myLightTheme
 		},
 	},
+
+	defaults: {
+		VForm: {
+			VTextField: { bgColor: '#f8f8fa', rounded: 0},
+			VTextarea:  { bgColor: '#f8f8fa', rounded: 0}
+		}
+	}
 
 }) 
 

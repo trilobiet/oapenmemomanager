@@ -13,20 +13,11 @@
 
         <v-toolbar color="transparent" >  
 
-            <v-toolbar-title class="font-weight-bold">Clients</v-toolbar-title>
-            
-            <!-- Edit Client Dialog ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-            TODO remove dialog
-            <v-dialog v-model="dialog" width="1024" max-width="90%" scrollable>
-            
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn variant="tonal"  class="bg-primary" v-bind="attrs" v-on="on">New Client</v-btn>
-              </template>
+          <v-toolbar-title class="font-weight-bold">
+            <v-icon>mdi-account-group</v-icon> Clients
+          </v-toolbar-title>
 
-              <user-form :item="editedItem" @cancel="cancel" @save="saveClient" :isOpen="dialog"
-                :title="formClient" :takenUsernames="userNames" />
-
-            </v-dialog>
+          <v-btn variant="tonal" class="bg-primary" @click="newClient()">New Client</v-btn>
 
         </v-toolbar>
 
@@ -35,16 +26,15 @@
           <v-text-field
               v-model="tableSearch"
               append-icon="mdi-magnify"
-              label="Search" single-line
+              label="Search"
               variant="underlined">
           </v-text-field>
 
           <!-- single-expand show-expand item-key="username" -->  
           <v-data-table 
-            :sort-by="['name','username']"
+            :sort-by="['name','username']" hover 
             :loading="loading" :search="tableSearch" 
             :headers="headers" :items="clients"   
-            :footer-props="{'items-per-page-options': [10, 25, 50, 100, -1]}"
             calculate-widths>
 
             <template v-slot:[`item.name`]="{ item }">
@@ -166,12 +156,16 @@ export default {
       return arr;
     },
 
-    editClient (client) {
+    editClient(client) {
       /*this.editedIndex = this.clients.indexOf(client)
       this.editedClient = Object.assign({}, client)
       this.dialog = true*/
       console.log("CLIENT: " + client.id)
-      this.$router.push({ name: 'editClient', params: {id: client.id} })
+      this.$router.push({ name: 'client', params: {id: client.id} })
+    },
+
+    newClient() {
+      this.$router.push({ name: 'clientNew' })
     },
 
     deleteItem (client) {

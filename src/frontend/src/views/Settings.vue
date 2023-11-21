@@ -148,12 +148,12 @@ export default {
 
       this.loading = true; 
       axios.get(`/api/setting`)
-      .then(resp => {
-         this.settings=resp.data;
-         this.headers=this.getHeaders(resp.data);
-      })
-      .catch(error => console.log(error))
-      .finally(() => this.loading = false )
+        .then(resp => {
+          this.settings=resp.data;
+          this.headers=this.getHeaders(resp.data);
+        })
+        .catch(error => console.log(error))
+        .finally(() => this.loading = false )
     },
     
     getHeaders() {

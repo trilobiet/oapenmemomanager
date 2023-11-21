@@ -84,10 +84,6 @@ export default {
   @import '../node_modules/@fontsource/roboto/500.css';
   @import '../node_modules/@fontsource/roboto/700.css';
 
-  #main {
-    background: rgb(232, 234, 246);
-  }
-
   .bg-actions {
     .v-btn { 
       color: #1565c0; 
@@ -126,6 +122,10 @@ export default {
     .v-data-table-footer {
       padding: 5px;
       background: #f8f4fb;
+    }
+
+    .v-field {
+      border-radius: 0;
     }
 
   }

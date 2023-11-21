@@ -96,8 +96,6 @@
 
       validation() {
 
-        console.log()
-
         return {
 
           key: [ 
