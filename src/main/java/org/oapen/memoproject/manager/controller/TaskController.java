@@ -63,12 +63,10 @@ public class TaskController {
     ){
 		taskRepository.deleteById(id);
 	}
-	
-	
+
 	// Save task to a homedir
-    @PostMapping("/homedir/{id}/task")
+    @PostMapping("/task")
 	public Task save(
-		@PathVariable("id") UUID hId,
 		@RequestBody final Task task 
 	){
     	
@@ -76,6 +74,16 @@ public class TaskController {
     	// Sample request body:
     	// {"id":"8f6f600f-7837-497b-8a28-999736be531c","fileName":"my_export","extension":"xml",
     	// "startDate":"2023-10-31","frequency":"M","public":false,"active":false}    	
+    	
+   		return taskRepository.save(task);
+	}
+	
+	// Save task to a homedir
+    @PostMapping("/homedir/{id}/task")
+	public Task saveNew(
+		@PathVariable("id") UUID hId,
+		@RequestBody final Task task 
+	){
     	
     	return homedirRepository.findById(hId).map(homedir -> {
     		task.setHomedir(homedir);

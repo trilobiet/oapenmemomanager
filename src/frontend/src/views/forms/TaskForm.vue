@@ -14,7 +14,7 @@
   
             <v-toolbar color="transparent" >  
               <v-toolbar-title class="font-weight-bold">
-                <v-icon>mdi-table-edit</v-icon> {{ title }}
+                <v-icon>mdi-table-edit</v-icon> {{ isNew? "New Task" : title }}
               </v-toolbar-title>
             </v-toolbar>
   
@@ -23,6 +23,9 @@
             <v-card-text class="pa-16">
   
               <div style="width: 1280px; max-width:90%; margin: auto">
+
+              <!-- update existing task -->  
+              <input type="hidden" v-if="!isNew" v-model="task.id"/>
   
               <v-row v-if="dialogSaved">
                 <v-col>
@@ -41,31 +44,21 @@
               </v-row>
   
               <v-row>
-                <v-col cols="12">
-                  <v-text-field label="task name" v-model="task.fileName" :rules="validation.fileName" />
+                <v-col cols="12" sm="8">
+                  <v-text-field label="task name" v-model="task.fileName" :rules="validation.fileName" clearable/>
+                </v-col>
+                <v-col cols="12" sm="4">
+                  <v-text-field label="extension" v-model="task.extension" readonly bg-color="transparent" class="text-blue-grey-lighten-1" />
                 </v-col>
               </v-row>  
 
               <v-row>
-                <v-col cols="12">TODO generate from filename
-                  <v-text-field label="extension" v-model="task.fileName" :rules="validation.extension" />
+                <v-col cols="12" sm="6" >
+                  <v-text-field label="start date" v-model="task.startDate" :rules="validation.startDate" 
+                   append-inner-icon="mdi-hours-24" @click:appendInner="task.startDate = $func.tomorrowDate()"
+                   hint="Format: yyyy-mm-dd (e.g. 2023-12-31)" />
                 </v-col>
-              </v-row>  
-
-              <v-row>
-                <v-col cols="12">
-                  <v-text-field label="description" v-model="task.description" />
-                </v-col>
-              </v-row>  
-
-              <v-row>
-                <v-col cols="12">
-                  <v-date-picker v-model="task.startDate" ></v-date-picker>
-                </v-col>
-              </v-row>  
-
-              <v-row>
-                <v-col cols="12">
+                <v-col cols="12" sm="6">
                   <v-select v-model="task.frequency" label="frequency" 
                    :items="frequencies" item-title="name" item-value="value"/>
                 </v-col>
@@ -73,7 +66,28 @@
 
               <v-row>
                 <v-col cols="12">
-                  <v-textarea label="notes" v-model="task.notes" rows="8"/>
+                  <v-textarea label="description" v-model="task.description" rows="4"/>
+                </v-col>
+              </v-row>  
+
+              <v-row>
+                <v-col cols="12" sm="6">
+                  <v-text-field label="script name" v-model="task.script.name"/>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <v-text-field label="script type" v-model="task.script.type"/>
+                </v-col>
+              </v-row>  
+
+              <v-row>
+                <v-col cols="12">
+                  <v-textarea label="script" v-model="task.script.body" rows="4"/>
+                </v-col>
+              </v-row>  
+
+              <v-row>
+                <v-col cols="12">
+                  <v-textarea label="notes" v-model="task.notes" rows="4"/>
                 </v-col>
               </v-row>  
   
@@ -124,10 +138,13 @@
       data() {
         return {
           isNew: false,
-          title: "New Task",
-          task: {},
+          task: {
+            frequency: { name: 'weekly', value: 'W'},
+            script: { }
+          },
           isValidForm: false,
           id: null,
+          clientid: null, 
           dialogSaved: false,
           dialogError: false,
           dialogErrorDetail: "",
@@ -136,22 +153,35 @@
             { name: 'weekly', value: 'W'},
             { name: 'monthly', value: 'M'},
             { name: 'yearly', value: 'Y'},
-          ]
+          ],
+          
         }      
       },
   
       mounted() {
   
         console.log("MOUNTED: "+ this.$route.params.id)
+        console.log(this.$func.tomorrowDate())
+
         if (this.$route.params.id) {
           this.id = this.$route.params.id;
           this.loadTask();
         }  
-        else this.isNew = true;
+        else {
+          this.isNew = true;
+          this.clientid = this.$route.params.clientid;
+        }  
   
       },
   
       watch: {
+
+        // update extension field when filename changes
+        'task.fileName': {
+          handler(val) {
+            this.task.extension = this.$func.getExtension(val);
+          }
+        }  
       },  
   
       computed: {
@@ -162,17 +192,25 @@
   
             fileName: [ 
               v => !!v || "Value is required",
-              v => (v && v.length >= 4) || "Value cannot be shorter than 3 characters"
+              v => (v && v.length >= 4) || "Value cannot be shorter than 3 characters",
+              v => this.hasExtension(v) || "Not a valid extension"
             ],
             startDate: [
               v => !!v || "Value is required",
-              v => (v && v.length >= 4) || "Value cannot be shorter than 4 characters"
+              v => this.$func.isValidDate(v) || "Not a valid date"
             ],
           }  
-        }
+        },
+
       },
   
       methods: {
+
+        hasExtension(s) {
+
+          let ext = this.$func.getExtension(s)
+          return ext && ext.length > 0;
+        },
   
         loadTask() {
   
@@ -189,8 +227,11 @@
         save() {
   
           if(this.$refs.taskForm.validate()) {
+
+            let postUrl = '/api/task';
+            if (this.isNew) postUrl = '/api/homedir/' + this.clientid + '/task';
   
-            axios.post(`/api/task`, this.task)
+            axios.post(postUrl, this.task)
             .then( resp => {
               console.log(resp)
               this.dialogSaved = true;

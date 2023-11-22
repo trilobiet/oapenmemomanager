@@ -33,6 +33,11 @@ const routes = [
     component: TaskForm,
   },
   {
+    path: "/task/new/:clientid/",
+    name: "taskNew",
+    component: TaskForm,
+  },
+  {
     path: "/queries",
     name: "queries",
     component: Queries,

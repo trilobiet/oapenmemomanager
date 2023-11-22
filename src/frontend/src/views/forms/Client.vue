@@ -48,7 +48,7 @@
                   <v-icon>mdi-table-clock</v-icon> export tasks
                 </v-toolbar-title>
 
-                <v-btn variant="tonal" class="bg-primary">New Export Task</v-btn>
+                <v-btn variant="tonal" class="bg-primary" @click="newTask()">New Export Task</v-btn>
 
               </v-toolbar>
 
@@ -68,10 +68,22 @@
                     </template>
 
                     <template v-slot:[`item.latestLog.date`]="{ item }">
+                      <span v-if="item.latestLog">
+                        {{ item.latestLog.date }}
+                        <v-icon v-if="item.latestLog.success" color="green" icon="mdi-check-bold" size="small"/>
+                        <v-icon v-else color="red" icon="mdi-alert-circle" size="small"/>
+                      </span>    
+                      <span v-else>
+                        <v-icon icon="mdi-progress-clock" color="grey" size="small" title="waiting for first run"/>
+                      </span>
+                    </template>
+
+                    <!--
+                    <template v-if=false v-slot:[`item.latestLog.date`]="{ item }">
                       {{ item.latestLog.date }}
                       <v-icon v-if="item.latestLog.success" color="green" icon="mdi-check-bold" size="small"/>
                       <v-icon v-else color="red" icon="mdi-alert-circle" size="small"/>
-                    </template>
+                    </template>-->
 
                     <template v-slot:[`item.frequency`]="{ item }">
                       <v-chip v-if="item.frequency=='D'" size="small" variant="flat" color="yellow">daily</v-chip>
@@ -103,8 +115,7 @@
                 </v-col>
 
                 <v-col class="text-right">
-                    <v-btn @click="$router.go(-1)" text="Cancel" />
-                    <v-btn @click="save" text="Save" :disabled="!isValidForm"/>
+                    <v-btn @click="$router.go(-1)" text="Back" />
                 </v-col>
 
               </v-row>   
@@ -177,12 +188,11 @@
       },
 
       editTask(task) {
-        console.log("TASK: " + task.id)
         this.$router.push({ name: 'taskEdit', params: {id: task.id} })
       },
 
       newTask() {
-        this.$router.push({ name: 'clientNew' })
+        this.$router.push({ name: 'taskNew', params: {clientid: this.client.id}  })
       },
 
     },
