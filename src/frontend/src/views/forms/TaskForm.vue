@@ -26,6 +26,8 @@
 
               <!-- update existing task -->  
               <input type="hidden" v-if="!isNew" v-model="task.id"/>
+              <!-- type always main for scripts connected to a task -->
+              <input type="hidden" value="MAIN" name="task.script.type"/>
   
               <v-row v-if="dialogSaved">
                 <v-col>
@@ -59,35 +61,75 @@
                    hint="Format: yyyy-mm-dd (e.g. 2023-12-31)" />
                 </v-col>
                 <v-col cols="12" sm="6">
-                  <v-select v-model="task.frequency" label="frequency" 
-                   :items="frequencies" item-title="name" item-value="value"/>
-                </v-col>
-              </v-row>  
-
-              <v-row>
-                <v-col cols="12">
-                  <v-textarea label="description" v-model="task.description" rows="4"/>
+                  <v-checkbox v-model="task.active" label="active" :color="task.active?'green':null"/>
                 </v-col>
               </v-row>  
 
               <v-row>
                 <v-col cols="12" sm="6">
+                  <v-radio-group label="frequency" v-model="task.frequency" inline >
+                    <v-radio label="daily" value="D"/>
+                    <v-radio label="weekly" value="W"/>
+                    <v-radio label="monthy" value="M"/>
+                    <v-radio label="yearly" value="Y"/>
+                  </v-radio-group>  
+                </v-col>
+              </v-row>  
+
+              <v-row>
+                <v-col>
+                  <v-textarea label="description" v-model="task.description" rows="1" auto-grow/>
+                </v-col>
+              </v-row>  
+
+              <v-divider class="mt-4 mb-8"/>
+
+              <v-row>
+                <v-col>
                   <v-text-field label="script name" v-model="task.script.name"/>
                 </v-col>
-                <v-col cols="12" sm="6">
-                  <v-text-field label="script type" v-model="task.script.type"/>
-                </v-col>
               </v-row>  
 
               <v-row>
                 <v-col cols="12">
-                  <v-textarea label="script" v-model="task.script.body" rows="4"/>
+
+                  <v-dialog fullscreen>
+
+                    <template v-slot:activator="{ props }">
+                      <v-btn id="oapen-btn-script" v-bind="props" text="Edit script" class="bg-primary"> </v-btn>
+                      <div v-if="task.script.body" id="oapen-script-preview">{{task.script.body}}</div>
+                      <div v-else id="oapen-script-preview">[no content]</div>
+                    </template>
+
+                    <template v-slot:default="{ isActive }">
+                      <v-card :title="'Python Editor: ' + task.script.name">
+                        <v-card-text>
+
+                          <v-ace-editor
+                            v-model:value="task.script.body"
+                            lang="python"
+                            theme="one_dark"
+                            style="height: 100%; font-size: 100%; " />
+
+                        </v-card-text>
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-btn text="Close Editor" @click=" isActive.value = false"
+                          ></v-btn>
+                        </v-card-actions>                        
+                      </v-card>
+                    </template>        
+
+                  </v-dialog>  
+
                 </v-col>
               </v-row>  
 
+              <v-divider class="mt-4 mb-8"/>
+
               <v-row>
                 <v-col cols="12">
-                  <v-textarea label="notes" v-model="task.notes" rows="4"/>
+                  <v-textarea label="notes" v-model="task.notes" rows="1" auto-grow/>
                 </v-col>
               </v-row>  
   
@@ -110,8 +152,8 @@
                   </v-col>
   
                   <v-col class="text-right">
-                      <v-btn @click="$router.go(-1)" text="Cancel" />
-                      <v-btn @click="save" text="Save" :disabled="!isValidForm"/>
+                    <v-btn @click="$router.go(-1)" text="Cancel" />
+                    <v-btn @click="save" text="Save" :disabled="!isValidForm"/>
                   </v-col>
   
                 </v-row>   
@@ -132,19 +174,32 @@
   <script>
   
     import axios from 'axios';
+
+    // https://www.npmjs.com/package/vue3-ace-editor
+    // https://ace.c9.io/
+    import { VAceEditor } from 'vue3-ace-editor';
+    import 'ace-builds/src-noconflict/mode-python';
+    // https://ace.c9.io/build/kitchen-sink.html
+    // import 'ace-builds/src-noconflict/theme-github_dark';
+    // import 'ace-builds/src-noconflict/theme-monokai';
+    import 'ace-builds/src-noconflict/theme-one_dark';
     
     export default {
   
+      components: {
+        VAceEditor
+      },
+
       data() {
         return {
           isNew: false,
           task: {
-            frequency: { name: 'weekly', value: 'W'},
-            script: { }
+            script: {}
           },
           isValidForm: false,
           id: null,
           clientid: null, 
+          isEditorOpen: false,
           dialogSaved: false,
           dialogError: false,
           dialogErrorDetail: "",
@@ -157,7 +212,7 @@
           
         }      
       },
-  
+
       mounted() {
   
         console.log("MOUNTED: "+ this.$route.params.id)
@@ -170,6 +225,7 @@
         else {
           this.isNew = true;
           this.clientid = this.$route.params.clientid;
+          this.task.frequency='W'
         }  
   
       },
@@ -219,6 +275,8 @@
               this.task = resp.data;
               this.title = this.task.fileName;
               console.log("CLIENT: " + this.task.fileName)
+              console.log("SCRIPT: " + this.task.script)
+              if (this.task.script==null) this.task.script = {}
             })
             .catch(error => console.log(error))
             .finally(() => this.loading = false )
@@ -259,4 +317,26 @@
   
     }
   
-    </script>
+  </script>
+
+  <style scoped>
+
+    #oapen-btn-script {
+      float:left; 
+      margin-right: 2em;
+    }
+  
+    #oapen-script-preview {
+
+      white-space: nowrap; 
+      overflow:hidden; 
+      text-overflow: ellipsis; 
+      font-family: monospace; 
+      font-size: 85%; 
+      background: #fbfbfb; 
+      padding: 1em;
+      color: #666666;
+    }
+  
+  
+  </style>
