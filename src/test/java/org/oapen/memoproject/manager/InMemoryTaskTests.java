@@ -10,6 +10,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.oapen.memoproject.manager.entities.Homedir;
+import org.oapen.memoproject.manager.entities.Query;
 import org.oapen.memoproject.manager.entities.RunLog;
 import org.oapen.memoproject.manager.entities.Script;
 import org.oapen.memoproject.manager.entities.Script.ScriptType;
@@ -78,12 +79,13 @@ public class InMemoryTaskTests {
 
 
 	@Test
-    public void givenTask_whenAddScript_thenOk() {
+    public void givenTask_whenAddScriptAndQuery_thenOk() {
 		
     	String HOMEDIRNAME = RandomStringUtils.randomAlphabetic(10);
     	String USERNAME = RandomStringUtils.randomAlphabetic(10);
     	String TASK = RandomStringUtils.randomAlphabetic(10);
     	String SCRIPT = RandomStringUtils.randomAlphabetic(10);
+    	String QUERY = RandomStringUtils.randomAlphabetic(10);
 
     	// We need a homedir to serve as owner of the tasks
     	Homedir hNew = new Homedir(USERNAME, HOMEDIRNAME);
@@ -91,6 +93,8 @@ public class InMemoryTaskTests {
     	
     	Task tNew = new Task(TASK, "ext", hNew);
     	Script script = new Script(SCRIPT, ScriptType.MAIN);
+    	Query q = new Query(QUERY,"Select blahblah");
+    	script.setQuery(q);
     	tNew.setScript(script);
     	
 		Task t = taskRepository.save(tNew);
@@ -101,6 +105,7 @@ public class InMemoryTaskTests {
 		
 		assertTrue(tf.isPresent());
 		assertEquals(tf.get().getScript().getName(),SCRIPT);
+		assertEquals(tf.get().getScript().getQuery().getName(),QUERY);
 	}
 
 	

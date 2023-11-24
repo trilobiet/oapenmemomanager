@@ -78,58 +78,104 @@
 
               <v-row>
                 <v-col>
-                  <v-textarea label="description" v-model="task.description" rows="1" auto-grow/>
+                  <v-textarea label="description (shown to client)" v-model="task.description" rows="1" auto-grow/>
                 </v-col>
               </v-row>  
 
               <v-divider class="mt-4 mb-8"/>
 
               <v-row>
-                <v-col>
-                  <v-text-field label="script name" v-model="task.script.name"/>
-                </v-col>
+                <v-col cols="12" sm="6">
+                
+                  <v-text-field bg-color="transparent" class="text-primary" @focus="isEditorOpen=true"
+                    label="query name" readonly v-model="task.script.query.name" :rules="validation.queryName"
+                    variant="outlined" persistent-placeholder />
+
+                  <div v-if="task.script.query.body" id="oapen-query-preview">{{task.script.query.body}}</div>
+                  <div v-else id="oapen-query-preview">[no content]</div>
+                
+                </v-col>  
+                <v-col cols="12" sm="6">
+                
+                  <v-text-field bg-color="transparent" class="text-primary" @focus="isEditorOpen=true"
+                    label="script name" readonly v-model="task.script.name" :rules="validation.scriptName"
+                    variant="outlined" persistent-placeholder />
+
+                  <div v-if="task.script.body" id="oapen-script-preview">{{task.script.body}}</div>
+                  <div v-else id="oapen-script-preview">[no content]</div>
+                
+                </v-col>  
               </v-row>  
 
-              <v-row>
-                <v-col cols="12">
+              <v-dialog fullscreen v-model="isEditorOpen">
 
-                  <v-dialog fullscreen>
+                <template v-slot:activator="{ props }">
+                  <v-row>
+                    <v-col cols="12" sm="6">
+                      <v-btn v-bind="props" text="Query editor" class="bg-primary"> </v-btn>
+                    </v-col>
+                    <v-col cols="12" sm="6">
+                      <v-btn v-bind="props" text="Script editor" class="bg-primary"> </v-btn>
+                    </v-col>
+                  </v-row>    
+                </template>
 
-                    <template v-slot:activator="{ props }">
-                      <v-btn id="oapen-btn-script" v-bind="props" text="Edit script" class="bg-primary"> </v-btn>
-                      <div v-if="task.script.body" id="oapen-script-preview">{{task.script.body}}</div>
-                      <div v-else id="oapen-script-preview">[no content]</div>
-                    </template>
+                <template v-slot:default="{ isActive }">
 
-                    <template v-slot:default="{ isActive }">
-                      <v-card :title="'Python Editor: ' + task.script.name">
-                        <v-card-text>
+                  <v-card>
 
-                          <v-ace-editor
-                            v-model:value="task.script.body"
-                            lang="python"
-                            theme="one_dark"
-                            style="height: 100%; font-size: 100%; " />
+                    <v-card-title v-if="!isHideLeft">
+                      {{  'SQL Editor: ' + (!task.script.query.name? 'new' : task.script.query.name) }}
+                      <v-btn @click="isHideLeft = !isHideLeft">switch to Python view</v-btn>
+                    </v-card-title>
 
-                        </v-card-text>
-                        <v-card-actions>
-                          <v-spacer></v-spacer>
-                          <v-btn text="Close Editor" @click=" isActive.value = false"
-                          ></v-btn>
-                        </v-card-actions>                        
-                      </v-card>
-                    </template>        
+                    <v-card-title v-if="isHideLeft">
+                      {{  'Python Editor: ' + (!task.script.name? 'new' : task.script.name) }}
+                      <v-btn @click="isHideLeft = !isHideLeft">switch to SQL view</v-btn>
+                    </v-card-title>
 
-                  </v-dialog>  
+                    <v-card-subtitle>
+                      <v-text-field v-if="!isHideLeft" label="query name" v-model="task.script.query.name" :rules="validation.queryName"/>
+                      <v-text-field v-if="isHideLeft" label="script name" v-model="task.script.name" :rules="validation.scriptName"/>
+                    </v-card-subtitle>
 
-                </v-col>
-              </v-row>  
+                    <v-card-text :hidden="isHideLeft" >
+
+                      <v-ace-editor
+                        v-model:value="task.script.query.body"
+                        lang="mysql"
+                        theme="github_dark"
+                        style="height: 100%; font-size: 100%; " />
+                        
+                    </v-card-text>
+
+                    <v-card-text :hidden="!isHideLeft">
+
+                      <v-ace-editor
+                        v-model:value="task.script.body"
+                        lang="python"
+                        theme="one_dark"
+                        style="height: 100%; font-size: 100%; " />
+
+                    </v-card-text>
+
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn text="Close Editor" @click=" isActive.value = false"
+                      ></v-btn>
+                    </v-card-actions>                        
+
+                  </v-card>
+
+                </template>        
+
+              </v-dialog>  
 
               <v-divider class="mt-4 mb-8"/>
 
               <v-row>
                 <v-col cols="12">
-                  <v-textarea label="notes" v-model="task.notes" rows="1" auto-grow/>
+                  <v-textarea label="notes (only visible here)" v-model="task.notes" rows="1" auto-grow/>
                 </v-col>
               </v-row>  
   
@@ -179,8 +225,9 @@
     // https://ace.c9.io/
     import { VAceEditor } from 'vue3-ace-editor';
     import 'ace-builds/src-noconflict/mode-python';
+    import 'ace-builds/src-noconflict/mode-mysql';
     // https://ace.c9.io/build/kitchen-sink.html
-    // import 'ace-builds/src-noconflict/theme-github_dark';
+    import 'ace-builds/src-noconflict/theme-github_dark';
     // import 'ace-builds/src-noconflict/theme-monokai';
     import 'ace-builds/src-noconflict/theme-one_dark';
     
@@ -194,7 +241,7 @@
         return {
           isNew: false,
           task: {
-            script: {}
+            script: { query: {}}
           },
           isValidForm: false,
           id: null,
@@ -209,7 +256,7 @@
             { name: 'monthly', value: 'M'},
             { name: 'yearly', value: 'Y'},
           ],
-          
+          isHideLeft: false,
         }      
       },
 
@@ -255,6 +302,12 @@
               v => !!v || "Value is required",
               v => this.$func.isValidDate(v) || "Not a valid date"
             ],
+            queryName: [
+              v => (v && v.length >= 2) || "Value is required",
+            ],
+            scriptName: [
+              v => (v && v.length >= 2) || "Value is required",
+            ],
           }  
         },
 
@@ -276,7 +329,8 @@
               this.title = this.task.fileName;
               console.log("CLIENT: " + this.task.fileName)
               console.log("SCRIPT: " + this.task.script)
-              if (this.task.script==null) this.task.script = {}
+              if (this.task.script==null) this.task.script = {name: ''}
+              if (this.task.script.query==null) this.task.script.query = {}
             })
             .catch(error => console.log(error))
             .finally(() => this.loading = false )
@@ -321,22 +375,22 @@
 
   <style scoped>
 
-    #oapen-btn-script {
-      float:left; 
-      margin-right: 2em;
-    }
-  
-    #oapen-script-preview {
+    #oapen-query-preview, #oapen-script-preview {
 
       white-space: nowrap; 
       overflow:hidden; 
       text-overflow: ellipsis; 
       font-family: monospace; 
       font-size: 85%; 
-      background: #fbfbfb; 
+      background: #fff; 
       padding: 1em;
+      margin-top: 10px;
       color: #666666;
+      border-bottom: dotted 2px #fff;
+      background: #555;
+      color: #eee;
     }
+
   
   
   </style>

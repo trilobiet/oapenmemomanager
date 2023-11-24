@@ -3,6 +3,7 @@ package org.oapen.memoproject.manager.entities;
 import java.io.Serializable;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -58,7 +59,7 @@ public class Script implements Serializable {
 	
 	private String body, params, notes;
 	
-	@ManyToOne()
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="id_query")
 	private Query query;
 	
