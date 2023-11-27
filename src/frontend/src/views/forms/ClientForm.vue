@@ -12,7 +12,7 @@
 
       <v-card class="elevation-5" >
 
-          <v-toolbar color="transparent" >  
+          <v-toolbar>  
             <v-toolbar-title class="font-weight-bold">
               <v-icon>mdi-square-edit-outline</v-icon> {{ title }}
             </v-toolbar-title>

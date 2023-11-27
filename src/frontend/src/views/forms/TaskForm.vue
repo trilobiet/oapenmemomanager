@@ -12,9 +12,9 @@
   
         <v-card class="elevation-5" >
   
-            <v-toolbar color="transparent" >  
+            <v-toolbar>  
               <v-toolbar-title class="font-weight-bold">
-                <v-icon>mdi-table-edit</v-icon> {{ isNew? "New Task" : title }}
+                <v-icon>mdi-table-edit</v-icon> Export task: {{ isNew? "new" : title }}
               </v-toolbar-title>
             </v-toolbar>
   
@@ -50,7 +50,8 @@
                   <v-text-field label="task name" v-model="task.fileName" :rules="validation.fileName" clearable/>
                 </v-col>
                 <v-col cols="12" sm="4">
-                  <v-text-field label="extension" v-model="task.extension" readonly bg-color="transparent" class="text-blue-grey-lighten-1" />
+                  <v-text-field label="extension" v-model="task.extension" readonly bg-color="transparent" class="text-blue-grey-lighten-1" 
+                   :append-inner-icon="$func.extensionIcon(this.task.extension)"/>
                 </v-col>
               </v-row>  
 
@@ -61,7 +62,8 @@
                    hint="Format: yyyy-mm-dd (e.g. 2023-12-31)" />
                 </v-col>
                 <v-col cols="12" sm="6">
-                  <v-checkbox v-model="task.active" label="active" :color="task.active?'green':null"/>
+                  <v-checkbox v-model="task.active" :label="task.active? 'active':'click to activate (task is currently suspended)'" 
+                    :class="task.active?'text-green':'text-deep-orange-darken-3'" />
                 </v-col>
               </v-row>  
 
@@ -87,9 +89,9 @@
               <v-row>
                 <v-col cols="12" sm="6">
                 
-                  <v-text-field bg-color="transparent" class="text-primary" @focus="isEditorOpen=true"
-                    label="query name" readonly v-model="task.script.query.name" :rules="validation.queryName"
-                    variant="outlined" persistent-placeholder />
+                  <v-text-field bg-color="transparent" class="text-primary oapen-readonly-name" @focus="showEditorSql()"
+                    label="query (click to edit)" readonly v-model="task.script.query.name" :rules="validation.queryName"
+                    variant="outlined" persistent-placeholder prepend-inner-icon="mdi-database-search"/>
 
                   <div v-if="task.script.query.body" id="oapen-query-preview">{{task.script.query.body}}</div>
                   <div v-else id="oapen-query-preview">[no content]</div>
@@ -97,9 +99,9 @@
                 </v-col>  
                 <v-col cols="12" sm="6">
                 
-                  <v-text-field bg-color="transparent" class="text-primary" @focus="isEditorOpen=true"
-                    label="script name" readonly v-model="task.script.name" :rules="validation.scriptName"
-                    variant="outlined" persistent-placeholder />
+                  <v-text-field bg-color="transparent" class="text-primary oapen-readonly-name" @focus="showEditorPython()"
+                    label="script (click to edit)" readonly v-model="task.script.name" :rules="validation.scriptName"
+                    variant="outlined" persistent-placeholder prepend-inner-icon="mdi-language-python" />
 
                   <div v-if="task.script.body" id="oapen-script-preview">{{task.script.body}}</div>
                   <div v-else id="oapen-script-preview">[no content]</div>
@@ -107,67 +109,69 @@
                 </v-col>  
               </v-row>  
 
-              <v-dialog fullscreen v-model="isEditorOpen">
+              <v-dialog fullscreen v-model="isEditor">
 
-                <template v-slot:activator="{ props }">
-                  <v-row>
-                    <v-col cols="12" sm="6">
-                      <v-btn v-bind="props" text="Query editor" class="bg-primary"> </v-btn>
-                    </v-col>
-                    <v-col cols="12" sm="6">
-                      <v-btn v-bind="props" text="Script editor" class="bg-primary"> </v-btn>
-                    </v-col>
-                  </v-row>    
-                </template>
+                <v-card>
 
-                <template v-slot:default="{ isActive }">
+                  <v-card-title v-if="isEditorSql">
+                    <v-container fluid >
+                      <v-row>
+                        <v-col>
+                          <v-icon icon="mdi-database-search"/>
+                          {{  'SQL Editor: ' + (!task.script.query.name? 'new' : task.script.query.name) }}
+                        </v-col>
+                        <v-col class="text-right">
+                          <v-btn @click="showEditorPython()" class="bg-primary">switch to Python view</v-btn>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card-title>
 
-                  <v-card>
+                  <v-card-title v-if="isEditorPython">
+                    <v-container fluid >
+                      <v-row>
+                        <v-col>
+                          <v-icon icon="mdi-language-python"/>
+                          {{  'Python Editor: ' + (!task.script.name? 'new' : task.script.name) }}
+                        </v-col>
+                        <v-col class="text-right">
+                          <v-btn @click="showEditorSql()" class="bg-primary">switch to SQL view</v-btn>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card-title>
 
-                    <v-card-title v-if="!isHideLeft">
-                      {{  'SQL Editor: ' + (!task.script.query.name? 'new' : task.script.query.name) }}
-                      <v-btn @click="isHideLeft = !isHideLeft">switch to Python view</v-btn>
-                    </v-card-title>
+                  <v-card-subtitle>
+                    <v-text-field v-if="isEditorSql" label="query name" v-model="task.script.query.name" :rules="validation.queryName" focused/>
+                    <v-text-field v-if="isEditorPython" label="script name" v-model="task.script.name" :rules="validation.scriptName" focused/>
+                  </v-card-subtitle>
 
-                    <v-card-title v-if="isHideLeft">
-                      {{  'Python Editor: ' + (!task.script.name? 'new' : task.script.name) }}
-                      <v-btn @click="isHideLeft = !isHideLeft">switch to SQL view</v-btn>
-                    </v-card-title>
+                  <v-card-text v-if="isEditorSql" >
 
-                    <v-card-subtitle>
-                      <v-text-field v-if="!isHideLeft" label="query name" v-model="task.script.query.name" :rules="validation.queryName"/>
-                      <v-text-field v-if="isHideLeft" label="script name" v-model="task.script.name" :rules="validation.scriptName"/>
-                    </v-card-subtitle>
+                    <v-ace-editor
+                      v-model:value="task.script.query.body"
+                      lang="mysql"
+                      theme="github_dark"
+                      style="height: 100%; font-size: 100%; " />
+                      
+                  </v-card-text>
 
-                    <v-card-text :hidden="isHideLeft" >
+                  <v-card-text v-if="isEditorPython">
 
-                      <v-ace-editor
-                        v-model:value="task.script.query.body"
-                        lang="mysql"
-                        theme="github_dark"
-                        style="height: 100%; font-size: 100%; " />
-                        
-                    </v-card-text>
+                    <v-ace-editor
+                      v-model:value="task.script.body"
+                      lang="python"
+                      theme="one_dark"
+                      style="height: 100%; font-size: 100%; " />
 
-                    <v-card-text :hidden="!isHideLeft">
+                  </v-card-text>
 
-                      <v-ace-editor
-                        v-model:value="task.script.body"
-                        lang="python"
-                        theme="one_dark"
-                        style="height: 100%; font-size: 100%; " />
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn text="Close Editor" @click="closeEditors()"></v-btn>
+                  </v-card-actions>                        
 
-                    </v-card-text>
-
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-btn text="Close Editor" @click=" isActive.value = false"
-                      ></v-btn>
-                    </v-card-actions>                        
-
-                  </v-card>
-
-                </template>        
+                </v-card>
 
               </v-dialog>  
 
@@ -246,7 +250,6 @@
           isValidForm: false,
           id: null,
           clientid: null, 
-          isEditorOpen: false,
           dialogSaved: false,
           dialogError: false,
           dialogErrorDetail: "",
@@ -256,7 +259,9 @@
             { name: 'monthly', value: 'M'},
             { name: 'yearly', value: 'Y'},
           ],
-          isHideLeft: false,
+          isEditor: false,
+          isEditorSql: false,
+          isEditorPython: false,
         }      
       },
 
@@ -272,7 +277,7 @@
         else {
           this.isNew = true;
           this.clientid = this.$route.params.clientid;
-          this.task.frequency='W'
+          this.task.frequency='M' // default frequency
         }  
   
       },
@@ -303,10 +308,10 @@
               v => this.$func.isValidDate(v) || "Not a valid date"
             ],
             queryName: [
-              v => (v && v.length >= 2) || "Value is required",
+              v => (v && v.length >= 2) || "Query name is required",
             ],
             scriptName: [
-              v => (v && v.length >= 2) || "Value is required",
+              v => (v && v.length >= 2) || "Script name is required",
             ],
           }  
         },
@@ -365,15 +370,31 @@
   
         alertErrorDetail() {
           alert(JSON.stringify(this.dialogErrorDetail))
-        }
-  
-      },
-  
+        },
+
+        showEditorSql() {
+          this.isEditorPython = false;
+          this.isEditorSql = true;
+          this.isEditor = true;
+        },
+
+        showEditorPython() {
+          this.isEditorPython = true;
+          this.isEditorSql = false;
+          this.isEditor = true;
+        },
+
+        closeEditors() {
+          this.isEditor = false;
+        },
+
+      }  
     }
   
   </script>
 
-  <style scoped>
+  <!-- do not use 'scoped' here (cascading will fail) -->
+  <style>
 
     #oapen-query-preview, #oapen-script-preview {
 
@@ -391,6 +412,9 @@
       color: #eee;
     }
 
+    .oapen-readonly-name input {
+      cursor: pointer !important;
+    }
   
   
   </style>

@@ -6,7 +6,7 @@
 
       <v-card class="elevation-5" >
 
-          <v-toolbar color="transparent" >  
+          <v-toolbar>  
             <v-toolbar-title class="font-weight-bold">
               <v-icon>mdi-account</v-icon> {{ client.name }}
             </v-toolbar-title>
@@ -57,6 +57,7 @@
                   <v-data-table :headers="headers" :items="tasks" hover>
 
                     <template v-slot:[`item.fileName`]="{ item }">
+                      <v-icon color="#999" :icon="$func.extensionIcon($func.getExtension(item.fileName))" size="small" class="mr-2"/>
                       <span style="cursor:pointer" @click="editTask(item)"
                        class="text-blue-darken-4"
                       >{{item.fileName}}</span>
@@ -72,6 +73,7 @@
                         {{ item.latestLog.date }}
                         <v-icon v-if="item.latestLog.success" color="green" icon="mdi-check-bold" size="small"/>
                         <v-icon v-else color="red" icon="mdi-alert-circle" size="small"/>
+                        <v-icon icon="mdi-file" @click="showRunlog(item.id)" />
                       </span>    
                       <span v-else>
                         <v-icon icon="mdi-progress-clock" color="grey" size="small" title="waiting for first run"/>
@@ -127,6 +129,12 @@
       
     </v-container>
 
+
+    <v-dialog width="90%" v-model="isShowRunlog">
+      <run-log :taskId="runlogId"/>
+    </v-dialog>
+
+
   </div>
   
 </template>
@@ -134,8 +142,11 @@
 <script>
 
   import axios from 'axios';
+  import RunLog from '../RunLog.vue';
   
   export default {
+
+    components: { RunLog },
 
     data() {
       return {
@@ -148,6 +159,8 @@
           { title: "last run", key: "latestLog.date" },
           { title: "active", key: "active" },
         ],
+        isShowRunlog: false,
+        runlogId: null,
       }      
     },
 
@@ -194,6 +207,12 @@
       newTask() {
         this.$router.push({ name: 'taskNew', params: {clientid: this.client.id}  })
       },
+
+      showRunlog(id) {
+
+        this.runlogId = id
+        this.isShowRunlog = true;
+      }
 
     },
 

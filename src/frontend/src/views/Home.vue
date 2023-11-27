@@ -11,7 +11,7 @@
 
       <v-card class="elevation-5">
 
-        <v-toolbar color="transparent" >  
+        <v-toolbar>  
 
           <v-toolbar-title class="font-weight-bold">
             <v-icon>mdi-account-group</v-icon> Clients

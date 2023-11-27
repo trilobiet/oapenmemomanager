@@ -72,6 +72,26 @@ export const globalfunctions = {
 		const offset = today.getTimezoneOffset()
 		let tomorrow = new Date(today.getTime() - offset*60*1000 + 24*60*60*1000)
 		return tomorrow.toISOString().split('T')[0]
-	}
+	},
+
+	extensionIcon(ext) {
+
+		if(ext) {
+
+			switch(ext.toLowerCase()) {
+				case "xml": 
+				case "onix": 
+				case "marcxml": return "mdi-xml"
+				case "rss": return "mdi-rss"
+				case "xls": 
+				case "xlsm": return "mdi-microsoft-excel"
+				case "tsv": 
+				case "csv": return "mdi-file-delimited"
+				case "htm":
+				case "html": return "mdi-file-code"
+				default: return "mdi-file"
+			}
+		} else return "mdi-file"  
+	},
 
 }
