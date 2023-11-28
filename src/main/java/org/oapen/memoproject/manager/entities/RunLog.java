@@ -11,7 +11,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -24,6 +27,7 @@ import lombok.ToString;
 @Getter @ToString 
 @EqualsAndHashCode(onlyExplicitlyIncluded=true)
 @Table(name = "runlog")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RunLog implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -42,4 +46,10 @@ public class RunLog implements Serializable {
 	@ToString.Exclude // To String would create an infinite loop
 	@JsonIgnore // Avoids infinite loop also
 	private Task task;
+	
+	
+	public String getShortMessage() {
+		
+		return StringUtils.abbreviate(message, 100);
+	}
 }
