@@ -130,7 +130,7 @@
     </v-container>
 
 
-    <v-dialog width="90%" v-model="isShowRunlog">
+    <v-dialog width="90%" maxHeight="90%" v-model="isShowRunlog" scrollable location="start top">
       <run-log :taskId="runlogId"/>
     </v-dialog>
 
