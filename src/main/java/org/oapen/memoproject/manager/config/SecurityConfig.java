@@ -1,8 +1,10 @@
 package org.oapen.memoproject.manager.config;
 
-import org.oapen.memoproject.manager.ClientDetailsService;
+import org.oapen.memoproject.manager.MyUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -20,6 +22,9 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
   jsr250Enabled = true
 )
 public class SecurityConfig {
+	
+	@Autowired
+	private Environment env;	
 
 	/*
 	 * @Bean public WebSecurityCustomizer webSecurityCustomizer() { // configure Web
@@ -36,7 +41,8 @@ public class SecurityConfig {
 	@Bean
 	public UserDetailsService userDetailsService() {
 		
-		return new ClientDetailsService();
+		return new MyUserDetailsService(env.getProperty("application.admin-password"));
+		
 	}
 	
 	// configure SecurityFilterChain
