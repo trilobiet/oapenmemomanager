@@ -5,6 +5,10 @@ import Settings from "@/views/Settings.vue";
 import Client from "@/views/forms/Client.vue";
 import ClientForm from "@/views/forms/ClientForm.vue";
 import TaskForm from "@/views/forms/TaskForm.vue";
+import SessionExpired from "@/views/SessionExpired.vue";
+
+import axios from 'axios'
+
 
 const routes = [
   {
@@ -47,11 +51,41 @@ const routes = [
     name: "settings",
     component: Settings,
   },
+  {
+    path: "/sessionexpired",
+    name: "sessionexpired",
+    component: SessionExpired,
+  }
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+
+
+// Before each router request check whether the session is still active
+router.beforeEach((to,from,next) => {
+
+  // console.log("TO " + to.fullPath)
+  // console.log("FROM " + from.fullPath)
+
+  if (to.fullPath != "/login") {
+
+    axios.get('/api/session')
+    .then(resp => {
+      console.log("Are you still logged in? ")
+      if(resp.data=='OK') next()
+      else window.location.href = "/login"
+    }) 
+    .catch(() => {
+      console.log("Session expired!")
+      window.location.href = "/login"
+    }) 
+  }  
+
+})
+
+
 
 export default router;

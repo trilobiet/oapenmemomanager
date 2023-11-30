@@ -1,13 +1,18 @@
 package org.oapen.memoproject.manager;
 
 import java.util.Collection;
+import java.util.Optional;
 
-import org.oapen.memoproject.manager.jpa.HomedirRepository;
+import org.oapen.memoproject.manager.entities.Setting;
+import org.oapen.memoproject.manager.jpa.SettingRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 
 /**
  * Current implementation supports a single user 'admin' whose password is set 
@@ -16,15 +21,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
  */
 public class MyUserDetailsService implements UserDetailsService {
 	
-	private final String bcryptPassword;
+	private static final Logger logger = LoggerFactory.getLogger(MyUserDetailsService.class);
+	private static final String PASSWORD_KEY = ".admin.password"; 
 	
-	public MyUserDetailsService(String bcryptPassword) {
-		this.bcryptPassword = bcryptPassword;
-	}
-
 	@Autowired
-	HomedirRepository homedirRepository;
-
+	SettingRepository settingRepository;
+	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
@@ -33,8 +35,20 @@ public class MyUserDetailsService implements UserDetailsService {
 			private static final long serialVersionUID = 1L;
 			
 			@Override
+			public boolean isEnabled() {
+				// Key must be present in table 'setting'
+				return settingRepository.findByKey(PASSWORD_KEY).isPresent(); 
+			}
+			
+			@Override
 			public String getPassword() {
-				return bcryptPassword;
+				
+				Optional<Setting> op = settingRepository.findByKey(PASSWORD_KEY);
+				if (op.isPresent()) return op.get().getValue();
+				else {
+					logger.error("No admin defined - provide key '.admin.password' in table 'setting'");
+					throw new RuntimeException("No admin defined");
+				}
 			}
 
 			@Override
@@ -44,14 +58,15 @@ public class MyUserDetailsService implements UserDetailsService {
 
 			@Override
 			public Collection<? extends GrantedAuthority> getAuthorities() { return null; }
+			
 			@Override
 			public boolean isAccountNonExpired()  { return true; }
+			
 			@Override
 			public boolean isAccountNonLocked() {  return true; }
+
 			@Override
 			public boolean isCredentialsNonExpired() { return true; }
-			@Override
-			public boolean isEnabled() { return true; }
 		};
 
 	}

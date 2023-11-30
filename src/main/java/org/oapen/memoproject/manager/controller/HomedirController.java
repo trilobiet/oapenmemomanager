@@ -24,6 +24,16 @@ public class HomedirController {
 	@Autowired
 	HomedirRepository homedirRepository;
 	
+    /**
+     * Returns OK if the user still has a session
+     * 
+     * @return
+     */
+    @GetMapping("/session")
+    public String session() {
+    	return "OK";
+    }
+	
 	@GetMapping("/homedir")
 	@ResponseBody
     public List<Homedir> list() {

@@ -48,12 +48,19 @@
                   :headers="headers" :items="settings">
 
                   <template v-slot:[`item.key`]="{ item }">
-                    <span style="cursor:pointer" @click="editSetting(item)"
+                    <span v-if="isHiddenKey(item.key)"
+                     class="text-grey">{{item.key}}</span>
+                    <span v-else style="cursor:pointer" @click="editSetting(item)"
                      class="text-blue-darken-4">{{item.key}}</span>
                   </template> 
 
+                  <template v-slot:[`item.value`]="{ item }">
+                    <span v-if="isHiddenKey(item.key)" class="text-grey">{{item.value}}</span>
+                    <span v-else>{{item.key}}</span>
+                  </template> 
+
                   <template v-slot:[`item.actions`]="{ item }">
-                    <v-hover v-slot="{ isHovering, props }">
+                    <v-hover v-if="!isHiddenKey(item.key)" v-slot="{ isHovering, props }">
                       <v-icon @click="deleteSetting(item)" v-bind="props"
                        :color="isHovering ? 'red': 'grey-darken-2'">mdi-close-circle-outline</v-icon>
                     </v-hover>  
@@ -250,6 +257,10 @@ export default {
 
     alertErrorDetail() {
       alert(JSON.stringify(this.dialogErrorDetail))
+    },
+
+    isHiddenKey(key) {
+      return key.charAt(0) == "."
     }
 
   }

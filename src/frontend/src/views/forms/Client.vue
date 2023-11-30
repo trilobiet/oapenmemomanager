@@ -24,7 +24,7 @@
                   username: {{ client.username }}
                 </v-toolbar-title>
 
-                <v-btn variant="tonal" class="bg-primary" @click="$router.push({ name: 'clientEdit', params: {id: client.id} })">Edit Client</v-btn>
+                <v-btn variant="tonal" class="bg-primary" @click="editClient()">Edit Client</v-btn>
 
               </v-toolbar>
 
@@ -93,6 +93,11 @@
                       <v-chip v-else-if="item.frequency=='M'" size="small" variant="flat" color="orange">monthly</v-chip>
                       <v-chip v-else-if="item.frequency=='Y'" size="small" variant="flat" color="deep-orange">yearly</v-chip>
                     </template>
+
+                    <template v-slot:no-data>
+                      No data available. Your session may have expired.
+                      <br/><a href="/login">Login again to start a new session</a>
+                    </template>                  
 
                   </v-data-table>
                 </v-col>
@@ -198,6 +203,10 @@
           })
           .catch(error => console.log(error))
           .finally(() => {} )
+      },
+
+      editClient() {
+        this.$router.push({ name: 'clientEdit', params: {id: this.client.id} })
       },
 
       editTask(task) {

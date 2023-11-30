@@ -31,7 +31,7 @@
           </v-text-field>
 
           <!-- single-expand show-expand item-key="username" -->  
-          <v-data-table 
+          <v-data-table  
             :sort-by="['name','username']" hover 
             :loading="loading" :search="tableSearch" 
             :headers="headers" :items="clients"   

@@ -16,6 +16,16 @@ import * as labsComponents  from 'vuetify/labs/components'
 import "@mdi/font/css/materialdesignicons.css";
 import "@fortawesome/fontawesome-free/css/all.css";
 
+// Check session validity once every 5 minutes
+setInterval( () => {
+	axios.get('/api/session')
+	.then(resp => {
+		console.log("Periodically checking session expiration...")
+		if(resp.data!='OK') window.location.href = "/login"
+	})  
+}, 300000);
+  
+
 const myLightTheme = {
 	dark: false,
 	colors: {
