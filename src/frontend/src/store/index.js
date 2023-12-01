@@ -25,7 +25,6 @@ export default new Vuex.Store({
             state.user = payload
             console.log("SET USER: " + JSON.stringify(state.user)) 
         },
-
     },
     actions: {
     },
@@ -34,7 +33,6 @@ export default new Vuex.Store({
         getUser(state) {
             return state.user
         },
-
     },
 
     plugins: [createPersistedState()]

@@ -2,7 +2,7 @@ import { createWebHistory, createRouter } from "vue-router";
 import Home from "@/views/Home.vue";
 import Queries from "@/views/Queries.vue";
 import Settings from "@/views/Settings.vue";
-import Client from "@/views/forms/Client.vue";
+import Client from "@/views/Client.vue";
 import ClientForm from "@/views/forms/ClientForm.vue";
 import TaskForm from "@/views/forms/TaskForm.vue";
 import SessionExpired from "@/views/SessionExpired.vue";

@@ -8,7 +8,7 @@
         <v-data-table id="oapen-logtable" :headers="headers" :items="loglines" density="compact"
          show-expand fixed-header="true" expand-on-click height="100%" >
 
-          <template v-slot:[`item.shortMessage`]="{ item }" >
+          <template v-slot:[`item.shortMessage`]="{ item }">
             <code style="font-size:.8rem">{{item.shortMessage}}</code>
           </template>           
         
@@ -16,15 +16,30 @@
             <tr v-if="item.message" style="background:#bbb;">
               <td colspan="2">
               </td>
-              <td style="height:200px;">
-                <pre style="background:#fcf8f8;font-size:.7rem;max-width: calc(75vw - 20em);height:100%;overflow:auto">{{ item.message }}</pre>
+              <td style="height:100%;">
+                <pre style="background:#fcf8f8;font-size:.7rem;max-width: calc(75vw - 20em);height:100%;overflow:auto;padding:1em;">{{ item.message }}</pre>
               </td>
               <td></td>
             </tr>
           </template>
 
         </v-data-table>
+
       </v-card-text>
+
+      <v-divider class="border-dark"></v-divider>
+  
+      <v-card-actions class="bg-actions">
+
+        <v-container>
+          <v-row >
+            <v-col class="text-right">
+              <v-btn text="Cancel" @click="this.$emit('closeRunlog')" />
+            </v-col>
+          </v-row>   
+        </v-container>
+
+      </v-card-actions>
 
     </v-card>
     
@@ -49,7 +64,8 @@
         { title: "message", key: "shortMessage", width: "auto" },
         { title: "", key: "data-table-expand" },
       ],
-      loglines: []
+      loglines: [],
+      isExpanded: false
     }      
   },
 

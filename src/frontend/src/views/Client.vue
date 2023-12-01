@@ -69,11 +69,10 @@
                     </template>
 
                     <template v-slot:[`item.latestLog.date`]="{ item }">
-                      <span v-if="item.latestLog">
+                      <span v-if="item.latestLog" @click="showRunlog(item.id)" style="cursor:pointer" 
+                        :class="item.latestLog.success? 'text-green-darken-3' : 'text-red-darken-2'">
                         {{ item.latestLog.date }}
-                        <v-icon v-if="item.latestLog.success" color="green" icon="mdi-check-bold" size="small"/>
-                        <v-icon v-else color="red" icon="mdi-alert-circle" size="small"/>
-                        <v-icon icon="mdi-file" @click="showRunlog(item.id)" />
+                        <v-icon v-if="!item.latestLog.success" color="red" icon="mdi-alert-circle" size="small"/>
                       </span>    
                       <span v-else>
                         <v-icon icon="mdi-progress-clock" color="grey" size="small" title="waiting for first run"/>
@@ -135,8 +134,8 @@
     </v-container>
 
 
-    <v-dialog width="90%" maxHeight="90%" v-model="isShowRunlog" scrollable location="start top">
-      <run-log :taskId="runlogId"/>
+    <v-dialog width="90%" height="90%" maxHeight="90%" v-model="isShowRunlog" scrollable>
+      <run-log :taskId="runlogId" @closeRunlog="this.isShowRunlog=false;"/>
     </v-dialog>
 
 
@@ -147,7 +146,7 @@
 <script>
 
   import axios from 'axios';
-  import RunLog from '../RunLog.vue';
+  import RunLog from './RunLog.vue';
   
   export default {
 
@@ -158,11 +157,11 @@
         client: {},
         tasks: [],
         headers: [
-          { title: "file name", key: "fileName" },
-          { title: "start date", key: "startDate" },
-          { title: "frequency", key: "frequency" },
+          { title: "file name", key: "fileName"},
+          { title: "active", key: "active", width: "1em"},
           { title: "last run", key: "latestLog.date" },
-          { title: "active", key: "active" },
+          { title: "frequency", key: "frequency" },
+          { title: "start date", key: "startDate" },
         ],
         isShowRunlog: false,
         runlogId: null,
@@ -221,7 +220,7 @@
 
         this.runlogId = id
         this.isShowRunlog = true;
-      }
+      },
 
     },
 
