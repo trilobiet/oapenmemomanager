@@ -38,7 +38,7 @@ public class Query implements Serializable {
 
 	@Column(nullable=false)
 	@NonNull
-	private String name, body; 
-	private String params, notes;
+	private String name; 
+	private String body, params, notes;
 
 }

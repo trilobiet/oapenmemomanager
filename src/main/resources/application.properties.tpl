@@ -6,3 +6,6 @@ spring.datasource.password=******
 logging.level.root=INFO
 logging.level.oapen.memoproject.manager=INFO
 logging.file.name=${user.home}/memoproject/manager.log
+
+# timeout session after 24 hours
+server.servlet.session.timeout=1440m

@@ -23,7 +23,7 @@ public class InMemoryQueryEntityTests {
     @Test
     public void givenQuery_whenInsert_thenValidUUID() {
     	
-    	Query qNew = new Query("test-query","SELECT 1");
+    	Query qNew = new Query("test-query");
     	Query qSaved = queryRepository.save(qNew);
 
         assertEquals(UUID.fromString(qSaved.getId().toString()), qSaved.getId());
@@ -35,7 +35,8 @@ public class InMemoryQueryEntityTests {
     	String NAME = "test-query";
     	String BODY = "Some sql statement";
     	
-    	Query qNew = new Query(NAME, BODY);
+    	Query qNew = new Query(NAME);
+    	qNew.setBody(BODY);
     	Query qSaved = queryRepository.save(qNew);
     	
     	Optional<Query> qCheck = queryRepository.findById(qSaved.getId());
@@ -53,7 +54,8 @@ public class InMemoryQueryEntityTests {
     	String NEWNAME = "test-query2";
     	String NEWBODY = "Another sql statement";
     	
-    	Query qNew = new Query(NAME, BODY);
+    	Query qNew = new Query(NAME);
+    	qNew.setBody(BODY);
     	Query qSaved = queryRepository.save(qNew);
     	
     	Query qUpdatable = queryRepository.findById(qSaved.getId()).get();

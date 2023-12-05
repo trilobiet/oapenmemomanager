@@ -14,7 +14,7 @@
         <v-toolbar>  
 
           <v-toolbar-title class="font-weight-bold">
-            <v-icon>mdi-account-group</v-icon> Clients
+            <v-icon>mdi-home</v-icon> Clients
           </v-toolbar-title>
 
           <v-btn variant="tonal" class="bg-primary" @click="newClient()">New Client</v-btn>
@@ -84,12 +84,9 @@
 
 <script>
 import axios from 'axios';
-//import UserForm from '../views/UserForm.vue';
 
 export default {
 
-  //components: { UserForm },
-  
   data() {
     return {
       loading: true,

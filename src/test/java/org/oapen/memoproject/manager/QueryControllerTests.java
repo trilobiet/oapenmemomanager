@@ -83,7 +83,7 @@ public class QueryControllerTests {
 	@Test 
 	void givenValidId_whenGetQuery_thenOk() throws Exception {
 		
-		Query q = queryRepository.save(new Query("qTEST123","blahblah"));
+		Query q = queryRepository.save(new Query("qTEST123"));
 		
 		ResultActions resultActions = mvc.perform(get("/api/query/" + q.getId()));
 		
@@ -114,7 +114,7 @@ public class QueryControllerTests {
 	@Test 
 	void givenQuery_whenDeleteQuery_thenNotFound() throws Exception {
 		
-		Query q = queryRepository.save(new Query("qTEST","blahblah"));
+		Query q = queryRepository.save(new Query("qTEST"));
 
 		mvc.perform(get("/api/query/" + q.getId()))
 			.andExpect(status().isOk());

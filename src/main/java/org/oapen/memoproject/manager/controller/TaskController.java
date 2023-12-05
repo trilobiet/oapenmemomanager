@@ -34,6 +34,18 @@ public class TaskController {
 		
 		return taskRepository.findAll(); 
 	}
+
+	@GetMapping("/homedir/{id}/{taskName}")
+	@ResponseBody
+    public List<Task> getTaskByNameForHomedir(
+    	@PathVariable(required=true) String id,
+    	@PathVariable(required=true) String taskName
+    ){
+		
+		Homedir homedir = new Homedir();
+		homedir.setId(UUID.fromString(id));
+		return taskRepository.findByHomedirAndFileName(homedir, taskName);
+	}
 	
 	@GetMapping("/homedir/{id}/task")
 	@ResponseBody

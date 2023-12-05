@@ -57,6 +57,29 @@ public class InMemoryTaskTests {
     	assertEquals(hNew, tasks.get(0).getHomedir());
     	assertEquals("daily", tasks.get(0).getFrequencyAsText());
     }
+
+	@Test
+    public void givenHomedirAndTaskname_whenFind_thenResult() {
+    	
+    	String NAME = "test name";
+    	String USERNAME = RandomStringUtils.randomAlphabetic(10);
+    	String FILENAME = RandomStringUtils.randomAlphabetic(10);
+
+    	// We need a homedir to serve as owner of the tasks
+    	Homedir hNew = new Homedir(USERNAME, NAME);
+    	homedirRepository.save(hNew);
+    	
+    	Task tNew = new Task(FILENAME,"ext",hNew);
+    	tNew.setFrequency(TaskFrequency.D);
+    	
+		taskRepository.save(tNew);
+    	
+    	List<Task> tasks = taskRepository.findByHomedirAndFileName(hNew,FILENAME);
+    	
+    	System.out.println(tasks.get(0));
+    	
+    	assertTrue(tasks.size() == 1);
+    }
 	
 	@Test
     public void givenTask_whenFindRunLog_thenGetList() {
@@ -93,7 +116,7 @@ public class InMemoryTaskTests {
     	
     	Task tNew = new Task(TASK, "ext", hNew);
     	Script script = new Script(SCRIPT, ScriptType.MAIN);
-    	Query q = new Query(QUERY,"Select blahblah");
+    	Query q = new Query(QUERY);
     	script.setQuery(q);
     	tNew.setScript(script);
     	
@@ -101,7 +124,7 @@ public class InMemoryTaskTests {
 		
 		Optional<Task> tf = taskRepository.findById(t.getId());
 		
-		System.out.println(tf);
+		// System.out.println(tf);
 		
 		assertTrue(tf.isPresent());
 		assertEquals(tf.get().getScript().getName(),SCRIPT);

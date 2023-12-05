@@ -11,5 +11,7 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
 
 	List<Task> findByHomedir(Homedir homedir);
 	
+	// Serves to see whether a given fileName is already in use for a homedir
+	List<Task> findByHomedirAndFileName(Homedir homedir, String fileName);
 }
 	

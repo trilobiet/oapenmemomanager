@@ -42,9 +42,7 @@ public class Task implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	public enum TaskFrequency {
-		Y, M, W, D
-	}
+	public enum TaskFrequency {	Y, M, W, D }
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO) //.SEQUENCE?

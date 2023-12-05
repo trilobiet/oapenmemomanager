@@ -3,6 +3,7 @@ import { createApp } from 'vue'
 import MyApp from './App.vue'
 import router from './router'
 import axios from 'axios'
+import store from './store'
 
 import '@/globalComponents'
 import {globalfunctions} from './globalFunctions.js'
@@ -16,13 +17,19 @@ import * as labsComponents  from 'vuetify/labs/components'
 import "@mdi/font/css/materialdesignicons.css";
 import "@fortawesome/fontawesome-free/css/all.css";
 
+// global custom tags
+import MyFormHeader from "@/components/MyFormHeader.vue";
+import MyWrapper from "@/components/MyWrapper.vue";
+
 // Check session validity once every 5 minutes
 setInterval( () => {
 	axios.get('/api/session')
 	.then(resp => {
 		console.log("Periodically checking session expiration...")
-		if(resp.data!='OK') window.location.href = "/login"
+		if(resp.data != 'OK') window.location.href = "/login"
 	})  
+	.catch(() => {})
+
 }, 300000);
   
 
@@ -48,7 +55,7 @@ const vuetify = createVuetify({
 	components: {
 		...components,
 		...directives,
-		...labsComponents
+		...labsComponents,
 	},
 
     theme: {
@@ -68,7 +75,15 @@ const vuetify = createVuetify({
 }) 
 
 // Preload some api lookup data
-const promises = []
+const promises = [
+
+	// Once we get here we already have a browser session (Spring Boot),
+	// so we only need to ask the api who is the logged in user. 
+	axios.get('/api/user')
+		.then(resp => store.commit("setUser",resp.data))
+		.catch(() => {}),
+
+]
 
 // Proceed when all promises have been fulfilled
 Promise.all(promises).then( () => {
@@ -76,10 +91,14 @@ Promise.all(promises).then( () => {
 	const app = createApp(MyApp)
 		.use(router)
 		.use(vuetify)
+		.use(store)
 		.use(globalfunctions)
 		
 	app.config.globalProperties.$axios = axios
 	app.config.globalProperties.$func = globalfunctions
+
+	app.component("my-form-header", MyFormHeader)
+	app.component("my-wrapper", MyWrapper)
 	
 	app.mount('#app')	
 }); 

@@ -10,6 +10,10 @@
 
       <v-spacer></v-spacer>
 
+      <v-chip v-if="user" class="text-caption">
+        {{ user.username }}
+      </v-chip>
+
       <v-menu>
 
         <template v-slot:activator="{ props }">
@@ -29,7 +33,7 @@
 
           <v-divider></v-divider>
 
-          <v-list-item v-if="isLoggedIn" href="/logout?logout">
+          <v-list-item v-if="user" href="/logout?logout">
             <!-- points to spring template! (so uses 'href' i.o 'to') -->
             <v-list-item-title>Log out</v-list-item-title>
           </v-list-item>
@@ -57,7 +61,6 @@
 
 import SiteFooter from '@/components/Footer.vue';
 
-
 export default {
   components: { SiteFooter },
   name: 'App',
@@ -66,12 +69,9 @@ export default {
     theme() {
       return (this.$vuetify.theme.dark) ? 'dark' : 'light'
     },
-    /*isLoggedIn(){ TODO
-      return this.$store.getters.getUser 
-    },
     user(){
       return this.$store.getters.getUser 
-    }*/
+    }
   }
 };
 </script>
@@ -85,6 +85,7 @@ export default {
   @import '../node_modules/@fontsource/roboto/700.css';
 
   .bg-actions {
+    padding: 20px 0 !important;
     .v-btn { 
       color: #1565c0; 
     }  
@@ -131,3 +132,4 @@ export default {
   }
   
 </style>
+

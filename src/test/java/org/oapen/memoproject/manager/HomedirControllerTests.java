@@ -62,7 +62,7 @@ public class HomedirControllerTests {
 		
 		// Json represents a task on homedir together with a script
 		String json = "{\"username\":\"" + USERNAME + "\",\"name\":\"Pietje\","
-			+ "\"password\":\"" + PASSWORD + "\"}";
+			+ "\"password\":\"" + PASSWORD + "\",\"notes\":\"blablabla\" }";
 		
 		ResultActions resultActions = mvc.perform(
 			post("/api/homedir").contentType(MediaType.APPLICATION_JSON)
