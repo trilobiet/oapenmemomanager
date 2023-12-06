@@ -52,7 +52,7 @@
                   append-inner-icon="mdi-auto-fix" @click:appendInner="client.password = $func.generatePassword()"/>
                 </v-col>
                 <v-col v-else lg="4" md="6" sm="8">
-                  <v-text-field label="password" v-model="client.password" :rules="validation.password" v-if="setPassword"
+                  <v-text-field v-if="setPassword" label="password" v-model="client.password" :rules="validation.password"
                     append-inner-icon="mdi-auto-fix" @click:appendInner="client.password = $func.generatePassword()" />
                   <v-text-field v-else label="set password" disabled><!-- just a 'label' --></v-text-field>
                 </v-col>
@@ -77,18 +77,26 @@
                 </v-col>
               </v-row>  
 
-              <v-row v-if="alert=='saved'">
+              <v-row v-if="!isNew" >
                 <v-col>
-                  <v-alert type="success" v-model="alert" closable @click:close="alert==''">
-                    Data saved!
+                  <my-danger-zone>
+                    <v-btn @click="deleteClient()" text="Delete this client" prepend-icon="mdi-alert" variant="tonal"/>
+                  </my-danger-zone>
+                </v-col>
+              </v-row>  
+
+              <v-row v-if="alert==this.$alert.SUCCESS">
+                <v-col>
+                  <v-alert type="success" v-model="alert" closable @click:close="alert==this.$alert.NONE">
+                    {{alertMsg}}
                   </v-alert>
                 </v-col>
               </v-row>
 
-              <v-row v-if="alert=='error'" >
+              <v-row v-if="alert==this.$alert.ERROR" >
                 <v-col>
-                  <v-alert type="error" v-model="alert" closable @click:close="alert==''">
-                    <span @click="showErrorDetail">A problem occurred when saving (click for details)</span>
+                  <v-alert type="error" v-model="alert" closable @click:close="alert==this.$alert.NONE">
+                    <span @click="showErrorDetail">{{alertMsg}}</span>
                   </v-alert>
                 </v-col>
               </v-row>
@@ -105,20 +113,16 @@
 
               <v-row >
 
-                <v-col v-if="!isNew" class="text-left">
-                  <v-btn @click="deleteClient()" text="Delete this client" prepend-icon="mdi-alert"/>
-                </v-col>
-
-                <v-col>
-                  <span v-if="isValidForm===false" class="text-red">
-                    <v-icon>mdi-alert-circle-outline</v-icon>
-                    Please fix validation issues before saving
-                  </span>
+                <v-col class="text-left">
+                  <v-btn @click="$router.go(-1)" text="Back" prepend-icon="mdi-menu-left" />
                 </v-col>
 
                 <v-col class="text-right">
-                    <v-btn @click="$router.go(-1)" text="Back" />
-                    <v-btn @click="save" text="Save" :disabled="!isValidForm"/>
+                  <span class="text-red" v-if="isValidForm===false">
+                    <v-icon>mdi-alert-circle-outline</v-icon>
+                    Please fix validation issues before saving
+                  </span>
+                  <v-btn @click="saveClient" text="Save" :disabled="!isValidForm"/>
                 </v-col>
 
               </v-row>   
@@ -139,9 +143,8 @@
   
 <script>
 
-  import router from '@/router';
-import axios from 'axios';
-  
+import router from '@/router';
+ 
   export default {
 
     data() {
@@ -152,8 +155,9 @@ import axios from 'axios';
         setPassword: false,
         isValidForm: false,
         id: null,
-        alert: "",
+        alert: this.$alert.NONE, // error,saved
         alertMsg: "",
+        alertDetail: "",
       }      
     },
 
@@ -170,9 +174,8 @@ import axios from 'axios';
 
     watch: {
 
-      setPassword: function(newVal, oldVal) {
+      setPassword: function(newVal) {
         if (newVal==false) this.client.password = ''
-        oldVal;
       },
       
       alert(new_val){ // auto close alert after 5 secs
@@ -209,7 +212,7 @@ import axios from 'axios';
 
       loadClient() {
 
-        axios.get(`/api/homedir/`+this.id)
+        this.$axios.get(`/api/homedir/`+this.id)
           .then(resp => {
             this.client = resp.data;
             this.title = this.client.name;
@@ -219,19 +222,22 @@ import axios from 'axios';
           .finally(() => this.loading = false )
       },
 
-      save() {
+      saveClient() {
 
         if(this.$refs.clientForm.validate()) {
 
-          axios.post(`/api/homedir`, this.client)
+          this.$axios.post(`/api/homedir`, this.client)
           .then( resp => {
             console.log(resp)
-            this.alert = "saved";
+            this.alert = this.$alert.SUCCESS;
+            this.alertMsg = "Client saved";
+            setTimeout(() => {router.push({ name: 'client', params: {id: this.client.id} })}, 1000);
           })
           .catch( err => {
             console.log(err)
-            this.alertMsg = err
-            this.alert = "error"
+            this.alert = this.$alert.ERROR;
+            this.alertMsg = "Error saving client";
+            this.alertDetail = err
           })
           .finally(() => {
             console.log("Ready.") 
@@ -247,14 +253,16 @@ import axios from 'axios';
 
         if (confirm("This client and all its tasks will be deleted!\nAre you sure?")) {
 
-          axios.delete(`/api/homedir/` + this.client.id)
+          this.$axios.delete(`/api/homedir/` + this.client.id)
           .then( () => {
-            alert("deleted");
-            router.push({name: 'home'})    
+            this.alert = this.$alert.SUCCESS;
+            this.alert = "Client deleted";
+            setTimeout(() => {router.push({ name: 'home', params: {id: this.client.id} })}, 1000);
           })
           .catch( err => {
-            this.alertMsg = err
-            this.alert = "error"
+            this.alert = this.$alert.ERROR
+            this.alertMsg = "Error deleting client"
+            this.alertDetail = err
           })
         }
 
@@ -262,7 +270,10 @@ import axios from 'axios';
 
       // a button to copy username and password to clipboard
       copyCredentials() { 
-        
+
+        // validate form first
+        this.$refs.clientForm.validate()
+
         if(this.isValidForm) {
           navigator.clipboard.writeText("username: " + this.client.username + "\npassword: " + this.client.password);
           alert("Username/password copied to clipboard!");  
@@ -271,7 +282,7 @@ import axios from 'axios';
       },
 
       showErrorDetail() {
-        alert(JSON.stringify(this.alertMsg))
+        alert(JSON.stringify(this.alertDetail))
       }
 
     },

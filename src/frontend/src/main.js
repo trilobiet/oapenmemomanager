@@ -20,6 +20,7 @@ import "@fortawesome/fontawesome-free/css/all.css";
 // global custom tags
 import MyFormHeader from "@/components/MyFormHeader.vue";
 import MyWrapper from "@/components/MyWrapper.vue";
+import MyDangerZone from "@/components/MyDangerZone.vue";
 
 // Check session validity once every 5 minutes
 setInterval( () => {
@@ -85,6 +86,13 @@ const promises = [
 
 ]
 
+const alert = {
+	SUCCESS: "success",
+	WARNING: "warning",
+	ERROR: "error",
+	NONE: ""
+}
+
 // Proceed when all promises have been fulfilled
 Promise.all(promises).then( () => {
 	
@@ -96,9 +104,11 @@ Promise.all(promises).then( () => {
 		
 	app.config.globalProperties.$axios = axios
 	app.config.globalProperties.$func = globalfunctions
+	app.config.globalProperties.$alert = alert
 
 	app.component("my-form-header", MyFormHeader)
 	app.component("my-wrapper", MyWrapper)
+	app.component("my-danger-zone", MyDangerZone)
 	
 	app.mount('#app')	
 }); 

@@ -83,7 +83,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 
 export default {
 
@@ -134,7 +133,7 @@ export default {
     loadClients() {
 
       this.loading = true; 
-      axios.get(`/api/homedir`)
+      this.$axios.get(`/api/homedir`)
       .then(resp => {
          this.clients=resp.data;
          this.headers=this.getHeaders(resp.data);
@@ -174,7 +173,7 @@ export default {
     confirmDelete () {
 
       // TODO
-      axios.post(`/api/TODOdelete-user`, this.editedClient)
+      this.$axios.post(`/api/TODOdelete-user`, this.editedClient)
         .then( resp => {
           this.clients.splice(this.editedIndex, 1)
           console.log(resp)
@@ -206,7 +205,7 @@ export default {
       //if (this.editedItem.password.length==0) delete this.editedItem['password'];
 
       // Content-type: application/json
-      axios.post(`/api/homedir`, this.editedItem)
+      this.$axios.post(`/api/homedir`, this.editedItem)
         .then( resp => {
           console.log(resp)
           if (this.editedIndex > -1) {

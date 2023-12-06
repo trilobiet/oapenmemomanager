@@ -114,7 +114,7 @@
             <v-row >
 
               <v-col>
-                  <v-btn @click="$router.push({name:'home' })" text="Home" prepend-icon="mdi-menu-left" />
+                <v-btn @click="$router.push({name:'home' })" text="Home" prepend-icon="mdi-menu-left" />
               </v-col>
 
             </v-row>   
@@ -137,7 +137,6 @@
   
 <script>
 
-  import axios from 'axios';
   import RunLog from './RunLog.vue';
   
   export default {
@@ -178,7 +177,7 @@
 
       loadClient() {
 
-        axios.get(`/api/homedir/`+this.id)
+        this.$axios.get(`/api/homedir/`+this.id)
           .then(resp => {
             this.client = resp.data;
             this.title = this.client.name;
@@ -187,7 +186,7 @@
           .catch(error => console.log(error))
           .finally(() => {} )
 
-        axios.get(`/api/homedir/`+this.id+`/task`)
+          this.$axios.get(`/api/homedir/`+this.id+`/task`)
           .then(resp => {
             this.tasks = resp.data;
             console.log("TASKS: " + this.tasks)

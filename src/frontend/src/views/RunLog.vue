@@ -47,10 +47,7 @@
     
 <script>
 
-  import axios from 'axios';
-
   export default {
-
 
   props: {
     taskId: {type: String, default: ''},
@@ -86,7 +83,7 @@
 
     loadRunlog() {
 
-      axios.get(`/api/task/`+this.taskId+`/runlog`)
+      this.$axios.get(`/api/task/`+this.taskId+`/runlog`)
         .then(resp => {
             this.loglines = resp.data;
             console.log("RUNLOG: " + this.loglines)

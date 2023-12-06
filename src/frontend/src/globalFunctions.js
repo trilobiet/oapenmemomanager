@@ -34,10 +34,9 @@ export const globalfunctions = {
 		return(retVal)
 	},
 
-	generateRandomNumber() {
+	generateRandomNumber(length=8) {
 
-		var length = 8,
-			charset = "0123456789",
+		var charset = "0123456789",
 			retVal = "";
 
 		for (var i = 0, n = charset.length; i < length; ++i) {

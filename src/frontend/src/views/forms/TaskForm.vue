@@ -25,7 +25,7 @@
 
             <my-wrapper>
 
-              <my-form-header>{{ isNew? "New Task" : "Edit task: " + title }}</my-form-header>
+              <my-form-header>{{ isNew? "New Task" : "Edit task: " + taskName }}</my-form-header>
 
               <!-- update existing task -->  
               <input type="hidden" v-if="!isNew" v-model="task.id"/>
@@ -33,7 +33,7 @@
               <v-row>
                 <v-col cols="12" sm="8">
                   <v-text-field label="task name" v-model="task.fileName" :rules="validation.fileName" clearable/>
-                  <div class="px-4 text-grey-darken-2 text-caption">export path: {{ client.username }}/{{ task.fileName }}</div>
+                  <div class="px-4 text-grey-darken-2 text-caption">export path: {{ client.username }}/{{ task.fileName }} new: {{ isNew }}</div>
                 </v-col>
                 <v-col cols="12" sm="4">
                   <v-text-field label="extension" v-model="task.extension" readonly bg-color="transparent" class="text-blue-grey-lighten-1" 
@@ -166,6 +166,14 @@
                 </v-col>
               </v-row>  
 
+              <v-row v-if="!isNew" >
+                <v-col>
+                  <my-danger-zone> !!!! TODO: implement !!!!   
+                    <v-btn @click="deleteTask()" text="Delete this task" prepend-icon="mdi-alert" variant="tonal"/>
+                  </my-danger-zone>
+                </v-col>
+              </v-row>  
+
               <v-row v-if="alert=='saved'">
                 <v-col>
                   <v-alert type="success" v-model="alert" closable @click:close="alert==''">
@@ -192,18 +200,18 @@
 
             <my-wrapper>
 
-                <v-row class="restricted">
+                <v-row>
   
                   <v-col>
+                    <v-btn @click="$router.go(-1)" text="Back" prepend-icon="mdi-menu-left" />
+                  </v-col>
+  
+                  <v-col class="text-right">
                     <span v-if="isValidForm===false" class="text-red">
                       <v-icon>mdi-alert-circle-outline</v-icon>
                       Please fix validation issues before saving
                     </span>
-                  </v-col>
-  
-                  <v-col class="text-right">
-                    <v-btn @click="$router.go(-1)" text="Cancel" />
-                    <v-btn @click="save" text="Save" :disabled="!isValidForm"/>
+                    <v-btn @click="saveTask" text="Save" :disabled="!isValidForm"/>
                   </v-col>
   
                 </v-row>  
@@ -224,8 +232,6 @@
     
   <script>
   
-    import axios from 'axios';
-
     // https://www.npmjs.com/package/vue3-ace-editor
     // https://ace.c9.io/
     import { VAceEditor } from 'vue3-ace-editor';
@@ -235,6 +241,8 @@
     import 'ace-builds/src-noconflict/theme-github_dark';
     // import 'ace-builds/src-noconflict/theme-monokai';
     import 'ace-builds/src-noconflict/theme-one_dark';
+    // eslint-disable-next-line no-unused-vars
+    import router from '@/router';
     
     export default {
   
@@ -259,6 +267,7 @@
             { name: 'monthly', value: 'M'},
             { name: 'yearly', value: 'Y'},
           ],
+          taskName: "", // will hold task name as input before editing (for validation)
           takenFileNames: [],
           isEditor: false,
           isEditorSql: false,
@@ -294,6 +303,13 @@
             this.task.extension = this.$func.getExtension(val);
           }
         },  
+
+        alert(new_val){ // auto close alert after 5 secs
+          if(new_val){
+            setTimeout(()=>{this.alert=""},5000)
+          }
+        },
+
       },  
   
       computed: {
@@ -330,10 +346,10 @@
   
         loadTask() {
   
-          axios.get(`/api/task/`+this.id)
+          this.$axios.get(`/api/task/`+this.id)
             .then(resp => {
               this.task = resp.data;
-              this.title = this.task.fileName;
+              this.taskName = this.task.fileName; 
               this.loadClient(this.task.homedir.id)
               if (this.task.script==null) this.task.script = {name: '', type: 'MAIN'}
               if (this.task.script.query==null) this.task.script.query = {}
@@ -344,7 +360,7 @@
 
         loadClient(id) {
   
-          axios.get(`/api/homedir/`+id)
+          this.$axios.get(`/api/homedir/`+id)
             .then(resp => {
               this.client = resp.data;
               this.takenFileNames = this.loadTakenFileNames(this.client)
@@ -355,9 +371,11 @@
 
         loadTakenFileNames(client) {
 
-          axios.get(`/api/homedir/`+ client.id + '/task')
+          this.$axios.get(`/api/homedir/`+ client.id + '/task')
           .then(resp => {
-            this.takenFileNames = resp.data.map(v => v.fileName);
+            this.takenFileNames = resp.data
+              .map(v => v.fileName)
+              .filter(v => v !== this.taskName); // not it's own name!
             console.log("TAKEN: " + this.takenFileNames)
           })
           .catch(error => console.log(error))
@@ -367,37 +385,33 @@
 
         setScriptAndQueryName() {
 
-          let postfix = this.client.username + "_" + this.task.fileName;
-          this.task.script.name = "script_" + postfix;
-          this.task.script.query.name = "query_" + postfix;
+          let sqname = this.client.username + "_" + this.task.fileName.replace(".","_")  
+            //+ "_" + this.$func.generateRandomNumber(4);
+          this.task.script.name = sqname + ".py";
+          this.task.script.query.name = sqname + ".sql"
         },
 
-        save() {
+        saveTask() {
           
           this.setScriptAndQueryName();
 
           let taskToSave = JSON.parse(JSON.stringify(this.task))
-
-          // remove empty query
-          if (!this.task.script.query.body) {
-            taskToSave.script.query = null;
-            if (this.task.script.query.id) this.deleteOrphanedQuery(this.task.script.query.id)
-          }  
 
           if(this.$refs.taskForm.validate()) {
 
             let postUrl = '/api/task';
             if (this.isNew) postUrl = '/api/homedir/' + this.clientid + '/task';
   
-            axios.post(postUrl, taskToSave)
+            this.$axios.post(postUrl, taskToSave)
             .then( resp => {
               console.log(resp)
-              this.alert = "saved"
+              this.alert = "Task saved"
+              setTimeout(() => {router.push({ name: 'client', params: {id: this.client.id} })},1000);
             })
             .catch( err => {
               console.log(err)
               this.alertMsg = err
-              this.alert = "error"
+              this.alert = "Error saving task"
             })
             .finally(() => {
               console.log("Ready.") 
@@ -410,10 +424,27 @@
 
         },
 
+        deleteTask() {
+
+          if (confirm("This task will be deleted!\nAre you sure?")) {
+
+            this.axios.delete(`/api/task/` + this.task.id)
+            .then( () => {
+              this.alert = "Task deleted";
+              setTimeout(() => {router.push({ name: 'client', params: {id: this.client.id} })},1000);  
+            })
+            .catch( err => {
+              this.alertMsg = err
+              this.alert = "Error deleting task"
+            })
+          }
+
+        },
+
         validateFilenameFree(filename) {
 
-          console.log("FILENAME="+filename)
-          console.log("TAKEN="+this.takenFileNames)
+          // console.log("FILENAME="+filename)
+          // console.log("TAKEN="+this.takenFileNames)
 
           if (!filename) return false;
           const posInList = this.takenFileNames.indexOf(filename.trim())
@@ -421,10 +452,6 @@
           else return false  
         },
 
-        deleteOrphanedQuery(id) {
-          axios.delete('/api/query/'+id);
-        },
-  
         showEditorSql() {
           this.isEditorPython = false;
           this.isEditorSql = true;

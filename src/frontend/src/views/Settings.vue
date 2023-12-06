@@ -102,7 +102,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+
 import SettingForm from '../views/forms/SettingForm.vue';
 
 export default {
@@ -154,7 +154,7 @@ export default {
     loadSettings() {
 
       this.loading = true; 
-      axios.get(`/api/setting`)
+      this.$axios.get(`/api/setting`)
         .then(resp => {
           this.settings=resp.data;
           this.headers=this.getHeaders(resp.data);
@@ -191,7 +191,7 @@ export default {
       console.log("DELETING ==== " + this.editedSetting.key)
 
       // TODO
-      axios.delete(`/api/setting/${this.editedSetting.key}`)
+      this.$axios.delete(`/api/setting/${this.editedSetting.key}`)
         .then( resp => {
           this.settings.splice(this.editedIndex, 1)
           console.log(resp)
@@ -222,7 +222,7 @@ export default {
     saveSetting () {
 
       // Content-type: application/json
-      axios.post(`/api/setting`, this.editedSetting)
+      this.$axios.post(`/api/setting`, this.editedSetting)
         .then( resp => {
           console.log(resp)
           if (this.editedIndex > -1) {
