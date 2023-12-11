@@ -168,24 +168,17 @@
 
               <v-row v-if="!isNew" >
                 <v-col>
-                  <my-danger-zone> !!!! TODO: implement !!!!   
+                  <my-danger-zone>
                     <v-btn @click="deleteTask()" text="Delete this task" prepend-icon="mdi-alert" variant="tonal"/>
                   </my-danger-zone>
                 </v-col>
               </v-row>  
 
-              <v-row v-if="alert=='saved'">
+              <v-row v-if="alert!==this.$alert.NONE">
                 <v-col>
-                  <v-alert type="success" v-model="alert" closable @click:close="alert==''">
-                    Data saved!
-                  </v-alert>
-                </v-col>
-              </v-row>
-
-              <v-row v-if="alert=='error'" >
-                <v-col>
-                  <v-alert type="error" v-model="alert" closable @click:close="alert==''">
-                    <span @click="showErrorDetail">A problem occurred when saving (click for details)</span>
+                  <v-alert :type="alert" v-model="alert" closable @click:close="alert==this.$alert.NONE">
+                    <span v-if="alert==this.$alert.ERROR" @click="showAlertDetail">{{alertMsg}}</span>
+                    <span v-else>{{alertMsg}}</span>
                   </v-alert>
                 </v-col>
               </v-row>
@@ -272,8 +265,9 @@
           isEditor: false,
           isEditorSql: false,
           isEditorPython: false,
-          alert: "",
+          alert: this.$alert.NONE, // ERROR,INFO,SUCCESS,WARNING,NONE
           alertMsg: "",
+          alertDetail: "",
         }      
       },
 
@@ -304,11 +298,11 @@
           }
         },  
 
-        alert(new_val){ // auto close alert after 5 secs
+        /*alert(new_val){ // auto close alert after 5 secs
           if(new_val){
             setTimeout(()=>{this.alert=""},5000)
           }
-        },
+        },*/
 
       },  
   
@@ -405,13 +399,15 @@
             this.$axios.post(postUrl, taskToSave)
             .then( resp => {
               console.log(resp)
-              this.alert = "Task saved"
+              this.alert = this.$alert.SUCCESS;
+              this.alertMsg = "Task saved";
               setTimeout(() => {router.push({ name: 'client', params: {id: this.client.id} })},1000);
             })
             .catch( err => {
               console.log(err)
-              this.alertMsg = err
-              this.alert = "Error saving task"
+              this.alert = this.$alert.ERROR;
+              this.alertMsg = err.message;
+              this.alertDetail = err
             })
             .finally(() => {
               console.log("Ready.") 
@@ -419,7 +415,8 @@
   
           }  
           else {
-            console.log("VALIDATION ERRORS!") 
+            this.alert = this.$alert.ERROR;
+            this.alertMsg = "There are validation errors" 
           }  
 
         },
@@ -428,14 +425,16 @@
 
           if (confirm("This task will be deleted!\nAre you sure?")) {
 
-            this.axios.delete(`/api/task/` + this.task.id)
+            this.$axios.delete(`/api/task/` + this.task.id)
             .then( () => {
-              this.alert = "Task deleted";
+              this.alert = this.$alert.SUCCESS;
+              this.alertMsg = "Task deleted";
               setTimeout(() => {router.push({ name: 'client', params: {id: this.client.id} })},1000);  
             })
             .catch( err => {
-              this.alertMsg = err
-              this.alert = "Error deleting task"
+              this.alert = this.$alert.ERROR;
+              this.alertMsg = err.message;
+              this.alertDetail = err
             })
           }
 
@@ -468,8 +467,8 @@
           this.isEditor = false;
         },
 
-        showErrorDetail() {
-          alert(JSON.stringify(this.alertMsg))
+        showAlertDetail() {
+          alert(JSON.stringify(this.alertDetail))
         },
 
       }  

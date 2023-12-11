@@ -35,7 +35,7 @@
               <v-row>
 
                 <v-col cols="12" lg="4" md="6" sm="12">
-                  <v-text-field label="username" v-model="client.username" :rules="validation.username">
+                  <v-text-field label="username" v-model="client.username" :rules="validation.username" :disabled="!client.editable">
                     <template v-slot:append-inner v-if="client.name">
                       <v-icon icon="mdi-auto-fix" @click="client.username = $func.normalizeName(client.name)"/> 
                     </template>
@@ -77,26 +77,23 @@
                 </v-col>
               </v-row>  
 
-              <v-row v-if="!isNew" >
+              <v-row v-if="!isNew && client.editable" >
                 <v-col>
-                  <my-danger-zone>
+                  <my-danger-zone v-if="client.taskCount!==0" color="grey">
+                    Delete client not available ({{client.taskCount}} tasks attached)
+                    <v-btn disabled text="Delete this client" prepend-icon="mdi-alert" variant="tonal"/>
+                  </my-danger-zone>
+                  <my-danger-zone v-else>
                     <v-btn @click="deleteClient()" text="Delete this client" prepend-icon="mdi-alert" variant="tonal"/>
                   </my-danger-zone>
                 </v-col>
               </v-row>  
 
-              <v-row v-if="alert==this.$alert.SUCCESS">
+              <v-row v-if="alert!==this.$alert.NONE">
                 <v-col>
-                  <v-alert type="success" v-model="alert" closable @click:close="alert==this.$alert.NONE">
-                    {{alertMsg}}
-                  </v-alert>
-                </v-col>
-              </v-row>
-
-              <v-row v-if="alert==this.$alert.ERROR" >
-                <v-col>
-                  <v-alert type="error" v-model="alert" closable @click:close="alert==this.$alert.NONE">
-                    <span @click="showErrorDetail">{{alertMsg}}</span>
+                  <v-alert :type="alert" v-model="alert" closable @click:close="alert==this.$alert.NONE">
+                    <span v-if="alert==this.$alert.ERROR" @click="showAlertDetail">{{alertMsg}}</span>
+                    <span v-else>{{alertMsg}}</span>
                   </v-alert>
                 </v-col>
               </v-row>
@@ -151,11 +148,11 @@ import router from '@/router';
       return {
         isNew: false,
         title: "New Client Home",
-        client: {},
+        client: {editable:true},
         setPassword: false,
         isValidForm: false,
         id: null,
-        alert: this.$alert.NONE, // error,saved
+        alert: this.$alert.NONE, // ERROR,INFO,SUCCESS,WARNING,NONE
         alertMsg: "",
         alertDetail: "",
       }      
@@ -178,11 +175,11 @@ import router from '@/router';
         if (newVal==false) this.client.password = ''
       },
       
-      alert(new_val){ // auto close alert after 5 secs
+      /*alert(new_val){ // auto close alert after 5 secs
         if(new_val){
-          setTimeout(()=>{this.alert=""},5000)
+          setTimeout(()=>{this.alert=this.$alert.NONE},5000)
         }
-      }        
+      } */       
 
     },  
 
@@ -194,11 +191,11 @@ import router from '@/router';
 
           name: [ 
             v => !!v || "Value is required",
-            v => (v && v.length >= 4) || "Value cannot be shorter than 3 characters"
+            v => (v && v.length >= 3) || "Value cannot be shorter than 3 characters"
           ],
           username: [
             v => !!v || "Value is required",
-            v => (v && v.length >= 4) || "Value cannot be shorter than 4 characters"
+            v => (v && v.length >= 3) || "Value cannot be shorter than 3 characters"
           ],
           password: [
             v => !!v || "Value is required",
@@ -228,24 +225,21 @@ import router from '@/router';
 
           this.$axios.post(`/api/homedir`, this.client)
           .then( resp => {
-            console.log(resp)
             this.alert = this.$alert.SUCCESS;
             this.alertMsg = "Client saved";
-            setTimeout(() => {router.push({ name: 'client', params: {id: this.client.id} })}, 1000);
+            setTimeout(() => {router.push({ name: 'client', params: {id: resp.data.id} })}, 1000);
           })
           .catch( err => {
-            console.log(err)
             this.alert = this.$alert.ERROR;
-            this.alertMsg = "Error saving client";
+            this.alertMsg = err.message;
             this.alertDetail = err
           })
-          .finally(() => {
-            console.log("Ready.") 
-          })
+          .finally(() => {})
 
         }  
         else {
-          console.log("VALIDATION ERRORS!") 
+          this.alert = this.$alert.ERROR;
+          this.alertMsg = "There are validation errors" 
         }  
       },
 
@@ -256,7 +250,7 @@ import router from '@/router';
           this.$axios.delete(`/api/homedir/` + this.client.id)
           .then( () => {
             this.alert = this.$alert.SUCCESS;
-            this.alert = "Client deleted";
+            this.alertMsg = "Client deleted";
             setTimeout(() => {router.push({ name: 'home', params: {id: this.client.id} })}, 1000);
           })
           .catch( err => {
@@ -281,7 +275,7 @@ import router from '@/router';
         else alert("Nothing copied - fix validation issues first!");  
       },
 
-      showErrorDetail() {
+      showAlertDetail() {
         alert(JSON.stringify(this.alertDetail))
       }
 

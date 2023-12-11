@@ -136,6 +136,7 @@ export default {
       this.$axios.get(`/api/homedir`)
       .then(resp => {
          this.clients=resp.data;
+         console.log(resp.data);
          this.headers=this.getHeaders(resp.data);
       })
       .catch(error => console.log(error))
@@ -147,6 +148,8 @@ export default {
       let arr = [
         { title: "Name", key: "name" },
 				{ title: "User name", key: "username" },
+        { title: "Tasks", key: "taskCount" },
+        { title: "Failed Tasks", key: "failedTaskCount" },
       ];
 
       return arr;

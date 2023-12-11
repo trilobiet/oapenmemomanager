@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.oapen.memoproject.manager.entities.Homedir;
@@ -73,7 +74,7 @@ public class InMemoryScriptTests {
     	
     	String NAME = "test name";
     	String USERNAME = RandomStringUtils.randomAlphabetic(10);
-
+    	
     	// We need a homedir to serve as owner of the tasks
     	Homedir hNew = new Homedir(USERNAME, NAME);
     	hNew = homedirRepository.save(hNew);

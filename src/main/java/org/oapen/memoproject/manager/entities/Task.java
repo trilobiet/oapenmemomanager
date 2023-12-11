@@ -63,7 +63,7 @@ public class Task implements Serializable {
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_homedir", nullable = false)
-	//@ToString.Exclude // To String would create an infinite loop
+	@ToString.Exclude // To String would create an infinite loop
 	@NonNull
 	//@JsonIgnore // Avoid back ref
 	private Homedir homedir;
@@ -105,5 +105,5 @@ public class Task implements Serializable {
 	@JoinFormula("(SELECT rl.id FROM runlog rl WHERE rl.id_task = id ORDER BY rl.date DESC LIMIT 1)")
 	@Setter(AccessLevel.NONE) // read only
 	private RunLog latestLog;
-
+	
 }

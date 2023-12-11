@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
@@ -57,7 +58,31 @@ public class InMemoryTaskTests {
     	assertEquals(hNew, tasks.get(0).getHomedir());
     	assertEquals("daily", tasks.get(0).getFrequencyAsText());
     }
+	
+	@Test
+    public void givenHomedir_whenAddTasks_thenCountMatches() {
+    	
+    	String NAME = "test name";
+    	String USERNAME = RandomStringUtils.randomAlphabetic(10);
 
+    	// We need a homedir to serve as owner of the tasks
+    	Homedir hNew = new Homedir(USERNAME, NAME);
+    	UUID id = homedirRepository.save(hNew).getId();
+    	
+    	Task t1 = new Task("File1","ext",hNew);
+    	Task t2 = new Task("File2","ext",hNew);
+    	Task t3 = new Task("File3","ext",hNew);
+    	
+		taskRepository.save(t1);
+		taskRepository.save(t2);
+		taskRepository.save(t3);
+    	
+		Optional<Homedir> hSaved = homedirRepository.findById(id);
+   	
+    	assertTrue(hSaved.isPresent());
+    	assertEquals(3, hSaved.get().getTaskCount());
+    }
+	
 	@Test
     public void givenHomedirAndTaskname_whenFind_thenResult() {
     	
@@ -76,7 +101,7 @@ public class InMemoryTaskTests {
     	
     	List<Task> tasks = taskRepository.findByHomedirAndFileName(hNew,FILENAME);
     	
-    	System.out.println(tasks.get(0));
+    	//System.out.println(tasks.get(0));
     	
     	assertTrue(tasks.size() == 1);
     }

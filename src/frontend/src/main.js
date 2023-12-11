@@ -87,10 +87,11 @@ const promises = [
 ]
 
 const alert = {
+	ERROR: "error",
+	INFO: "info",
 	SUCCESS: "success",
 	WARNING: "warning",
-	ERROR: "error",
-	NONE: ""
+	NONE: "info"
 }
 
 // Proceed when all promises have been fulfilled
