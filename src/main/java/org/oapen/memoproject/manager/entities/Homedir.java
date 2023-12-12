@@ -85,12 +85,23 @@ public class Homedir implements UserDetails, Serializable  {
 		
     	if (tasks != null) return tasks.stream()
 			.filter(task -> task.getLatestLog() != null)	
-			.filter(task -> task.getLatestLog().isSuccess() == false)
+			.filter(task -> !task.getLatestLog().isSuccess())
 			.count();
 		
     	else return 0L;
 	}
-	
+
+    public Long getPassedTaskCount() {
+		
+    	if (tasks != null) return tasks.stream()
+			.filter(task -> task.getLatestLog() != null)	
+			.filter(task -> task.getLatestLog().isSuccess())
+			.count();
+		
+    	else return 0L;
+	}
+    
+    
 	// UserDetails methods =======================================
 
 	@Override @JsonIgnore

@@ -22,7 +22,7 @@ public class QueryController {
 	@Autowired
 	QueryRepository queryRepository;
 	
-	@GetMapping()
+	@GetMapping("/query")
 	@ResponseBody
     public List<Query> list() {
 		

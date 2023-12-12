@@ -5,10 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.oapen.memoproject.manager.entities.Query;
+import org.oapen.memoproject.manager.entities.Script;
+import org.oapen.memoproject.manager.entities.Script.ScriptType;
 import org.oapen.memoproject.manager.jpa.QueryRepository;
+import org.oapen.memoproject.manager.jpa.ScriptRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -19,7 +23,10 @@ public class InMemoryQueryEntityTests {
     
 	@Autowired
     private QueryRepository queryRepository;
-    
+
+	@Autowired
+    private ScriptRepository scriptRepository;
+	
     @Test
     public void givenQuery_whenInsert_thenValidUUID() {
     	
@@ -67,5 +74,34 @@ public class InMemoryQueryEntityTests {
     	
         assertEquals(qCheck.getId(),qSaved.getId());
     }
+
+	
+	@Test
+	public void givenScriptsWithReference_thenQueryShouldDisplayCorrectReferences() {
+		
+		String SCRIPTNAME1 = RandomStringUtils.randomAlphabetic(10);
+		String SCRIPTNAME2 = RandomStringUtils.randomAlphabetic(10);
+		String BODY1pre = RandomStringUtils.randomAlphabetic(50);
+		String BODY1post = RandomStringUtils.randomAlphabetic(50);
+		String BODY2pre = RandomStringUtils.randomAlphabetic(50);
+		String BODY2post = RandomStringUtils.randomAlphabetic(50);
+		String QUERYNAME = RandomStringUtils.randomAlphabetic(10);
+		
+		Query q = new Query(QUERYNAME);
+		queryRepository.save(q);
+		
+		// Two scripts with QUERYNAME in their body fields
+		Script s1 = new Script(SCRIPTNAME1,ScriptType.MAIN);
+		s1.setBody(BODY1pre + QUERYNAME + BODY1post);
+		scriptRepository.save(s1);
+		
+		Script s2 = new Script(SCRIPTNAME2,ScriptType.MAIN);
+		s2.setBody(BODY2pre + QUERYNAME + BODY2post);
+		scriptRepository.save(s2);
+		
+		Optional<Query> savedQuery = queryRepository.findById(q.getId());
+		
+		assertEquals(2, savedQuery.get().getReferences());
+	}
 	
 }
