@@ -1,10 +1,10 @@
 <template>
 
-  <div class="home">
+  <div class="settings">
 
-      <!-- TODO toggle from axios on save if an error occurs -->  
-      <v-alert v-if="dialogError" type="error" closable=true >
-        <span @click="alertErrorDetail">A problem occurred when saving (click for details)</span>
+      <v-alert v-if="alert!==this.$alert.NONE" :type="alert" v-model="alert" closable @click:close="alert==this.$alert.NONE">
+        <span v-if="alert==this.$alert.ERROR" @click="showAlertDetail">{{alertMsg}}</span>
+        <span v-else>{{alertMsg}}</span>
       </v-alert>
 
       <v-container fluid>
@@ -56,7 +56,7 @@
 
                   <template v-slot:[`item.value`]="{ item }">
                     <span v-if="isHiddenKey(item.key)" class="text-grey">{{item.value}}</span>
-                    <span v-else>{{item.key}}</span>
+                    <span v-else>{{item.value}}</span>
                   </template> 
 
                   <template v-slot:[`item.actions`]="{ item }">
@@ -111,13 +111,9 @@ export default {
   
   data() {
     return {
+      dialog: false,
       loading: true,
       tableSearch: '',
-      dialog: false,
-      dialogDelete: false,      
-      dialogError: false, 
-      dialogSaved: false, 
-      dialogErrorDetail: "",     
       headers: [],
       settings:[], 
       editedIndex: -1,      
@@ -129,6 +125,9 @@ export default {
         key: '',
         value: ''
       },   
+      alert: this.$alert.NONE, // ERROR,INFO,SUCCESS,WARNING,NONE
+      alertMsg: "",
+      alertDetail: "",
     }    
   },
   
@@ -149,6 +148,16 @@ export default {
     this.loadSettings();
   },
   
+  watch: {
+
+    // auto close alert after 5 secs
+    alert(new_val){ 
+      if(new_val){
+        setTimeout(()=>{this.alert=this.$alert.NONE},5000)
+      }
+    }    
+  },
+
   methods: {
 
     loadSettings() {
@@ -183,7 +192,7 @@ export default {
     deleteSetting (setting) {
       this.editedIndex = this.settings.indexOf(setting)
       this.editedSetting = Object.assign({}, setting)
-      this.dialogDelete = true
+      if(confirm("Delete this setting?")) this.confirmDelete();
     },
 
     confirmDelete () {
@@ -195,11 +204,13 @@ export default {
         .then( resp => {
           this.settings.splice(this.editedIndex, 1)
           console.log(resp)
+          this.alert = this.$alert.SUCCESS;
+          this.alertMsg = "Setting deleted";
         })
         .catch( err => {
-          // Show error on alert
-          this.dialogError = true
-          console.log(err) 
+          this.alert = this.$alert.ERROR;
+          this.alertMsg = err.message;
+          this.alertDetail = err
         })
         .finally(() => {
           this.setDefault();
@@ -232,15 +243,13 @@ export default {
             this.settings.push(this.editedSetting)
             this.editedSetting.id = resp.data.id
           }  
-          this.dialogSaved = true;
+          this.alert = this.$alert.SUCCESS;
+          this.alertMsg = "Setting saved";
         })
         .catch( err => {
-          console.log(err)
-          // Show error on alert
-          // TODO show logout message on session expiration
-          console.log("ERROR: " + err)
-          this.dialogErrorDetail = err.message
-          this.dialogError = true
+          this.alert = this.$alert.ERROR;
+          this.alertMsg = err.message;
+          this.alertDetail = err
         })
         .finally(() => {
           this.setDefault();
@@ -255,8 +264,8 @@ export default {
       this.editedIndex = -1
     },
 
-    alertErrorDetail() {
-      alert(JSON.stringify(this.dialogErrorDetail))
+    showAlertDetail() {
+      alert(JSON.stringify(this.alertDetail))
     },
 
     isHiddenKey(key) {

@@ -5,6 +5,7 @@ import Settings from "@/views/Settings.vue";
 import Client from "@/views/Client.vue";
 import ClientForm from "@/views/forms/ClientForm.vue";
 import TaskForm from "@/views/forms/TaskForm.vue";
+import LibraryQueryForm from "@/views/forms/LibraryQueryForm.vue";
 import SessionExpired from "@/views/SessionExpired.vue";
 
 import axios from 'axios'
@@ -27,7 +28,7 @@ const routes = [
     component: ClientForm,
   },
   {
-    path: "/client/:id", // default page
+    path: "/client/:id", // client overview page
     name: "client",
     component: Client,
   },
@@ -45,6 +46,11 @@ const routes = [
     path: "/queries",
     name: "queries",
     component: Queries,
+  },
+  {
+    path: "/query/:id",
+    name: "query",
+    component: LibraryQueryForm,
   },
   {
     path: "/settings",

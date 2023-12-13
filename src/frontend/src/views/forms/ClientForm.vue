@@ -10,7 +10,7 @@
         validate-on="lazy input" 
       >
 
-      <v-card class="elevation-5">
+        <v-card class="elevation-5">
 
           <v-toolbar>  
             <v-toolbar-title class="font-weight-bold">

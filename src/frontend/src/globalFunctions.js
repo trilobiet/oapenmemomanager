@@ -106,4 +106,12 @@ export const globalfunctions = {
 		} else return "mdi-file"  
 	},
 
+	truncate(input,maxsize) {
+
+		if (input.length > maxsize) 
+			return input.substring(0, maxsize) + ' \u2026';
+		else 
+			return input;
+	}
+
 }
