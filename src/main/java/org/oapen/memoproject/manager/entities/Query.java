@@ -1,13 +1,10 @@
 package org.oapen.memoproject.manager.entities;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -48,7 +45,7 @@ public class Query implements Serializable {
 	// Queries not 'owned' by a script 
 	private boolean isLibrary = false;
 
-	// Count scripts that have a reference to this query name
+	// Count scripts that have a reference to this (library) query name
 	@Formula("(SELECT count(s.name) FROM script s WHERE s.body LIKE CONCAT('%',name,'%') )")
 	private int references;
 

@@ -15,5 +15,8 @@ public interface ScriptRepository extends JpaRepository<Script, UUID> {
 	
 	List<Script> findByType(ScriptType type, Sort sort);
 
+	// like must include '%'
+	List<Script> findByBodyLike(String like, Sort sort);
+
 }
 	

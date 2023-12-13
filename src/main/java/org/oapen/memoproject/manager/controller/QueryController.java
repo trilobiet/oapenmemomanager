@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.oapen.memoproject.manager.entities.Query;
 import org.oapen.memoproject.manager.jpa.QueryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,9 +28,15 @@ public class QueryController {
     public List<Query> list() {
 		
 		return queryRepository.findAllByOrderByNameAsc();
-		//return homedirRepository.findAll(Sort.by("username").ascending());
 	}
 	
+	@GetMapping("/query/library")
+	@ResponseBody
+    public List<Query> listLibrary() {
+		
+		return queryRepository.findByIsLibraryTrue(Sort.by("name").ascending());
+	}
+
 	@GetMapping("/query/{id}")
 	@ResponseBody
     public Query get(

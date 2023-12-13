@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,6 +37,15 @@ public class ScriptController {
     public List<Script> listSnippets(){
 		
 		return scriptRepository.findByType(ScriptType.SNIP, Sort.by("name").ascending());
+	}
+	
+	// Use this to find references to queries in scripts
+	@GetMapping("/script/searchinbody") 
+	@ResponseBody
+    public List<Script> listBySearchString(
+    	@RequestParam(required = true) String term
+    ){
+		return scriptRepository.findByBodyLike("%" + term + "%", Sort.by("name").ascending());
 	}
 	
 	@GetMapping("/script/{id}")

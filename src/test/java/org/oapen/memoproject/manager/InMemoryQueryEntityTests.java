@@ -77,7 +77,7 @@ public class InMemoryQueryEntityTests {
 
 	
 	@Test
-	public void givenScriptsWithReference_thenQueryShouldDisplayCorrectReferences() {
+	public void givenScriptsWithReference_thenQueryShouldCountReferences() {
 		
 		String SCRIPTNAME1 = RandomStringUtils.randomAlphabetic(10);
 		String SCRIPTNAME2 = RandomStringUtils.randomAlphabetic(10);

@@ -27,7 +27,7 @@
 
           <!-- single-expand show-expand item-key="username" -->  
           <v-data-table  
-            :sort-by="['name','usage']" hover 
+            :sort-by="['name','references']" hover 
             :loading="loading" :search="tableSearch" 
             :headers="headers" :items="queries"   
             calculate-widths>
@@ -82,7 +82,7 @@ export default {
     loadQueries() {
 
       this.loading = true; 
-      this.$axios.get(`/api/query`)
+      this.$axios.get(`/api/query/library`)
       .then(resp => {
          this.queries=resp.data;
          console.log(resp.data);
@@ -96,7 +96,7 @@ export default {
 
       let arr = [
         { title: "Name", key: "name" },
-				{ title: "Usage (TODO)", key: "usage" },
+				{ title: "Usage (TODO)", key: "references" },
       ];
 
       return arr;

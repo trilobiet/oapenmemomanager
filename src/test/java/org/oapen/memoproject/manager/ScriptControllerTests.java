@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -70,5 +71,45 @@ public class ScriptControllerTests {
 		String q = lst.stream().map(script -> script.getName()).collect(Collectors.joining());
 		assertEquals(q, "abd");
 	}
+	
+	
+	@Test 
+	void givenScriptsAndTermInBody_whenSearchTermInBody_thenFind() throws Exception {
+		
+		String SCRIPTNAME1 = RandomStringUtils.randomAlphabetic(10);
+		String SCRIPTNAME2 = RandomStringUtils.randomAlphabetic(10);
+		String SCRIPTNAME3 = RandomStringUtils.randomAlphabetic(10);
+		String BODY1 = RandomStringUtils.randomAlphabetic(50);
+		String BODY2 = RandomStringUtils.randomAlphabetic(50);
+		String QUERYNAME = RandomStringUtils.randomAlphabetic(10);
+		
+		// Two scripts with QUERYNAME in their body fields
+		Script s1 = new Script(SCRIPTNAME1,ScriptType.MAIN);
+		s1.setBody(BODY1 + QUERYNAME + BODY2);
+		scriptRepository.save(s1);
+		
+		Script s2 = new Script(SCRIPTNAME2,ScriptType.MAIN);
+		s2.setBody(BODY2 + QUERYNAME + BODY1);
+		scriptRepository.save(s2);
+		
+		Script s3 = new Script(SCRIPTNAME3,ScriptType.MAIN);
+		s2.setBody(BODY1 + "nothing" + BODY2);
+		scriptRepository.save(s3);
+
+		ResultActions resultActions = mvc.perform(
+			get("/api/script/searchinbody").param("term", QUERYNAME)
+		);
+		
+		MvcResult res = resultActions.andReturn();
+		
+		ObjectMapper om = new ObjectMapper();
+		// https://stackoverflow.com/questions/6349421/how-to-use-jackson-to-deserialise-an-array-of-objects
+		List<Script> lst = om.readValue(res.getResponse().getContentAsString(), new TypeReference<List<Script>>(){});
+		
+		// System.out.println(lst);
+		
+		assertEquals(lst.size(), 2);
+	}
+	
 	
 }
