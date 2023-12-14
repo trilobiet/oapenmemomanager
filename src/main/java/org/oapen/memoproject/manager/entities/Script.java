@@ -1,6 +1,7 @@
 package org.oapen.memoproject.manager.entities;
 
 import java.io.Serializable;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.persistence.CascadeType;
@@ -18,7 +19,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -34,6 +36,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded=true) 
 @Table(name = "script")
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Script implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -65,8 +68,22 @@ public class Script implements Serializable {
 	
 	@OneToOne(optional=true, mappedBy="script")
 	@ToString.Exclude
-	@JsonIgnore // Avoid back ref
+	@JsonBackReference // Avoid back ref
 	private Task task;
+	
+	// Just a means to get essential task data without the infinite recursion of field task 
+	@SuppressWarnings("unused")
+	public Optional<Object> getTaskOutline() {
+		
+		if (task != null) 
+			return Optional.of(new Object() {
+				public UUID id = task.getId();
+				public String client = task.getHomedir().getName();
+				public String fileName = task.getFileName(); 
+			}); 
+		else 
+			return Optional.empty();
+	}
 	
 	
 }

@@ -128,15 +128,13 @@
 
                   <v-card-text v-if="isEditorSql">
 
-                    <v-ace-editor v-model:value="task.script.query.body" lang="mysql" theme="github_dark"
-                      style="height: 100%; font-size: 100%;" />
+                    <v-ace-editor v-model:value="task.script.query.body" lang="mysql" theme="github_dark"/>
 
                   </v-card-text>
 
                   <v-card-text v-if="isEditorPython">
 
-                    <v-ace-editor v-model:value="task.script.body" lang="python" theme="one_dark"
-                      style="height: 100%; font-size: 100%;" />
+                    <v-ace-editor v-model:value="task.script.body" lang="python" theme="one_dark"/>
 
                   </v-card-text>
 
@@ -266,11 +264,11 @@ export default {
     console.log("MOUNTED: " + this.$route.params.id)
     console.log(this.$func.tomorrowDate())
 
-    if (this.$route.params.id) {
+    if (this.$route.params.id) { // existing task
       this.id = this.$route.params.id;
       this.loadTask();
     }
-    else {
+    else { // add new task to existing client
       this.isNew = true;
       this.clientid = this.$route.params.clientid;
       this.loadClient(this.clientid)

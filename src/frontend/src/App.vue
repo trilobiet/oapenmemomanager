@@ -132,25 +132,31 @@ export default {
   }
 
   #oapen-query-preview,
-    #oapen-script-preview {
+  #oapen-script-preview {
 
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-family: monospace;
-      font-size: 85%;
-      background: #fff;
-      padding: 1em;
-      //margin-top: 10px;
-      color: #666666;
-      border-bottom: dotted 2px #fff;
-      background: #555;
-      color: #eee;
-    }
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: monospace;
+    font-size: 85%;
+    background: #fff;
+    padding: 1em;
+    //margin-top: 10px;
+    color: #666666;
+    border-bottom: dotted 2px #fff;
+    background: #555;
+    color: #eee;
+  }
 
-    .oapen-readonly-name input {
-      cursor: pointer !important;
-    }
+  .oapen-readonly-name input {
+    cursor: pointer !important;
+  }
+
+  .ace_editor {
+    font-size: 13px;
+    line-height: 1.4;
+    height: 100%;
+  }
 
 </style>
 

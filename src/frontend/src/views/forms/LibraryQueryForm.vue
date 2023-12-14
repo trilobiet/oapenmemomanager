@@ -68,8 +68,7 @@
 
                   <v-card-text>
 
-                    <v-ace-editor v-model:value="query.body" lang="mysql" theme="github_dark"
-                      style="height: 100%; font-size: 100%;" />
+                    <v-ace-editor v-model:value="query.body" lang="mysql" theme="github_dark"/>
 
                   </v-card-text>
 
@@ -93,14 +92,23 @@
 
               <v-row>
                 <v-col>
-                  <v-data-table-virtual hide-default-header class="bg-grey-lighten-5 oapen-query-refs-table"
-                    :headers="[{title:'usage in scripts',key:'name'},{title:'',key:'body'}]" 
+                  <v-data-table-virtual v-model:expanded="refscriptsExpanded" show-expand
+                    hide-default-header class="bg-grey-lighten-5 oapen-query-refs-table"
+                    :headers="refScriptsHeaders" 
                     :items="refscripts" item-value="name" density="compact"
-                    height="250"
                   >
+                    <!--
                     <template v-slot:[`item.body`]="{ item }">
-                      <code style="font-size:80%;white-space:wrap;max-width:1px;overflow:hidden">{{$func.truncate(item.body,100)}}</code>
-                    </template> 
+                      <code>{{$func.truncate(item.body,100)}}</code>
+                    </template> -->
+
+                    <template v-slot:expanded-row="{ columns, item }">
+                      <tr>
+                        <td :colspan="columns.length" class="bg-grey-darken-3">
+                          <code><pre>{{item.body}}</pre></code>
+                        </td>
+                      </tr>
+                    </template>                    
                 
                   </v-data-table-virtual>
                 </v-col>
@@ -187,6 +195,13 @@ export default {
       alertDetail: "",
       takenQueryNames: {},
       refscripts: [],
+      refScriptsHeaders: [
+        {title: 'usage in scripts', key: 'name'},
+        {title: 'task', key: 'taskOutline.fileName'},
+        {title: 'client', key: 'taskOutline.client'},
+        {title: '', key: 'data-table-expand' }, 
+      ],
+      refscriptsExpanded: []
     }
   },
 
@@ -339,10 +354,21 @@ export default {
 
 </script>
 
-<style>
+<style lang="scss">
 
   .oapen-query-refs-table .v-table__wrapper{
       overflow-x: hidden;
+
+      code pre {
+        display:block;
+        padding: 10px;
+        font-size:80%;
+      }
+  }
+
+  .v-data-table__td {
+    overflow: hidden;
+    white-space: wrap;
   }
 
 </style>
