@@ -8,6 +8,8 @@
           transition="scale-transition" width="70" />
       </div>
 
+      <h3 style="margin-left:1em;opacity:.85">MEMO Manager</h3>
+
       <v-spacer></v-spacer>
 
       <v-chip v-if="user" class="text-caption">
@@ -24,8 +26,8 @@
           <v-list-item :to="{ name: 'home' }">
             <v-list-item-title>Home</v-list-item-title>
           </v-list-item>
-          <v-list-item :to="{ name: 'queries' }">
-            <v-list-item-title>Queries</v-list-item-title>
+          <v-list-item :to="{ name: 'library' }">
+            <v-list-item-title>Library</v-list-item-title>
           </v-list-item>
           <v-list-item :to="{ name: 'settings' }">
             <v-list-item-title>Settings</v-list-item-title>
@@ -133,19 +135,36 @@ export default {
 
   #oapen-query-preview,
   #oapen-script-preview {
-
-    white-space: nowrap;
-    overflow: hidden;
+    position: relative;
+    white-space: pre;
+    overflow: auto;
+    overflow-x: hidden;
     text-overflow: ellipsis;
     font-family: monospace;
     font-size: 85%;
     background: #fff;
-    padding: 1em;
-    //margin-top: 10px;
+    padding: 0 17px 17px;
     color: #666666;
     border-bottom: dotted 2px #fff;
     background: #555;
     color: #eee;
+    height: 20em;
+
+    &::before {
+      position: sticky;
+      content: 'preview';
+      display: block;
+      top: 0; 
+      margin-left: -17px; 
+      margin-right: -17px;
+      margin-bottom: 1em;
+      background: #F8F8FA;
+      padding: 2px 17px;
+      border-radius: 0px;
+      color: #666;
+      font-family: "Roboto", sans-serif;
+      line-height: 1.8;
+    }
   }
 
   .oapen-readonly-name input {
@@ -157,6 +176,13 @@ export default {
     line-height: 1.4;
     height: 100%;
   }
+
+  a[target='memoweb'] {
+    text-decoration: none;
+    margin-right: 5px;
+    vertical-align: inherit;
+  }
+
 
 </style>
 

@@ -67,8 +67,6 @@
                 </v-col>
               </v-row>
 
-              <v-divider class="mt-4 mb-8" />
-
               <v-row>
                 <v-col cols="12" sm="6">
 
@@ -99,55 +97,56 @@
                 <v-card>
 
                   <v-card-title v-if="isEditorPython">
-                    <v-container fluid>
+                    <v-container fluid class="pb-0">
                       <v-row>
                         <v-col>
                           <v-icon icon="mdi-language-python" />
                           {{ 'Python Editor: ' + (!task.script.name ? 'new' : task.script.name) }}
                         </v-col>
-                        <v-col class="text-right">
-                          <v-btn @click="showEditorSql()" class="bg-primary">switch to SQL view</v-btn>
+                        <v-col>
+                          <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn @click="showEditorSql()" class="bg-primary px-4">switch to SQL view</v-btn>
+                            <v-btn variant="outlined" color="primary" @click="closeEditors()" title="exit fullscreen">
+                              <v-icon size="25" icon="mdi-exit-to-app"/>
+                            </v-btn>
+                          </v-card-actions>    
                         </v-col>
                       </v-row>
                     </v-container>
                   </v-card-title>
 
                   <v-card-title v-if="isEditorSql">
-                    <v-container fluid>
+                    <v-container fluid class="pb-0">
                       <v-row>
                         <v-col>
                           <v-icon icon="mdi-database-search" />
                           {{ 'SQL Editor: ' + (!task.script.query.name ? 'new' : task.script.query.name) }}
                         </v-col>
-                        <v-col class="text-right">
-                          <v-btn @click="showEditorPython()" class="bg-primary">switch to Python view</v-btn>
+                        <v-col>
+                          <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn @click="showEditorPython()" class="bg-primary px-4">switch to Python view</v-btn>
+                            <v-btn variant="outlined" color="primary" @click="closeEditors()" title="exit fullscreen">
+                              <v-icon size="25" icon="mdi-exit-to-app"/>
+                            </v-btn>
+                          </v-card-actions>  
                         </v-col>
                       </v-row>
                     </v-container>
                   </v-card-title>
 
                   <v-card-text v-if="isEditorSql">
-
                     <v-ace-editor v-model:value="task.script.query.body" lang="mysql" theme="github_dark"/>
-
                   </v-card-text>
 
                   <v-card-text v-if="isEditorPython">
-
                     <v-ace-editor v-model:value="task.script.body" lang="python" theme="one_dark"/>
-
                   </v-card-text>
-
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn text="Close Editor" @click="closeEditors()"></v-btn>
-                  </v-card-actions>
 
                 </v-card>
 
               </v-dialog>
-
-              <v-divider class="mt-4 mb-8" />
 
               <v-row>
                 <v-col cols="12">
@@ -304,7 +303,7 @@ export default {
           v => !!v || "Value is required",
           v => (v && v.length >= 4) || "Value cannot be shorter than 3 characters",
           v => this.hasExtension(v) || "Not a valid extension",
-          v => this.validateFilenameFree(v) || 'File name is already in use for this client. Choose another name.',
+          v => this.validateFileNameFree(v) || 'File name is already in use for this client. Choose another name.',
         ],
         startDate: [
           v => !!v || "Value is required",
@@ -389,7 +388,8 @@ export default {
             console.log(resp)
             this.alert = this.$alert.SUCCESS;
             this.alertMsg = "Task saved";
-            setTimeout(() => { router.push({ name: 'client', params: { id: this.client.id } }) }, 1000);
+            //setTimeout(() => { router.push({ name: 'client', params: { id: this.client.id } }) }, 1000);
+            setTimeout(() => { router.go(-1) }, 1000);
           })
           .catch(err => {
             console.log(err)
@@ -417,7 +417,8 @@ export default {
           .then(() => {
             this.alert = this.$alert.SUCCESS;
             this.alertMsg = "Task deleted";
-            setTimeout(() => { router.push({ name: 'client', params: { id: this.client.id } }) }, 1000);
+            //setTimeout(() => { router.push({ name: 'client', params: { id: this.client.id } }) }, 1000);
+            setTimeout(() => { router.go(-1) }, 1000);
           })
           .catch(err => {
             this.alert = this.$alert.ERROR;
@@ -428,13 +429,13 @@ export default {
 
     },
 
-    validateFilenameFree(filename) {
+    validateFileNameFree(fileName) {
 
       // console.log("FILENAME="+filename)
       // console.log("TAKEN="+this.takenFileNames)
 
-      if (!filename) return false;
-      const posInList = this.takenFileNames.indexOf(filename.trim())
+      if (!fileName) return false;
+      const posInList = this.takenFileNames.indexOf(fileName.trim())
       if (posInList == -1) return true
       else return false
     },

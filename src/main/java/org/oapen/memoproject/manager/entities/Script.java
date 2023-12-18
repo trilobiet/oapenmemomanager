@@ -17,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -84,6 +85,10 @@ public class Script implements Serializable {
 		else 
 			return Optional.empty();
 	}
+	
+	// Count scripts that have a reference to this (library) script name
+	@Formula("(SELECT count(s.name) FROM script s WHERE s.body LIKE CONCAT('%',name,'%') )")
+	private int references;
 	
 	
 }

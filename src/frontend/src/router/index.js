@@ -1,15 +1,15 @@
 import { createWebHistory, createRouter } from "vue-router";
 import Home from "@/views/Home.vue";
-import Queries from "@/views/Queries.vue";
-import Settings from "@/views/Settings.vue";
 import Client from "@/views/Client.vue";
 import ClientForm from "@/views/forms/ClientForm.vue";
 import TaskForm from "@/views/forms/TaskForm.vue";
+import Library from "@/views/Library.vue";
 import LibraryQueryForm from "@/views/forms/LibraryQueryForm.vue";
+import LibraryScriptForm from "@/views/forms/LibraryScriptForm.vue";
+import Settings from "@/views/Settings.vue";
 import SessionExpired from "@/views/SessionExpired.vue";
 
 import axios from 'axios'
-
 
 const routes = [
   {
@@ -43,14 +43,29 @@ const routes = [
     component: TaskForm,
   },
   {
-    path: "/queries",
-    name: "queries",
-    component: Queries,
+    path: "/library",
+    name: "library",
+    component: Library,
+  },
+  {
+    path: "/query",
+    name: "queryNew",
+    component: LibraryQueryForm,
   },
   {
     path: "/query/:id",
     name: "query",
     component: LibraryQueryForm,
+  },
+  {
+    path: "/script",
+    name: "scriptNew",
+    component: LibraryScriptForm,
+  },
+  {
+    path: "/script/:id",
+    name: "script",
+    component: LibraryScriptForm,
   },
   {
     path: "/settings",
@@ -91,6 +106,5 @@ router.beforeEach((to,from,next) => {
   }  
 
 })
-
 
 export default router;

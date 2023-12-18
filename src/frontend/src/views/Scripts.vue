@@ -1,6 +1,6 @@
 <template>
   
-  <div class="queries">
+  <div class="scripts">
 
     <v-container fluid>
 
@@ -9,10 +9,10 @@
         <v-toolbar>  
 
           <v-toolbar-title class="font-weight-bold">
-            <v-icon>mdi-database-search</v-icon> Query Library
+            <v-icon>mdi-language-python</v-icon> Script Library
           </v-toolbar-title>
 
-          <v-btn variant="tonal" class="bg-primary" @click="newQuery()">New Query</v-btn>
+          <v-btn variant="tonal" class="bg-primary" @click="newScript()">New Script</v-btn>
 
         </v-toolbar>
 
@@ -29,11 +29,11 @@
           <v-data-table  
             :sort-by="['name','references']" hover 
             :loading="loading" :search="tableSearch" 
-            :headers="headers" :items="queries"   
+            :headers="headers" :items="scripts"   
             calculate-widths>
 
             <template v-slot:[`item.name`]="{ item }">
-              <span style="cursor:pointer" @click="editQuery(item)"
+              <span style="cursor:pointer" @click="editScript(item)"
                 class="text-blue-darken-4"
               >{{item.name}}</span>
             </template> 
@@ -65,7 +65,7 @@ export default {
       loading: true,
       tableSearch: '',
       headers: [],
-      queries:[], 
+      scripts:[], 
     }    
   },
   
@@ -74,17 +74,17 @@ export default {
   },
 
   mounted() {
-    this.loadQueries();
+    this.loadScripts();
   },
   
   methods: {
 
-    loadQueries() {
+    loadScripts() {
 
       this.loading = true; 
-      this.$axios.get(`/api/query/library`)
+      this.$axios.get(`/api/script/snippets`)
       .then(resp => {
-         this.queries=resp.data;
+         this.scripts=resp.data;
          console.log(resp.data);
          this.headers=this.getHeaders(resp.data);
       })
@@ -102,13 +102,13 @@ export default {
       return arr;
     },
 
-    editQuery(query) {
-      console.log("QUERY: " + query.id)
-      this.$router.push({ name: 'query', params: {id: query.id} })
+    editScript(script) {
+      console.log("SCRIPT: " + script.id)
+      this.$router.push({ name: 'script', params: {id: script.id} })
     },
 
-    newQuery() {
-      this.$router.push({ name: 'queryNew' })
+    newScript() {
+      this.$router.push({ name: 'scriptNew' })
     },
 
   }

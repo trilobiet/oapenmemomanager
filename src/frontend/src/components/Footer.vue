@@ -3,7 +3,7 @@
     <v-row justify="center" no-gutters>
 
       <v-btn color="#334" rounded variant="text" class="ma-2" :to="{ name: 'home' }">home</v-btn>
-      <v-btn color="#334" rounded variant="text" class="ma-2" :to="{ name: 'queries' }">queries</v-btn>
+      <v-btn color="#334" rounded variant="text" class="ma-2" :to="{ name: 'library' }">library</v-btn>
       <v-btn color="#334" rounded variant="text" class="ma-2" :to="{ name: 'settings' }">settings</v-btn>
       <v-btn color="#334" rounded variant="text" class="ma-2" href="/logout?logout">logout</v-btn>
 

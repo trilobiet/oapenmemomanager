@@ -9,7 +9,7 @@
 
           <v-toolbar>
             <v-toolbar-title class="font-weight-bold">
-              <v-icon>mdi-database-search</v-icon> Query Library
+              <v-icon>mdi-database-search</v-icon> Scripts Library
             </v-toolbar-title>
           </v-toolbar>
 
@@ -19,21 +19,21 @@
 
             <my-wrapper>
 
-              <my-form-header>{{ isNew ? "New library query" : "Edit library query " }}</my-form-header>
+              <my-form-header>{{ isNew ? "New library script" : "Edit library script " }}</my-form-header>
 
               <v-row>
 
                 <v-col cols="6">
-                  <v-text-field v-if="!refscripts.length" label="query name" v-model="query.name" :rules="validation.queryName" />
-                  <v-text-field v-else label="query name" v-model="query.name" readonly disabled 
-                   hint="Remove references to edit query name" persistent-hint />
+                  <v-text-field v-if="!refscripts.length" label="script naaame" v-model="script.name" :rules="validation.scriptName" />
+                  <v-text-field v-else label="script name" v-model="script.name" readonly disabled 
+                   hint="Remove references to edit script name" persistent-hint />
                 </v-col>
 
                 <v-col cols="6">
 
                   <v-text-field bg-color="transparent" class="text-primary oapen-readonly-name" @focus="showEditor()"
-                    label="query (click to edit)" readonly v-model="query.name" variant="outlined" persistent-placeholder
-                    prepend-inner-icon="mdi-database-search" />
+                    label="script (click to edit)" readonly v-model="script.name" variant="outlined" persistent-placeholder
+                    prepend-inner-icon="mdi-language-python" />
 
                 </v-col>
 
@@ -42,8 +42,8 @@
               <v-row>
 
                 <v-col>
-                  <div id="oapen-query-preview">
-                    {{ query.body ? query.body : '[no content]' }}
+                  <div id="oapen-script-preview">
+                    {{ script.body ? script.body : '[no content]' }}
                   </div>
                 </v-col>
 
@@ -57,8 +57,8 @@
                     <v-container fluid class="pb-0">
                       <v-row>
                         <v-col>
-                          <v-icon icon="mdi-database-search" />
-                          {{ 'SQL Editor: ' + (!query.name ? 'new' : query.name) }}
+                          <v-icon icon="mdi-language-pyhton" />
+                          {{ 'Python Editor: ' + (!script.name ? 'new' : script.name) }}
                         </v-col>
                         <v-col>
                           <v-card-actions>
@@ -73,7 +73,7 @@
                   </v-card-title>
 
                   <v-card-text>
-                    <v-ace-editor v-model:value="query.body" lang="mysql" theme="github_dark"/>
+                    <v-ace-editor v-model:value="script.body" lang="python" theme="one_dark"/>
                   </v-card-text>
 
                 </v-card>
@@ -82,10 +82,10 @@
 
               <v-row>
                 <v-col>
-                  <v-textarea label="params" v-model="query.params" hint="one param per line" rows="4" auto-grow />
+                  <v-textarea label="params" v-model="script.params" hint="one param per line" rows="4" auto-grow />
                 </v-col>
                 <v-col>
-                  <v-textarea label="notes" v-model="query.notes" rows="4" auto-grow />
+                  <v-textarea label="notes" v-model="script.notes" rows="4" auto-grow />
                 </v-col>
               </v-row>
 
@@ -116,12 +116,12 @@
 
               <v-row v-if="!isNew" >
                 <v-col>
-                  <my-danger-zone v-if="refscripts" color="grey">
+                  <my-danger-zone v-if="refscripts.length" color="grey">
                     Delete query not available ({{refscripts.length}} references)
-                    <v-btn disabled text="Delete this query" prepend-icon="mdi-alert" variant="tonal"/>
+                    <v-btn disabled text="Delete this script" prepend-icon="mdi-alert" variant="tonal"/>
                   </my-danger-zone>
                   <my-danger-zone v-else>
-                    <v-btn @click="deleteQuery()" text="Delete this query" prepend-icon="mdi-alert" variant="tonal"/>
+                    <v-btn @click="deleteQuery()" text="Delete this script" prepend-icon="mdi-alert" variant="tonal"/>
                   </my-danger-zone>
                 </v-col>
               </v-row>  
@@ -197,18 +197,18 @@ export default {
     return {
       isNew: false,
       isEditor: false,
-      query: {isLibrary: true},
+      script: {type:'SNIP'},
       isValidForm: false,
       id: null,
       alert: this.$alert.NONE, // ERROR,INFO,SUCCESS,WARNING,NONE
       alertMsg: "",
       alertDetail: "",
-      takenQueryNames: [],
+      takenScriptNames: [],
       refscripts: [],
       refScriptsHeaders: [
-        {title: 'references in scripts', key: 'name'},
-        {title: 'task', key: 'taskOutline.fileName'},
-        {title: 'client', key: 'taskOutline.client'},
+        {title: 'References in other scripts', key: 'name'},
+        {title: 'Task', key: 'taskOutline.fileName'},
+        {title: 'Client', key: 'taskOutline.client'},
         {title: '', key: 'data-table-expand' }, 
       ],
       refscriptsExpanded: []
@@ -222,7 +222,7 @@ export default {
 
     if (this.$route.params.id) {
       this.id = this.$route.params.id;
-      this.loadQuery();
+      this.loadScript();
     }
     else {
       this.isNew = true;
@@ -240,9 +240,9 @@ export default {
 
       return {
 
-        queryName: [
-          v => (v && v.length >= 2) || "Query name is required",
-          v => this.validateQueryNameFree(v) || 'Query name is already in use. Choose another name.',
+        scriptName: [
+          v => (v && v.length >= 2) || "Script name is required",
+          v => this.validateScriptNameFree(v) || 'Script name is already in use. Choose another name.',
         ],
       }
     },
@@ -251,12 +251,12 @@ export default {
 
   methods: {
 
-    loadQuery() {
+    loadScript() {
 
-      this.$axios.get(`/api/query/` + this.id)
+      this.$axios.get(`/api/script/` + this.id)
         .then(resp => {
-          this.query = resp.data
-          this.loadReferingScripts(this.query)
+          this.script = resp.data;
+          this.loadReferingScripts(this.script)
           this.loadTakenQueryNames()
         })
         .catch(error => console.log(error))
@@ -264,9 +264,9 @@ export default {
 
     },
 
-    loadReferingScripts(query) {
+    loadReferingScripts(script) {
 
-      this.$axios.get(`/api/script/searchinbody?term=` + query.name)
+      this.$axios.get(`/api/script/searchinbody?term=` + script.name)
         .then(resp => {
           this.refscripts = resp.data;
           //console.log("REFSCRIPTS=" + this.refscripts[0].body)
@@ -276,29 +276,30 @@ export default {
 
     },
 
-    loadTakenQueryNames() { 
+    loadTakenScriptNames() {
 
-      this.$axios.get(`/api/query/`)
+      // TODO  
+      this.$axios.get(`/api/script/`)
         .then(resp => {
-          this.takenQueryNames = resp.data
+          this.takenScriptNames = resp.data
             .map(v => v.name)
             .filter(v => v !== this.name); // not it's own name!
-          console.log("TAKEN: " + this.takenQueryNames)
+          console.log("TAKEN: " + this.takenScriptNames)
         })
         .catch(error => console.log(error))
         .finally(() => this.loading = false)
 
     },
 
-    saveQuery() {
+    saveScript() {
 
-      if (this.$refs.queryForm.validate()) {
+      if (this.$refs.scriptForm.validate()) {
 
-        this.$axios.post(`/api/query`, this.query)
+        this.$axios.post(`/api/script`, this.script)
           .then(resp => {
             console.log(resp)
             this.alert = this.$alert.SUCCESS;
-            this.alertMsg = "Query saved";
+            this.alertMsg = "Script saved";
             setTimeout(() => { router.push({ name: 'library' }) }, 1000);
           })
           .catch(err => {
@@ -318,14 +319,14 @@ export default {
 
     },
 
-    deleteQuery() {
+    deleteScript() {
 
-      if (confirm("This query will be deleted!\nAre you sure?")) {
+      if (confirm("This script will be deleted!\nAre you sure?")) {
 
-        this.$axios.delete(`/api/query/` + this.query.id)
+        this.$axios.delete(`/api/script/` + this.script.id)
           .then(() => {
             this.alert = this.$alert.SUCCESS;
-            this.alertMsg = "Query deleted";
+            this.alertMsg = "Script deleted";
             setTimeout(() => { router.push({ name: 'library' }) }, 1000);
           })
           .catch(err => {
@@ -337,13 +338,13 @@ export default {
 
     },
 
-    validateQueryNameFree(queryName) {
+    validateScriptNameFree(scriptName) {
 
       // console.log("FILENAME="+filename)
       // console.log("TAKEN="+this.takenFileNames)
 
-      if (!queryName) return false;
-      const posInList = this.takenQueryNames.indexOf(queryName.trim())
+      if (!scriptName) return false;
+      const posInList = this.takenScriptNames.indexOf(scriptName.trim())
       if (posInList == -1) return true
       else return false
     },
