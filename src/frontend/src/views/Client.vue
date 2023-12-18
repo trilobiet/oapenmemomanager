@@ -20,8 +20,8 @@
 
             <v-toolbar class="mb-4">  
 
-              <v-toolbar-title class="text-body-1">
-                username: <strong>{{ client.username }}</strong>
+              <v-toolbar-title class="text-body-2">
+                <strong>Username: {{ client.username }}</strong>
               </v-toolbar-title>
 
               <v-btn variant="tonal" class="bg-primary" @click="editClient()">Edit Client</v-btn>
@@ -29,14 +29,15 @@
             </v-toolbar>
 
             <v-row>
-              <v-col>
+              <v-col class="px-7">
                 <strong>Client home:</strong><br/>
                 <a :href="$func.getClientUrl(client.username)" target="memoweb">{{$func.getClientUrl(client.username)}}</a>
+                <v-icon icon="mdi-open-in-new" size="x-small"/>
               </v-col>
             </v-row>  
 
             <v-row v-if="client.notes">
-              <v-col>
+              <v-col class="px-7">
                 <strong>Notes:</strong><br/>
                 {{client.notes}}
               </v-col>
@@ -44,8 +45,8 @@
 
             <v-toolbar class="mt-8 mb-4">  
 
-              <v-toolbar-title class="text-body-1">
-                <v-icon>mdi-table-clock</v-icon> export tasks
+              <v-toolbar-title class="text-body-2">
+                <v-icon>mdi-table-clock</v-icon> <b>Export tasks</b>
               </v-toolbar-title>
 
               <v-btn variant="tonal" class="bg-primary" @click="newTask()">New Export Task</v-btn>
@@ -54,7 +55,7 @@
 
             <v-row>
               <v-col>
-                <v-data-table :headers="headers" :items="tasks" hover>
+                <v-data-table :headers="headers" :items="tasks" hover >
 
                   <template v-slot:[`item.fileName`]="{ item }">
                     <v-icon color="#999" :icon="$func.extensionIcon($func.getExtension(item.fileName))" size="small" class="mr-2"/>
@@ -148,11 +149,11 @@
         client: {},
         tasks: [],
         headers: [
-          { title: "file name", key: "fileName"},
-          { title: "active", key: "active", width: "1em"},
-          { title: "last run", key: "latestLog.date" },
-          { title: "frequency", key: "frequency" },
-          { title: "start date", key: "startDate" },
+          { title: "File name", key: "fileName"},
+          { title: "Active", key: "active", width: "1em"},
+          { title: "Last run", key: "latestLog.date" },
+          { title: "Frequency", key: "frequency" },
+          { title: "Start date", key: "startDate" },
         ],
         isShowRunlog: false,
         runlogId: null,

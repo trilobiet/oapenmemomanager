@@ -22,8 +22,8 @@
                 <!-- Edit Client Dialog ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
                 <v-dialog v-model="dialog" width="1024" max-width="90%" scrollable @click:outside="cancelForm">
                 
-                  <template v-slot:activator="{ props }">
-                    <v-btn class="bg-primary" v-bind="props">New Setting</v-btn>
+                  <template v-slot:activator>
+                    <v-btn class="bg-primary" @click="editSetting()">New Setting</v-btn>
                   </template>
 
                   <setting-form :insetting="editedSetting" @cancel="cancelForm" @save="saveSetting" 

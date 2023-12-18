@@ -50,14 +50,19 @@ export const globalfunctions = {
 
 		return str.toLowerCase()
 			.normalize('NFD')	
-			.replace(/[^\w\s]/gi, '')
-			.replace(/ /g,"_");
-
+			.replace(/ +/g,"_")
+			.replace(/[^\w\s]+/gi, '_')
+			
 	},
 
 	getClientUrl(username) {
 
 		return 'https://memo.oapen.org/clients/' + username
+	},
+
+	getClientPath(username) {
+
+		return '/clients/' + username
 	},
 
 	// https://stackoverflow.com/questions/18758772/how-do-i-validate-a-date-in-this-format-yyyy-mm-dd-using-jquery

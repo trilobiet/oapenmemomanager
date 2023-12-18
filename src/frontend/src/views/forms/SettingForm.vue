@@ -76,7 +76,7 @@
     data() {
       return {
         isNew: false,
-        isValidForm: false,
+        isValidForm: true,
         setting: {},
       }      
     },
@@ -87,8 +87,9 @@
 
       console.log("MOUNTED")
 
-      if (this.setting.key == null || this.setting.key.length == 0) 
-      this.isNew = true;
+      if (this.setting.key == null || this.setting.key.length == 0) {
+        this.isNew = true;
+      }
 
     },
 

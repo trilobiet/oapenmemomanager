@@ -62,7 +62,7 @@
                 </v-col>  
 
                 <v-col v-if="setPassword" class="text-lg-right"><!-- No way to retrieve the password from saved (encrypted) clients -->
-                  <v-btn class="mt-2" color="blue" text="copy credentials to clipboard" @click="copyCredentials()"/>
+                  <v-btn :disabled="!client.password" class="mt-2" color="blue" text="copy credentials to clipboard" @click="copyCredentials()"/>
                   <div class="text-caption mt-4">
                     <strong>Attn:</strong> Credentials can only be copied when the password is newly set. 
                     <br/>Once stored, passwords cannot be deciphered.
@@ -270,7 +270,7 @@ import router from '@/router';
 
         if(this.isValidForm) {
           navigator.clipboard.writeText("username: " + this.client.username + "\npassword: " + this.client.password);
-          alert("Username/password copied to clipboard!");  
+          alert("Username + password copied to clipboard!");  
         }
         else alert("Nothing copied - fix validation issues first!");  
       },

@@ -38,6 +38,13 @@
               >{{item.name}}</span>
             </template> 
 
+            <template v-slot:[`item.url`]="{ item }">
+              <a :href="$func.getClientUrl(item.username)" target="memoweb">
+                {{$func.getClientPath(item.username)}}
+              </a>
+              <v-icon icon="mdi-open-in-new" size="x-small"/>
+            </template> 
+
             <template v-slot:[`item.passedTaskCount`]="{ item }">
               <v-chip v-if="item.passedTaskCount > 0" variant="flat" color="green" size="small">
                 <strong>{{item.passedTaskCount}}</strong>
@@ -122,6 +129,7 @@ export default {
 
       let arr = [
         { title: "Name", key: "name" },
+        { title: "Client home", key: "url" },
 				{ title: "User name", key: "username" },
         { title: "Tasks", key: "taskCount", align: "end" },
         { title: "Passed Tasks", key: "passedTaskCount", align: "center" },
@@ -144,3 +152,4 @@ export default {
 
 }; 
 </script>
+
