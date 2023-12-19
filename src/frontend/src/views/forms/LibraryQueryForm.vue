@@ -92,7 +92,7 @@
               <v-row v-if="!isNew">
                 <v-col>
                   <v-data-table-virtual v-model:expanded="refscriptsExpanded" show-expand
-                    hide-default-header class="bg-grey-lighten-5 oapen-query-refs-table"
+                    hide-default-header class="bg-grey-lighten-5 oapen-script-refs-table"
                     :headers="refScriptsHeaders" no-data-text="no references" 
                     :items="refscripts" item-value="name" density="compact"
                   >
@@ -365,21 +365,3 @@ export default {
 
 </script>
 
-<style lang="scss">
-
-  .oapen-query-refs-table .v-table__wrapper{
-      overflow-x: hidden;
-
-      code pre {
-        display:block;
-        padding: 10px;
-        font-size:80%;
-      }
-  }
-
-  .v-data-table__td {
-    overflow: hidden;
-    white-space: wrap;
-  }
-
-</style>

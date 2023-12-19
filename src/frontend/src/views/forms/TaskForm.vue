@@ -39,20 +39,25 @@
 
               <v-row>
                 <v-col cols="12" sm="6">
-                  <v-text-field label="start date" v-model="task.startDate" :rules="validation.startDate"
-                    append-inner-icon="mdi-hours-24" @click:appendInner="task.startDate = $func.tomorrowDate()"
-                    hint="Format: yyyy-mm-dd (e.g. 2023-12-31)" />
+                  <v-checkbox v-model="task.active"
+                    :label="task.active ? 'Task is actived' : 'Task is currently suspended. Click to activate schedule.'"
+                    :class="task.active ? 'text-green' : 'text-orange-darken-2'" />
                 </v-col>
                 <v-col cols="12" sm="6">
-                  <v-checkbox v-model="task.active"
-                    :label="task.active ? 'active' : 'click to activate (task is currently suspended)'"
-                    :class="task.active ? 'text-green' : 'text-deep-orange-darken-3'" />
+                  <v-checkbox v-model="task.public"
+                    :label="task.public ? 'Task is public. No passkey is needed!' : 'Task is private. Click to make public.'"
+                    :class="task.public ? 'text-orange-darken-2' : 'text-green'" />
                 </v-col>
               </v-row>
 
               <v-row>
                 <v-col cols="12" sm="6">
-                  <v-radio-group label="frequency" v-model="task.frequency" inline>
+                  <v-text-field label="start date" v-model="task.startDate" :rules="validation.startDate"
+                    append-inner-icon="mdi-hours-24" @click:appendInner="task.startDate = $func.tomorrowDate()"
+                    hint="Format: yyyy-mm-dd (e.g. 2023-12-31)" />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <v-radio-group v-model="task.frequency" inline >
                     <v-radio label="daily" value="D" />
                     <v-radio label="weekly" value="W" />
                     <v-radio label="monthy" value="M" />
@@ -235,7 +240,8 @@ export default {
       isNew: false,
       task: {
         fileName: "",
-        script: { query: {}, type: 'MAIN' }
+        script: { query: {}, type: 'MAIN' },
+        latestLog: {date: null}
       },
       isValidForm: false,
       id: null,

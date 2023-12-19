@@ -8,10 +8,20 @@
         <v-data-table id="oapen-logtable" :headers="headers" :items="loglines" density="compact"
          show-expand fixed-header="true" expand-on-click height="100%" >
 
+          <template v-slot:[`item.date`]="{ item }">
+            <span v-if="!item.success" style="color:red">{{item.date}}</span>
+            <span v-else>{{item.date}}</span>
+          </template>           
+
           <template v-slot:[`item.shortMessage`]="{ item }">
             <code style="font-size:.8rem">{{item.shortMessage}}</code>
           </template>           
         
+          <template v-slot:[`item.success`]="{ item }">
+            <v-chip v-if="item.success" color="green" density="small" class="text-caption">success</v-chip>
+            <v-chip v-else color="red" density="small" class="text-caption">failure</v-chip>
+          </template>           
+
           <template v-slot:expanded-row="{ item }">
             <tr v-if="item.message" style="background:#bbb;">
               <td colspan="2">

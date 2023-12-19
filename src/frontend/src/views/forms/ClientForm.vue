@@ -61,7 +61,7 @@
                   <v-switch v-model="setPassword" inset></v-switch>
                 </v-col>  
 
-                <v-col v-if="setPassword" class="text-lg-right"><!-- No way to retrieve the password from saved (encrypted) clients -->
+                <v-col class="text-lg-right"><!-- No way to retrieve the password from saved (encrypted) clients -->
                   <v-btn :disabled="!client.password" class="mt-2" color="blue" text="copy credentials to clipboard" @click="copyCredentials()"/>
                   <div class="text-caption mt-4">
                     <strong>Attn:</strong> Credentials can only be copied when the password is newly set. 
@@ -195,6 +195,7 @@ import router from '@/router';
           ],
           username: [
             v => !!v || "Value is required",
+            v => (v && this.$func.isValidUserName(v)) || "Value can only contain A-Z, a-z, 0-9, - and _",
             v => (v && v.length >= 3) || "Value cannot be shorter than 3 characters"
           ],
           password: [

@@ -1,9 +1,9 @@
 <template>
-  <div class="query-form">
+  <div class="script-form">
 
     <v-container fluid>
 
-      <v-form ref="queryForm" v-model="isValidForm" validate-on="lazy input">
+      <v-form ref="scriptForm" v-model="isValidForm" validate-on="lazy input">
 
         <v-card class="elevation-5">
 
@@ -92,7 +92,7 @@
               <v-row v-if="!isNew">
                 <v-col>
                   <v-data-table-virtual v-model:expanded="refscriptsExpanded" show-expand
-                    hide-default-header class="bg-grey-lighten-5 oapen-query-refs-table"
+                    hide-default-header class="bg-grey-lighten-5 oapen-script-refs-table"
                     :headers="refScriptsHeaders" no-data-text="no references" 
                     :items="refscripts" item-value="name" density="compact"
                   >
@@ -156,7 +156,7 @@
                     <v-icon>mdi-alert-circle-outline</v-icon>
                     Please fix validation issues before saving
                   </span>
-                  <v-btn @click="saveQuery" text="Save" :disabled="!isValidForm" />
+                  <v-btn @click="saveScript" text="Save" :disabled="!isValidForm" />
                 </v-col>
 
               </v-row>
@@ -366,21 +366,3 @@ export default {
 
 </script>
 
-<style lang="scss">
-
-  .oapen-query-refs-table .v-table__wrapper{
-      overflow-x: hidden;
-
-      code pre {
-        display:block;
-        padding: 10px;
-        font-size:80%;
-      }
-  }
-
-  .v-data-table__td {
-    overflow: hidden;
-    white-space: wrap;
-  }
-
-</style>

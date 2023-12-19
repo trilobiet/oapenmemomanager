@@ -117,6 +117,19 @@ export const globalfunctions = {
 			return input.substring(0, maxsize) + ' \u2026';
 		else 
 			return input;
+	},
+
+	isValidFileName(s) {
+
+		// Only A-Z, a-z, 0-9 (\w) and _
+		return s.match(/^[\w_-]+$/)
+	},
+
+	isValidUserName(s) {
+
+		// Only A-Z, a-z, 0-9 (\w) and _
+		return s.match(/^[\w_-]+$/)
 	}
+
 
 }

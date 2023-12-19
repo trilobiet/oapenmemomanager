@@ -69,7 +69,6 @@ public class ScriptController {
 	
     @PostMapping("/script")
 	public Script save(
-		@PathVariable("id") UUID hId,
 		@RequestBody final Script script 
 	){
     	

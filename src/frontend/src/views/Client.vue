@@ -94,6 +94,10 @@
                     <v-chip v-else-if="item.frequency=='Y'" size="small" variant="flat" color="deep-orange">yearly</v-chip>
                   </template>
 
+                  <template v-slot:[`item.runNow`]="{ item }">
+                    <v-icon color="primary" icon="mdi-play-circle-outline" size="x-large" @click="runTask(item)"/>
+                  </template>
+
                   <template v-slot:no-data>
                     No tasks available.
                   </template>                  
@@ -150,10 +154,11 @@
         tasks: [],
         headers: [
           { title: "File name", key: "fileName"},
-          { title: "Active", key: "active", width: "1em"},
-          { title: "Last run", key: "latestLog.date" },
-          { title: "Frequency", key: "frequency" },
+          { title: "Active", key: "active", width: "1em", align: "center"},
+          { title: "Last run (click for log)", key: "latestLog.date" },
+          { title: "Frequency", key: "frequency", align: "center" },
           { title: "Start date", key: "startDate" },
+          { title: "Run now", key: "runNow", align: "center" },
         ],
         isShowRunlog: false,
         runlogId: null,
@@ -213,6 +218,12 @@
         this.runlogId = id
         this.isShowRunlog = true;
       },
+
+      runTask(item) {
+        console.log("Run Task " + item.id)
+        // TODO implement
+        alert("Feature to be implemented in a future version")
+      }
 
     },
 

@@ -131,6 +131,11 @@ export default {
       border-radius: 0;
     }
 
+    .v-data-table__td {
+      overflow: hidden;
+      white-space: wrap;
+    }
+
   }
 
   #oapen-query-preview,
@@ -182,6 +187,18 @@ export default {
     margin-right: 5px;
     vertical-align: inherit;
   }
+
+  .oapen-script-refs-table .v-table__wrapper{
+      overflow-x: hidden;
+
+      code pre {
+        display:block;
+        padding: 10px;
+        font-size:80%;
+      }
+  }
+
+
 
 
 </style>
