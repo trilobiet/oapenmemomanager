@@ -43,6 +43,7 @@ const myLightTheme = {
 		'primary-darken-1': '#3700B3',
 		secondary: '#ddd',
 		'secondary-darken-1': '#018786',
+		'btn-editor': '#F6ECF8',
 		error: '#B00020',
 		info: '#2196F3',
 		success: '#4CAF50',

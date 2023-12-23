@@ -19,22 +19,14 @@
 
             <my-wrapper>
 
-              <my-form-header>{{ isNew ? "New library script" : "Edit library script " }}</my-form-header>
+              <my-form-header>{{ isNew ? "New library script" : "Edit " + curName }}</my-form-header>
 
               <v-row>
 
-                <v-col cols="6">
-                  <v-text-field v-if="!refscripts.length" label="script naaame" v-model="script.name" :rules="validation.scriptName" />
+                <v-col>
+                  <v-text-field v-if="!refscripts.length" label="script name" v-model="script.name" :rules="validation.scriptName" />
                   <v-text-field v-else label="script name" v-model="script.name" readonly disabled 
                    hint="Remove references to edit script name" persistent-hint />
-                </v-col>
-
-                <v-col cols="6">
-
-                  <v-text-field bg-color="transparent" class="text-primary oapen-readonly-name" @focus="showEditor()"
-                    label="script (click to edit)" readonly v-model="script.name" variant="outlined" persistent-placeholder
-                    prepend-inner-icon="mdi-language-python" />
-
                 </v-col>
 
               </v-row>
@@ -42,9 +34,15 @@
               <v-row>
 
                 <v-col>
+
+                  <v-btn class="my-3" variant="tonal" width="100%" color="primary" prepend-icon="mdi-language-python" @focus="showEditor()">
+                    open script editor
+                  </v-btn>
+
                   <div id="oapen-script-preview">
                     {{ script.body ? script.body : '[no content]' }}
                   </div>
+
                 </v-col>
 
               </v-row>
@@ -195,6 +193,7 @@ export default {
 
   data() {
     return {
+      curName: "",
       isNew: false,
       isEditor: false,
       script: {type:'SNIP'},
@@ -242,6 +241,7 @@ export default {
 
         scriptName: [
           v => (v && v.length >= 2) || "Script name is required",
+          v => (v && this.$func.isValidFileName(v)) || "Script name can only contain A-Z, a-z, 0-9, -, _ and .",
           v => this.validateScriptNameFree(v) || 'Script name is already in use. Choose another name.',
         ],
       }
@@ -257,7 +257,8 @@ export default {
         .then(resp => {
           this.script = resp.data;
           this.loadReferingScripts(this.script)
-          this.loadTakenQueryNames()
+          this.loadTakenScriptNames()
+          this.curName = this.script.name
         })
         .catch(error => console.log(error))
         .finally(() => this.loading = false)
@@ -283,7 +284,7 @@ export default {
         .then(resp => {
           this.takenScriptNames = resp.data
             .map(v => v.name)
-            .filter(v => v !== this.name); // not it's own name!
+            .filter(v => v !== this.script.name); // not it's own name!
           console.log("TAKEN: " + this.takenScriptNames)
         })
         .catch(error => console.log(error))

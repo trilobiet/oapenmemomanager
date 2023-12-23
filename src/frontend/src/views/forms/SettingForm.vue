@@ -104,7 +104,7 @@
             v => (v && v.length >= 4) || 'Key cannot be shorter than 4 characters',
             v => (v && v.length <= 32) || 'Key cannot be longer than 32 characters',
             v => this.validateKeyFree(v) || 'Key is already in use. Choose another key.',
-            v => (v && !/\s/g.test(v)) || 'Key must not contain whitespace',
+            v => (v && this.$func.isValidSettingKey(v)) || 'Key may only contain A-Z, a-z, 0-9, _, - and .',
           ],
           value: [
             v => !!v || 'Value is required'

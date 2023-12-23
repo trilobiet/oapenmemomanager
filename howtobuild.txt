@@ -1,0 +1,37 @@
+
+Building:
+=========
+Stop running application!
+
+For production:
+mvn clean install -Pprod
+
+For local deployment:
+mvn clean install -Pdev
+
+Check: run ./oapenmemomanager-x.y.z.jar from the target directory
+and look for the line 'The following profiles are active: prod'.  
+
+
+Installation:
+=============
+As user oapen:
+--------------
+
+Copy jar to deployment path /home/oapen
+
+Update symlink (user oapen):
+- rm irus-dashboard.jar
+- ln -s irus-dashboard-0.1.2.jar irus-dashboard.jar 
+
+As root:
+--------
+
+Restart service after installation (user root)
+
+- systemctl stop irus-dashboard.service
+- systemctl start irus-dashboard.service
+
+logs can be found in 
+/var/log/irus-dashboard.log
+

@@ -12,7 +12,7 @@
 
 	<groupId>org.oapen.memoproject</groupId>
 	<artifactId>manager</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>managerapplication</name>
 	<description>OAPEN Management Application for MEMO Project</description>
 
@@ -94,6 +94,28 @@
 	</dependencies>
 
 
+    <profiles>
+    
+        <profile>
+            <id>dev</id>
+            <properties>
+                <activatedProperties>dev</activatedProperties>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        
+        <profile>
+            <id>prod</id>
+            <properties>
+                <activatedProperties>prod</activatedProperties>
+            </properties>
+        </profile>
+        
+    </profiles>	
+
+
 	<build>
 
 		<plugins>
@@ -103,9 +125,8 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<mainClass>org.oapen.memoproject.manager.Application</mainClass>
-					<layout>JAR</layout>
-				</configuration>
+					<executable>true</executable>
+				</configuration>		
 			</plugin>
 
 			<!-- https://www.danvega.dev/blog/2021/01/22/full-stack-java-vue/ -->
@@ -164,6 +185,15 @@
 
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
+			
+				<configuration>	
+					<nonFilteredFileExtensions>
+						<nonFilteredFileExtension>eot</nonFilteredFileExtension>
+            			<nonFilteredFileExtension>ttf</nonFilteredFileExtension>
+            			<nonFilteredFileExtension>woff</nonFilteredFileExtension>
+            			<nonFilteredFileExtension>woff2</nonFilteredFileExtension>
+            		</nonFilteredFileExtensions>	
+            	</configuration>
 
 				<executions>
 

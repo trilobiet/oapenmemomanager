@@ -11,6 +11,8 @@
     "@fontsource/roboto": "^5.0.8",
     "@mdi/font": "^7.3.67",
     "axios": "^1.6.0",
+    "browserslist": "^4.22.2",
+    "caniuse-lite": "^1.0.30001571",
     "core-js": "^3.8.3",
     "vue": "^3.2.13",
     "vue-router": "^4.2.5",

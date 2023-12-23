@@ -75,23 +75,33 @@
               <v-row>
                 <v-col cols="12" sm="6">
 
-                  <v-text-field bg-color="transparent" class="text-primary oapen-readonly-name"
-                    @focus="showEditorPython()" label="script (click to edit)" readonly v-model="task.script.name"
-                    variant="outlined" persistent-placeholder prepend-inner-icon="mdi-language-python" />
+                  <div class="text-subtitle-2 text-grey-darken-2">
+                    <v-icon icon="mdi-language-python" class="mr-1"/>
+                    {{ task.script.name || 'new script'}}
+                  </div>
+
+                  <v-btn class="my-3" variant="tonal" width="100%" color="primary" prepend-icon="mdi-language-python" @focus="showEditorPython()">
+                    open script editor
+                  </v-btn>
 
                   <div id="oapen-script-preview">
-                    {{ task.script.body ? task.script.body : '[no content]' }}
+                    {{ task.script.body || '[no content]' }}
                   </div>
 
                 </v-col>
                 <v-col cols="12" sm="6">
 
-                  <v-text-field bg-color="transparent" class="text-primary oapen-readonly-name" @focus="showEditorSql()"
-                    label="query (click to edit)" readonly v-model="task.script.query.name" variant="outlined"
-                    persistent-placeholder prepend-inner-icon="mdi-database-search" />
+                  <div class="text-subtitle-2 text-grey-darken-2">
+                    <v-icon icon="mdi-database-search" class="mr-1"/>
+                    {{ task.script.query.name || 'new query' }}
+                  </div>
+
+                  <v-btn class="my-3" variant="tonal" width="100%" color="primary" prepend-icon="mdi-database-search" @focus="showEditorSql()">
+                    open query editor
+                  </v-btn>
 
                   <div id="oapen-query-preview">
-                    {{ task.script.query.body ? task.script.query.body : '[no content]' }}
+                    {{ task.script.query.body || '[no content]' }}
                   </div>
 
                 </v-col>
@@ -241,7 +251,6 @@ export default {
       task: {
         fileName: "",
         script: { query: {}, type: 'MAIN' },
-        latestLog: {date: null}
       },
       isValidForm: false,
       id: null,

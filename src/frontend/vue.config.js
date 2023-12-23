@@ -6,7 +6,7 @@ module.exports = defineConfig({
       port: 3000,
       proxy: {
           '/api': {
-              target: 'http://localhost:8080', // this is where spring boot runs; change accordingly
+              target: 'http://localhost:8084', // this is where spring boot runs; change accordingly
               ws: true,
               changeOrigin: true
           }

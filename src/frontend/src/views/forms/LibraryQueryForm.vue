@@ -19,22 +19,14 @@
 
             <my-wrapper>
 
-              <my-form-header>{{ isNew ? "New library query" : "Edit library query " }}</my-form-header>
+              <my-form-header>{{ isNew ? "New library query" : "Edit " + curName }}</my-form-header>
 
               <v-row>
 
-                <v-col cols="6">
+                <v-col>
                   <v-text-field v-if="!refscripts.length" label="query name" v-model="query.name" :rules="validation.queryName" />
                   <v-text-field v-else label="query name" v-model="query.name" readonly disabled 
                    hint="Remove references to edit query name" persistent-hint />
-                </v-col>
-
-                <v-col cols="6">
-
-                  <v-text-field bg-color="transparent" class="text-primary oapen-readonly-name" @focus="showEditor()"
-                    label="query (click to edit)" readonly v-model="query.name" variant="outlined" persistent-placeholder
-                    prepend-inner-icon="mdi-database-search" />
-
                 </v-col>
 
               </v-row>
@@ -42,9 +34,15 @@
               <v-row>
 
                 <v-col>
+
+                  <v-btn class="my-3" variant="tonal" width="100%" color="primary" prepend-icon="mdi-database-search" @focus="showEditor()">
+                    open query editor
+                  </v-btn>
+
                   <div id="oapen-query-preview">
                     {{ query.body ? query.body : '[no content]' }}
                   </div>
+
                 </v-col>
 
               </v-row>
@@ -116,7 +114,7 @@
 
               <v-row v-if="!isNew" >
                 <v-col>
-                  <my-danger-zone v-if="refscripts" color="grey">
+                  <my-danger-zone v-if="refscripts.length" color="grey">
                     Delete query not available ({{refscripts.length}} references)
                     <v-btn disabled text="Delete this query" prepend-icon="mdi-alert" variant="tonal"/>
                   </my-danger-zone>
@@ -195,9 +193,10 @@ export default {
 
   data() {
     return {
+      curName: "",
       isNew: false,
       isEditor: false,
-      query: {isLibrary: true},
+      query: {library: true},
       isValidForm: false,
       id: null,
       alert: this.$alert.NONE, // ERROR,INFO,SUCCESS,WARNING,NONE
@@ -242,6 +241,7 @@ export default {
 
         queryName: [
           v => (v && v.length >= 2) || "Query name is required",
+          v => (v && this.$func.isValidFileName(v)) || "Query name can only contain A-Z, a-z, 0-9, -, _ and .",
           v => this.validateQueryNameFree(v) || 'Query name is already in use. Choose another name.',
         ],
       }
@@ -258,6 +258,7 @@ export default {
           this.query = resp.data
           this.loadReferingScripts(this.query)
           this.loadTakenQueryNames()
+          this.curName = this.query.name
         })
         .catch(error => console.log(error))
         .finally(() => this.loading = false)
@@ -282,7 +283,7 @@ export default {
         .then(resp => {
           this.takenQueryNames = resp.data
             .map(v => v.name)
-            .filter(v => v !== this.name); // not it's own name!
+            .filter(v => v !== this.query.name); // not it's own name!
           console.log("TAKEN: " + this.takenQueryNames)
         })
         .catch(error => console.log(error))
