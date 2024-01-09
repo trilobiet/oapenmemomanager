@@ -53,7 +53,7 @@ public class MyUserDetailsService implements UserDetailsService {
 
 			@Override
 			public String getUsername() {
-				return "admin";
+				return "administrator";
 			}
 
 			@Override

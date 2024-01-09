@@ -18,20 +18,18 @@ Installation:
 As user oapen:
 --------------
 
-Copy jar to deployment path /home/oapen
+Copy jar to deployment path /home/oapenmemo
 
 Update symlink (user oapen):
-- rm irus-dashboard.jar
-- ln -s irus-dashboard-0.1.2.jar irus-dashboard.jar 
+- rm manager.jar
+- ln -s manager-0.0.1.jar manager.jar 
 
 As root:
 --------
 
 Restart service after installation (user root)
 
-- systemctl stop irus-dashboard.service
-- systemctl start irus-dashboard.service
+- systemctl stop oapen-memo-manager-website.service
+- systemctl start oapen-memo-manager-website.service
 
-logs can be found in 
-/var/log/irus-dashboard.log
 
