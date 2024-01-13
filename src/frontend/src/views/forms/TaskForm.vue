@@ -28,8 +28,7 @@
               <v-row>
                 <v-col cols="12" sm="8">
                   <v-text-field label="task name" v-model="task.fileName" :rules="validation.fileName" clearable />
-                  <div class="px-4 text-grey-darken-2 text-caption">export path: {{ client.username }}/{{ task.fileName }}
-                    new: {{ isNew }}</div>
+                  <div class="px-4 text-grey-darken-2 text-caption">export path: {{ client.username }}/{{ task.fileName }}</div>
                 </v-col>
                 <v-col cols="12" sm="4">
                   <v-text-field label="extension" v-model="task.extension" readonly bg-color="transparent"
