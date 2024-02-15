@@ -2,6 +2,7 @@ package org.oapen.memoproject.manager.controller;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.oapen.memoproject.manager.entities.Script;
 import org.oapen.memoproject.manager.entities.Script.ScriptType;
@@ -45,7 +46,19 @@ public class ScriptController {
     public List<Script> listBySearchString(
     	@RequestParam(required = true) String term
     ){
-		return scriptRepository.findByBodyLike("%" + term + "%", Sort.by("name").ascending());
+		return scriptRepository.findByBodyLike("%" + term.replace("_","\\_") + "%", Sort.by("name").ascending());
+	}
+	
+	@GetMapping("/script/searchimport") 
+	@ResponseBody
+    public List<Script> listMainScriptsBySearchImport(
+    	@RequestParam(required = true) String term
+    ){
+		return scriptRepository
+			.findByBodyLike("%import " + term.replace("_","\\_") + "%", Sort.by("name").ascending())
+			.stream().filter(s -> s.getType() != ScriptType.SNIP ) // SNIPS have no Task!
+			.collect(Collectors.toList())
+			;
 	}
 	
 	@GetMapping("/script/{id}")

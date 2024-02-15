@@ -78,6 +78,7 @@
 
               </v-dialog>
 
+              <!--
               <v-row>
                 <v-col>
                   <v-textarea label="params" v-model="script.params" hint="one param per line" rows="4" auto-grow />
@@ -86,6 +87,7 @@
                   <v-textarea label="notes" v-model="script.notes" rows="4" auto-grow />
                 </v-col>
               </v-row>
+              -->
 
               <v-row v-if="!isNew">
                 <v-col>
@@ -119,7 +121,7 @@
                     <v-btn disabled text="Delete this script" prepend-icon="mdi-alert" variant="tonal"/>
                   </my-danger-zone>
                   <my-danger-zone v-else>
-                    <v-btn @click="deleteQuery()" text="Delete this script" prepend-icon="mdi-alert" variant="tonal"/>
+                    <v-btn @click="deleteScript()" text="Delete this script" prepend-icon="mdi-alert" variant="tonal"/>
                   </my-danger-zone>
                 </v-col>
               </v-row>  
@@ -267,7 +269,7 @@ export default {
 
     loadReferingScripts(script) {
 
-      this.$axios.get(`/api/script/searchinbody?term=` + script.name)
+      this.$axios.get(`/api/script/searchimport?term=` + script.name)
         .then(resp => {
           this.refscripts = resp.data;
           //console.log("REFSCRIPTS=" + this.refscripts[0].body)

@@ -78,6 +78,7 @@
 
               </v-dialog>
 
+              <!--
               <v-row>
                 <v-col>
                   <v-textarea label="params" v-model="query.params" hint="one param per line" rows="4" auto-grow />
@@ -86,6 +87,7 @@
                   <v-textarea label="notes" v-model="query.notes" rows="4" auto-grow />
                 </v-col>
               </v-row>
+              -->
 
               <v-row v-if="!isNew">
                 <v-col>
@@ -267,7 +269,7 @@ export default {
 
     loadReferingScripts(query) {
 
-      this.$axios.get(`/api/script/searchinbody?term=` + query.name)
+      this.$axios.get(`/api/script/searchimport?term=` + query.name)
         .then(resp => {
           this.refscripts = resp.data;
           //console.log("REFSCRIPTS=" + this.refscripts[0].body)

@@ -92,7 +92,7 @@
 
                   <div class="text-subtitle-2 text-grey-darken-2">
                     <v-icon icon="mdi-database-search" class="mr-1"/>
-                    {{ task.script.query.name || 'new query' }}
+                    {{ !task.script.query.name ? 'new' : 'queries.'+task.script.query.name }}
                   </div>
 
                   <v-btn class="my-3" variant="tonal" width="100%" color="primary" prepend-icon="mdi-database-search" @focus="showEditorSql()">
@@ -135,7 +135,7 @@
                       <v-row>
                         <v-col>
                           <v-icon icon="mdi-database-search" />
-                          {{ 'SQL Editor: ' + (!task.script.query.name ? 'new' : task.script.query.name) }}
+                          {{ 'SQL Editor: ' + (!task.script.query.name ? 'new' : 'queries.'+task.script.query.name) }}
                         </v-col>
                         <v-col>
                           <v-card-actions>
@@ -380,10 +380,10 @@ export default {
 
     setScriptAndQueryName() {
 
-      let sqname = this.client.username + "_" + this.task.fileName.replace(".", "_")
+      let sqname = this.client.username + ":" + this.task.fileName.replace(".", "_")
       //+ "_" + this.$func.generateRandomNumber(4);
-      this.task.script.name = sqname + ".py";
-      this.task.script.query.name = sqname + ".sql"
+      this.task.script.name = sqname //+ ".py";
+      this.task.script.query.name = sqname //+ ".sql"
     },
 
     saveTask() {

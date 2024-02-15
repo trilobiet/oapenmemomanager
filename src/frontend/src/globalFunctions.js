@@ -121,20 +121,20 @@ export const globalfunctions = {
 
 	isValidFileName(s) {
 
-		// Only A-Z, a-z, 0-9 (\w) -, _ and .
-		return s.match(/^[.\w_-]+$/)
+		// Only A-Z, a-z, 0-9 (\w) _ and .
+		return s.match(/^[.\w_]+$/)
 	},
 
 	isValidUserName(s) {
 
-		// Only A-Z, a-z, 0-9 (\w) - and _
-		return s.match(/^[\w_-]+$/)
+		// Only A-Z, a-z, 0-9 (\w) and _
+		return s.match(/^[\w_]+$/)
 	},
 
 	isValidSettingKey(s) {
 
 		// Only A-Z, a-z, 0-9 (\w) -, _ and .
-		return s.match(/^[.\w_-]+$/)
+		return s.match(/^[.\w_]+$/)
 	},
 
 }

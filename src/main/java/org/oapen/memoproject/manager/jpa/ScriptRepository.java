@@ -19,4 +19,3 @@ public interface ScriptRepository extends JpaRepository<Script, UUID> {
 	List<Script> findByBodyLike(String like, Sort sort);
 
 }
-	
