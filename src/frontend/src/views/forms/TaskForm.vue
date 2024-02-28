@@ -317,6 +317,7 @@ export default {
           v => !!v || "Value is required",
           v => (v && v.length >= 4) || "Value cannot be shorter than 3 characters",
           v => this.hasExtension(v) || "Not a valid extension",
+          v => this.$func.isValidFileName(v) || "Task name can only contain A-Z, a-z, 0-9, _ and .",
           v => this.validateFileNameFree(v) || 'File name is already in use for this client. Choose another name.',
         ],
         startDate: [
@@ -382,8 +383,8 @@ export default {
 
       let sqname = this.client.username + ":" + this.task.fileName.replace(".", "_")
       //+ "_" + this.$func.generateRandomNumber(4);
-      this.task.script.name = sqname //+ ".py";
-      this.task.script.query.name = sqname //+ ".sql"
+      this.task.script.name = sqname.toLowerCase() //+ ".py";
+      this.task.script.query.name = sqname.toLowerCase() //+ ".sql"
     },
 
     saveTask() {

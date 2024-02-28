@@ -19,14 +19,14 @@
 
             <my-wrapper>
 
-              <my-form-header>{{ isNew ? "New library query" : "Edit " + curName }}</my-form-header>
+              <my-form-header>{{ isNew ? "New query" : "Edit " + curName }}</my-form-header>
 
               <v-row>
 
                 <v-col>
                   <v-text-field v-if="!refscripts.length" label="query name" v-model="query.name" :rules="validation.queryName" />
                   <v-text-field v-else label="query name" v-model="query.name" readonly disabled 
-                   hint="Remove references to edit query name" persistent-hint />
+                   hint="To edit name, remove references first" persistent-hint />
                 </v-col>
 
               </v-row>
@@ -91,10 +91,10 @@
 
               <v-row v-if="!isNew">
                 <v-col>
-                  <v-data-table-virtual v-model:expanded="refscriptsExpanded" show-expand
+                  <v-data-table v-model:expanded="refscriptsExpanded" show-expand
                     hide-default-header class="bg-grey-lighten-5 oapen-script-refs-table"
                     :headers="refScriptsHeaders" no-data-text="no references" 
-                    :items="refscripts" item-value="name" density="compact"
+                    :items="refscripts" item-value="name" density="comfortable" items-per-page="5"
                   >
                     <template v-slot:[`item.taskOutline.fileName`]="{ item }">
                       <span @click="this.$router.push({ name: 'taskEdit', params: {id: item.taskOutline.id},  })">
@@ -110,7 +110,7 @@
                       </tr>
                     </template>                    
                 
-                  </v-data-table-virtual>
+                  </v-data-table>
                 </v-col>
               </v-row>
 
@@ -243,7 +243,7 @@ export default {
 
         queryName: [
           v => (v && v.length >= 2) || "Query name is required",
-          v => (v && this.$func.isValidFileName(v)) || "Query name can only contain A-Z, a-z, 0-9, -, _ and .",
+          v => (v && this.$func.isValidModuleName(v)) || "Query name can only contain lower case a-z, 0-9 and _",
           v => this.validateQueryNameFree(v) || 'Query name is already in use. Choose another name.',
         ],
       }

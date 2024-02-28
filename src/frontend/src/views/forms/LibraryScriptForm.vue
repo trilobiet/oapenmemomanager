@@ -9,7 +9,7 @@
 
           <v-toolbar>
             <v-toolbar-title class="font-weight-bold">
-              <v-icon>mdi-database-search</v-icon> Scripts Library
+              <v-icon>mdi-database-search</v-icon>Script Library
             </v-toolbar-title>
           </v-toolbar>
 
@@ -26,7 +26,7 @@
                 <v-col>
                   <v-text-field v-if="!refscripts.length" label="script name" v-model="script.name" :rules="validation.scriptName" />
                   <v-text-field v-else label="script name" v-model="script.name" readonly disabled 
-                   hint="Remove references to edit script name" persistent-hint />
+                   hint="To edit name, remove references first" persistent-hint />
                 </v-col>
 
               </v-row>
@@ -91,10 +91,10 @@
 
               <v-row v-if="!isNew">
                 <v-col>
-                  <v-data-table-virtual v-model:expanded="refscriptsExpanded" show-expand
+                  <v-data-table v-model:expanded="refscriptsExpanded" show-expand 
                     hide-default-header class="bg-grey-lighten-5 oapen-script-refs-table"
                     :headers="refScriptsHeaders" no-data-text="no references" 
-                    :items="refscripts" item-value="name" density="compact"
+                    :items="refscripts" item-value="name" density="comfortable" items-per-page="5" 
                   >
                     <template v-slot:[`item.taskOutline.fileName`]="{ item }">
                       <span @click="this.$router.push({ name: 'taskEdit', params: {id: item.taskOutline.id},  })">
@@ -110,14 +110,14 @@
                       </tr>
                     </template>                    
                 
-                  </v-data-table-virtual>
+                  </v-data-table>
                 </v-col>
               </v-row>
 
               <v-row v-if="!isNew" >
                 <v-col>
                   <my-danger-zone v-if="refscripts.length" color="grey">
-                    Delete query not available ({{refscripts.length}} references)
+                    Delete script not available ({{refscripts.length}} references)
                     <v-btn disabled text="Delete this script" prepend-icon="mdi-alert" variant="tonal"/>
                   </my-danger-zone>
                   <my-danger-zone v-else>
@@ -243,7 +243,7 @@ export default {
 
         scriptName: [
           v => (v && v.length >= 2) || "Script name is required",
-          v => (v && this.$func.isValidFileName(v)) || "Script name can only contain A-Z, a-z, 0-9, -, _ and .",
+          v => (v && this.$func.isValidModuleName(v)) || "Script name can only contain lower case a-z, 0-9 and _",
           v => this.validateScriptNameFree(v) || 'Script name is already in use. Choose another name.',
         ],
       }
@@ -271,7 +271,8 @@ export default {
 
       this.$axios.get(`/api/script/searchimport?term=` + script.name)
         .then(resp => {
-          this.refscripts = resp.data;
+          this.refscripts = resp.data
+          //console.log(resp.data[0])
           //console.log("REFSCRIPTS=" + this.refscripts[0].body)
         })
         .catch(error => console.log(error))

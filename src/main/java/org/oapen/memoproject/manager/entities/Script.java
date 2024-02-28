@@ -87,7 +87,13 @@ public class Script implements Serializable {
 	}
 	
 	// Count scripts that have a reference to this (library) script name
-	@Formula("(SELECT count(s.name) FROM script s WHERE s.body LIKE CONCAT('%',name,'%') )")
+	// Underscore in like is replaced with '\_' otherwise it is read as a wildcard
+	@Formula("("
+		+ "SELECT count(s.name) FROM script s "
+		+ "WHERE s.body LIKE CONCAT('%',REPLACE(name,'_','\\_'),'%') "
+		+ "AND s.type = 'MAIN' "
+		+ ")"
+	)
 	private int references;
 	
 	
