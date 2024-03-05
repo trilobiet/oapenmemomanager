@@ -12,6 +12,7 @@ import LibraryQueryForm from "@/views/forms/LibraryQueryForm.vue";
 import LibraryScriptForm from "@/views/forms/LibraryScriptForm.vue";
 import Settings from "@/views/Settings.vue";
 import SessionExpired from "@/views/SessionExpired.vue";
+import RunLogAll from "@/views/RunLogAll.vue";
 
 import axios from 'axios'
 
@@ -75,6 +76,11 @@ const routes = [
     path: "/settings",
     name: "settings",
     component: Settings,
+  },
+  {
+    path: "/alllogs",
+    name: "alllogs",
+    component: RunLogAll,
   },
   {
     path: "/sessionexpired",

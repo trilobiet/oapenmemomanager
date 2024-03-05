@@ -147,4 +147,14 @@ export const globalfunctions = {
 		return /^[.\w]+$/.test(s)
 	},
 
+	formatDateTime(dt) {
+
+		return dt.replace("T", "\xa0")
+	},
+
+	formatDate(dt) {
+
+		return dt.replace(/T.*/, "")
+	}
+
 }

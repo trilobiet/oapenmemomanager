@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -100,6 +101,19 @@ public class Homedir implements UserDetails, Serializable  {
 		
     	else return 0L;
 	}
+    
+    public Long getEmptyScriptsCount() {
+    	
+    	if (tasks != null) return tasks.stream()
+    		.filter(task -> 
+    			task.getScript() == null 
+    			|| !StringUtils.hasText(task.getScript().getBody()) 
+    		)
+    		.count();
+    	
+    	else return 0L;
+    }
+    
     
     
 	// UserDetails methods =======================================

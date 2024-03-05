@@ -8,7 +8,8 @@
           transition="scale-transition" width="70" />
       </div>
 
-      <h3 style="margin-left:1em;opacity:.85">MEMO Manager</h3>
+      <h3 style="margin-left:1em;opacity:.85; cursor:pointer" 
+        @click="this.$router.push({ name: 'home' })">MEMO Manager</h3>
 
       <v-spacer></v-spacer>
 
@@ -28,6 +29,9 @@
           </v-list-item>
           <v-list-item :to="{ name: 'library' }">
             <v-list-item-title>Library</v-list-item-title>
+          </v-list-item>
+          <v-list-item :to="{ name: 'alllogs' }">
+            <v-list-item-title>Run Logs</v-list-item-title>
           </v-list-item>
           <v-list-item :to="{ name: 'settings' }">
             <v-list-item-title>Settings</v-list-item-title>

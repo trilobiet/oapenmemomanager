@@ -20,6 +20,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.JoinFormula;
 import org.hibernate.annotations.Type;
+import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -77,7 +78,7 @@ public class Task implements Serializable {
 		
 		if (latestLog == null) return startDate;
 		else {
-			LocalDate d = latestLog.getDate();
+			LocalDate d = latestLog.getDate().toLocalDate();
 
 			switch (frequency) {
 			
@@ -100,6 +101,15 @@ public class Task implements Serializable {
 			default: return "daily";
 		}
 	}
+	
+	@JsonIgnore
+    public boolean getHasScript() {
+    	
+    	if ( script != null && StringUtils.hasText(script.getBody()) ) 
+    		return true;
+    	else 
+    		return false;
+    }
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinFormula("(SELECT rl.id FROM runlog rl WHERE rl.id_task = id ORDER BY rl.date DESC LIMIT 1)")

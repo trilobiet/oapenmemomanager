@@ -1,16 +1,24 @@
 <template>
 
-  <v-card height="100%">
+  <div class="home">
 
-    <v-card-title  class="bg-secondary">runlog</v-card-title>
+    <v-card height="100%">
+
+      <v-toolbar>  
+
+        <v-toolbar-title class="font-weight-bold">
+          <v-icon>mdi-list-box-outline</v-icon> Run Log for {{ taskName }}
+        </v-toolbar-title>
+
+      </v-toolbar>
 
       <v-card-text >
         <v-data-table id="oapen-logtable" :headers="headers" :items="loglines" density="compact"
-         show-expand fixed-header="true" expand-on-click height="100%" >
+        show-expand fixed-header expand-on-click height="100%" >
 
           <template v-slot:[`item.date`]="{ item }">
-            <span v-if="!item.success" style="color:red">{{item.date}}</span>
-            <span v-else>{{item.date}}</span>
+            <span v-if="!item.success" style="color:red">{{this.$func.formatDateTime(item.date)}}</span>
+            <span v-else style="color:#999">{{this.$func.formatDateTime(item.date)}}</span>
           </template>           
 
           <template v-slot:[`item.shortMessage`]="{ item }">
@@ -18,8 +26,8 @@
           </template>           
         
           <template v-slot:[`item.success`]="{ item }">
-            <v-chip v-if="item.success" color="green" density="small" class="text-caption">success</v-chip>
-            <v-chip v-else color="red" density="small" class="text-caption">failure</v-chip>
+            <v-chip v-if="item.success" color="green" density="compact" class="text-caption">success</v-chip>
+            <v-chip v-else color="red" density="compact" class="text-caption">failure</v-chip>
           </template>           
 
           <template v-slot:expanded-row="{ item }">
@@ -53,6 +61,8 @@
 
     </v-card>
     
+  </div>
+    
 </template>
     
 <script>
@@ -61,6 +71,7 @@
 
   props: {
     taskId: {type: String, default: ''},
+    taskName: {type: String, default: ''},
   },  
 
   data() {
@@ -72,7 +83,6 @@
         { title: "", key: "data-table-expand" },
       ],
       loglines: [],
-      isExpanded: false
     }      
   },
 

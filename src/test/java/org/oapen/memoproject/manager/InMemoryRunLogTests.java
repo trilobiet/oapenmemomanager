@@ -48,7 +48,7 @@ public class InMemoryRunLogTests {
 		
 			LocalDate date = date();
 			RunLog rl = new RunLog();
-			rl.setDate(date);
+			rl.setDate(date.atStartOfDay());
 			rl.setTask(tSaved);
 			runLogRepository.save(rl);
 		}

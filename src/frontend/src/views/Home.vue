@@ -38,6 +38,11 @@
               >{{item.name}}</span>
             </template> 
 
+            <template v-slot:[`item.emptyScriptsCount`]="{ item }">
+              <v-icon v-if="item.emptyScriptsCount > 0" icon="mdi-circle-half-full" color="orange" size="x-small" title="Some scripts need implementation"/>
+              <v-icon v-else icon="mdi-circle" color="green" size="x-small"/>  
+            </template>
+
             <template v-slot:[`item.url`]="{ item }">
               <a :href="$func.getClientUrl(item.username)" target="memoweb">
                 {{$func.getClientPath(item.username)}}
@@ -129,11 +134,12 @@ export default {
 
       let arr = [
         { title: "Name", key: "name" },
+        { title: "Completed", key: "emptyScriptsCount" , align: "center"},
         { title: "Client home", key: "url" },
 				{ title: "User name", key: "username" },
         { title: "Tasks", key: "taskCount", align: "end" },
-        { title: "Passed Tasks", key: "passedTaskCount", align: "center" },
-        { title: "Failed Tasks", key: "failedTaskCount", align: "center" },
+        { title: "Success", key: "passedTaskCount", align: "center" },
+        { title: "Fail", key: "failedTaskCount", align: "center" },
       ];
 
       return arr;

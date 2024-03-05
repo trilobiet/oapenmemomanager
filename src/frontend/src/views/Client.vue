@@ -63,21 +63,45 @@
                       class="text-blue-darken-4"
                     >{{item.fileName}}</span>
                   </template> 
+
+                  <template v-slot:[`item.hasScript`]="{ item }">
+                    <v-icon v-if="item.hasScript" color="green" icon="mdi-circle" size="x-small"/>
+                    <v-icon v-else color="orange" icon="mdi-circle-half-full" size="x-small"/>
+                  </template>
                 
                   <template v-slot:[`item.active`]="{ item }">
                     <v-icon v-if="item.active" color="green" icon="mdi-circle" size="x-small"/>
                     <v-icon v-else color="#ddd" icon="mdi-circle" size="x-small"/>
                   </template>
 
+                  <template v-slot:[`item.frequency`]="{ item }">
+                    <v-chip v-if="item.frequency=='D'" style="font-weight:bold" size="small" variant="flat" color="blue-lighten-5"
+                     title="day">D</v-chip>
+                    <v-chip v-else-if="item.frequency=='W'" style="font-weight:bold" size="small" variant="flat" color="blue-lighten-3"
+                     title="week">W</v-chip>
+                    <v-chip v-else-if="item.frequency=='M'" style="font-weight:bold" size="small" variant="flat" color="blue-darken-1"
+                     title="month">M</v-chip>
+                    <v-chip v-else-if="item.frequency=='Y'" style="font-weight:bold" size="small" variant="flat" color="indigo-darken-4"
+                     title="year">Y</v-chip>
+                  </template>
+
                   <template v-slot:[`item.latestLog.date`]="{ item }">
-                    <span v-if="item.latestLog" @click="showRunlog(item.id)" style="cursor:pointer" 
+                    <span v-if="item.latestLog" @click="showRunlog(item.id, item.fileName)" style="cursor:pointer" 
                       :class="item.latestLog.success? 'text-green-darken-3' : 'text-red-darken-2'">
-                      {{ item.latestLog.date }}
-                      <v-icon v-if="!item.latestLog.success" color="red" icon="mdi-alert-circle" size="small"/>
+                      {{ this.$func.formatDateTime(item.latestLog.date) }}
+                      <v-icon v-if="!item.latestLog.success" color="red" icon="mdi-alert-circle" size="x-small" style="vertical-align: baseline;"/>
                     </span>    
                     <span v-else>
                       <v-icon icon="mdi-progress-clock" color="grey" size="small" title="waiting for first run"/>
                     </span>
+                  </template>
+
+                  <template v-slot:[`item.download`]="{ item }">
+                    <a v-if="item.latestLog.success" :href="'/download/' + item.id + '/' + item.fileName">
+                      <v-icon class="text-blue-darken-1" icon="mdi-download">
+                      </v-icon>  
+                    </a>
+                    <v-icon v-else class="text-grey-lighten-2" icon="mdi-download"/>
                   </template>
 
                   <!--
@@ -86,13 +110,6 @@
                     <v-icon v-if="item.latestLog.success" color="green" icon="mdi-check-bold" size="small"/>
                     <v-icon v-else color="red" icon="mdi-alert-circle" size="small"/>
                   </template>-->
-
-                  <template v-slot:[`item.frequency`]="{ item }">
-                    <v-chip v-if="item.frequency=='D'" size="small" variant="flat" color="yellow">daily</v-chip>
-                    <v-chip v-else-if="item.frequency=='W'" size="small" variant="flat" color="amber">weekly</v-chip>
-                    <v-chip v-else-if="item.frequency=='M'" size="small" variant="flat" color="orange">monthly</v-chip>
-                    <v-chip v-else-if="item.frequency=='Y'" size="small" variant="flat" color="deep-orange">yearly</v-chip>
-                  </template>
 
                   <template v-slot:[`item.runNow`]="{ item }">
                     <v-icon color="primary" icon="mdi-play-circle-outline" size="x-large" @click="runTask(item)"/>
@@ -133,7 +150,7 @@
     </v-container>
 
     <v-dialog width="90%" height="90%" maxHeight="90%" v-model="isShowRunlog" scrollable>
-      <run-log :taskId="runlogId" @closeRunlog="this.isShowRunlog=false;"/>
+      <run-log :taskId="runLogTaskId" :taskName="runLogTaskName" @closeRunlog="this.isShowRunlog=false;"/>
     </v-dialog>
 
   </div>
@@ -153,15 +170,17 @@
         client: {},
         tasks: [],
         headers: [
-          { title: "File name", key: "fileName"},
+          { title: "File name", key: "fileName", width:"10em"},
+          { title: "Completed", key: "hasScript", width: "1em", align: "center"},
           { title: "Active", key: "active", width: "1em", align: "center"},
-          { title: "Last run (click for log)", key: "latestLog.date" },
           { title: "Frequency", key: "frequency", align: "center" },
-          { title: "Start date", key: "startDate" },
+          { title: "Last run (click for log)", key: "latestLog.date" },
+          { title: "Download", key: "download", align: "center" },
           { title: "Run now", key: "runNow", align: "center" },
         ],
         isShowRunlog: false,
-        runlogId: null,
+        runLogTaskId: null,
+        runLogTaskName: null,
       }      
     },
 
@@ -213,10 +232,11 @@
         this.$router.push({ name: 'taskNew', params: {clientid: this.client.id}  })
       },
 
-      showRunlog(id) {
+      showRunlog(taskId, taskName) {
 
-        this.runlogId = id
-        this.isShowRunlog = true;
+        this.runLogTaskId = taskId
+        this.runLogTaskName = taskName
+        this.isShowRunlog = true
       },
 
       runTask(item) {

@@ -1,7 +1,7 @@
 package org.oapen.memoproject.manager.entities;
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -39,7 +39,7 @@ public class RunLog implements Serializable {
 	
 	private String message;
 	private boolean isSuccess;
-	private LocalDate date; 
+	private LocalDateTime date; 
 	
 	@ManyToOne()
 	@JoinColumn(name = "id_task", nullable = false)
