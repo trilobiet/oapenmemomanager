@@ -61,7 +61,7 @@
 
                   <template v-slot:[`item.actions`]="{ item }">
                     <v-hover v-if="!isHiddenKey(item.key)" v-slot="{ isHovering, props }">
-                      <v-icon @click="deleteSetting(item)" v-bind="props"
+                      <v-icon @click="confirmDeleteSetting(item)" v-bind="props"
                        :color="isHovering ? 'red': 'grey-darken-2'">mdi-close-circle-outline</v-icon>
                     </v-hover>  
                   </template>
@@ -80,22 +80,6 @@
       </v-row>
 
     </v-container>
-
-    <!-- DELETE Dialog ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-    <v-dialog v-model="dialogDelete" max-width="500px">
-
-      <v-card class="mx-auto" title="Delete setting" subtitle="Are you sure you want to delete this setting?">
-        <template v-slot:prepend>
-          <v-icon icon="mdi-alert-circle-outline" color="red" size="x-large"></v-icon>
-        </template>
-        <v-divider></v-divider>
-        <v-card-actions class="justify-center px-6 py-3">
-          <v-btn class="flex-grow-1" @click="cancelDelete">Cancel</v-btn>
-          <v-btn class="flex-grow-1" @click="confirmDelete">OK</v-btn>
-        </v-card-actions>
-      </v-card>
-
-    </v-dialog>
 
   </div>
 
@@ -183,26 +167,32 @@ export default {
       return arr;
     },
 
-    editSetting (setting) {
+    editSetting(setting) {
       this.editedIndex = this.settings.indexOf(setting)
       this.editedSetting = Object.assign({}, setting)
       this.dialog = true
     },
 
-    deleteSetting (setting) {
-      this.editedIndex = this.settings.indexOf(setting)
-      this.editedSetting = Object.assign({}, setting)
+    confirmDeleteSetting(setting) {
+      this.$root.$refs.confirm.open(
+        'Delete Setting', 
+        'Are you sure you want to delete setting \'' + setting.key + '\'?', 
+        { color: 'orange-darken-2', width: 400 }
+      ).then((confirm) => {
+         if (confirm) this.deleteSetting(setting)
+      })
+
       if(confirm("Delete this setting?")) this.confirmDelete();
     },
 
-    confirmDelete () {
+    deleteSetting(setting) {
 
-      console.log("DELETING ==== " + this.editedSetting.key)
+      console.log("DELETING ==== " + setting.key)
 
       // TODO
-      this.$axios.delete(`/api/setting/${this.editedSetting.key}`)
+      this.$axios.delete(`/api/setting/${setting.key}`)
         .then( resp => {
-          this.settings.splice(this.editedIndex, 1)
+          this.settings.splice(this.settings.indexOf(setting), 1)
           console.log(resp)
           this.alert = this.$alert.SUCCESS;
           this.alertMsg = "Setting deleted";
@@ -223,11 +213,6 @@ export default {
       this.dialog = false
       this.setDefault();   
       console.log("Dialog canceled")   
-    },
-
-    cancelDelete () {
-      this.dialogDelete = false
-      this.setDefault();      
     },
 
     saveSetting () {

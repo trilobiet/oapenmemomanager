@@ -121,7 +121,7 @@
                     <v-btn disabled text="Delete this query" prepend-icon="mdi-alert" variant="tonal"/>
                   </my-danger-zone>
                   <my-danger-zone v-else>
-                    <v-btn @click="deleteQuery()" text="Delete this query" prepend-icon="mdi-alert" variant="tonal"/>
+                    <v-btn @click="confirmDeleteQuery()" text="Delete this query" prepend-icon="mdi-alert" variant="tonal"/>
                   </my-danger-zone>
                 </v-col>
               </v-row>  
@@ -321,22 +321,31 @@ export default {
 
     },
 
+    confirmDeleteQuery() {
+
+      this.$root.$refs.confirm.open(
+          'Delete query', 
+          'This library query will irreversely be deleted! <br/><br/>Are you sure you want to continue?', 
+          { color: 'orange-darken-2', width: 400 }
+        ).then((confirm) => {
+          if (confirm) this.deleteQuery()
+        })
+
+    },
+
     deleteQuery() {
 
-      if (confirm("This query will be deleted!\nAre you sure?")) {
-
-        this.$axios.delete(`/api/query/` + this.query.id)
-          .then(() => {
-            this.alert = this.$alert.SUCCESS;
-            this.alertMsg = "Query deleted";
-            setTimeout(() => { router.push({ name: 'library' }) }, 1000);
-          })
-          .catch(err => {
-            this.alert = this.$alert.ERROR;
-            this.alertMsg = err.message;
-            this.alertDetail = err
-          })
-      }
+      this.$axios.delete(`/api/query/` + this.query.id)
+        .then(() => {
+          this.alert = this.$alert.SUCCESS;
+          this.alertMsg = "Query deleted";
+          setTimeout(() => { router.push({ name: 'library' }) }, 1000);
+        })
+        .catch(err => {
+          this.alert = this.$alert.ERROR;
+          this.alertMsg = err.message;
+          this.alertDetail = err
+        })
 
     },
 

@@ -52,6 +52,9 @@
 
     <v-main>
 
+      <!-- Confirm Dialog -->
+      <confirm ref="confirm"></confirm>
+
       <!-- Render current view -->
       <router-view />
 

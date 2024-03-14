@@ -84,7 +84,7 @@
                     <v-btn disabled text="Delete this client" prepend-icon="mdi-alert" variant="tonal"/>
                   </my-danger-zone>
                   <my-danger-zone v-else>
-                    <v-btn @click="deleteClient()" text="Delete this client" prepend-icon="mdi-alert" variant="tonal"/>
+                    <v-btn @click="confirmDeleteClient()" text="Delete this client" prepend-icon="mdi-alert" variant="tonal"/>
                   </my-danger-zone>
                 </v-col>
               </v-row>  
@@ -244,11 +244,20 @@ import router from '@/router';
         }  
       },
 
+      confirmDeleteClient() {
+
+        this.$root.$refs.confirm.open(
+            'Delete client', 
+            'This client will irreversely be deleted! <br/><br/>Are you sure you want to continue?', 
+            { color: 'orange-darken-2', width: 400 }
+          ).then((confirm) => {
+            if (confirm) this.deleteClient()
+          })
+      },
+      
       deleteClient() {
 
-        if (confirm("This client and all its tasks will be deleted!\nAre you sure?")) {
-
-          this.$axios.delete(`/api/homedir/` + this.client.id)
+        this.$axios.delete(`/api/homedir/` + this.client.id)
           .then( () => {
             this.alert = this.$alert.SUCCESS;
             this.alertMsg = "Client deleted";
@@ -259,7 +268,6 @@ import router from '@/router';
             this.alertMsg = "Error deleting client"
             this.alertDetail = err
           })
-        }
 
       },
 

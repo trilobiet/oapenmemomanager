@@ -21,6 +21,7 @@ import "@fortawesome/fontawesome-free/css/all.css";
 import MyFormHeader from "@/components/MyFormHeader.vue";
 import MyWrapper from "@/components/MyWrapper.vue";
 import MyDangerZone from "@/components/MyDangerZone.vue";
+import Confirm from '@/components/Confirm.vue';
 
 // Check session validity once every 5 minutes
 setInterval( () => {
@@ -111,6 +112,7 @@ Promise.all(promises).then( () => {
 	app.component("my-form-header", MyFormHeader)
 	app.component("my-wrapper", MyWrapper)
 	app.component("my-danger-zone", MyDangerZone)
+	app.component("confirm", Confirm)
 	
 	app.mount('#app')	
 }); 

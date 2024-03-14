@@ -171,7 +171,7 @@
               <v-row v-if="!isNew">
                 <v-col>
                   <my-danger-zone>
-                    <v-btn @click="deleteTask()" text="Delete this task" prepend-icon="mdi-alert" variant="tonal" />
+                    <v-btn @click="confirmDeleteTask()" text="Delete this task" prepend-icon="mdi-alert" variant="tonal" />
                   </my-danger-zone>
                 </v-col>
               </v-row>
@@ -424,24 +424,32 @@ export default {
 
     },
 
+    confirmDeleteTask() {
+
+      this.$root.$refs.confirm.open(
+          'Delete task', 
+          'This task will irreversely be deleted! <br/><br/>Are you sure you want to continue?', 
+          { color: 'orange-darken-2', width: 400 }
+        ).then((confirm) => {
+          if (confirm) this.deleteTask()
+        })
+
+    },
+
     deleteTask() {
 
-      if (confirm("This task will be deleted!\nAre you sure?")) {
-
-        this.$axios.delete(`/api/task/` + this.task.id)
-          .then(() => {
-            this.alert = this.$alert.SUCCESS;
-            this.alertMsg = "Task deleted";
-            //setTimeout(() => { router.push({ name: 'client', params: { id: this.client.id } }) }, 1000);
-            setTimeout(() => { router.go(-1) }, 1000);
-          })
-          .catch(err => {
-            this.alert = this.$alert.ERROR;
-            this.alertMsg = err.message;
-            this.alertDetail = err
-          })
-      }
-
+      this.$axios.delete(`/api/task/` + this.task.id)
+        .then(() => {
+          this.alert = this.$alert.SUCCESS;
+          this.alertMsg = "Task deleted";
+          //setTimeout(() => { router.push({ name: 'client', params: { id: this.client.id } }) }, 1000);
+          setTimeout(() => { router.go(-1) }, 1000);
+        })
+        .catch(err => {
+          this.alert = this.$alert.ERROR;
+          this.alertMsg = err.message;
+          this.alertDetail = err
+        })
     },
 
     validateFileNameFree(fileName) {

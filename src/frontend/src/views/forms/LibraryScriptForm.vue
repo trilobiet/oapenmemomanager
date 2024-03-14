@@ -121,7 +121,7 @@
                     <v-btn disabled text="Delete this script" prepend-icon="mdi-alert" variant="tonal"/>
                   </my-danger-zone>
                   <my-danger-zone v-else>
-                    <v-btn @click="deleteScript()" text="Delete this script" prepend-icon="mdi-alert" variant="tonal"/>
+                    <v-btn @click="confirmDeleteScript()" text="Delete this script" prepend-icon="mdi-alert" variant="tonal"/>
                   </my-danger-zone>
                 </v-col>
               </v-row>  
@@ -323,22 +323,31 @@ export default {
 
     },
 
+    confirmDeleteScript() {
+
+      this.$root.$refs.confirm.open(
+          'Delete script', 
+          'This library script will irreversely be deleted! <br/><br/>Are you sure you want to continue?', 
+          { color: 'orange-darken-2', width: 400 }
+        ).then((confirm) => {
+          if (confirm) this.deleteScript()
+        })
+
+    },
+    
     deleteScript() {
 
-      if (confirm("This script will be deleted!\nAre you sure?")) {
-
-        this.$axios.delete(`/api/script/` + this.script.id)
-          .then(() => {
-            this.alert = this.$alert.SUCCESS;
-            this.alertMsg = "Script deleted";
-            setTimeout(() => { router.push({ name: 'library' }) }, 1000);
-          })
-          .catch(err => {
-            this.alert = this.$alert.ERROR;
-            this.alertMsg = err.message;
-            this.alertDetail = err
-          })
-      }
+      this.$axios.delete(`/api/script/` + this.script.id)
+        .then(() => {
+          this.alert = this.$alert.SUCCESS;
+          this.alertMsg = "Script deleted";
+          setTimeout(() => { router.push({ name: 'library' }) }, 1000);
+        })
+        .catch(err => {
+          this.alert = this.$alert.ERROR;
+          this.alertMsg = err.message;
+          this.alertDetail = err
+        })
 
     },
 
