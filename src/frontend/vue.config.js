@@ -14,7 +14,12 @@ module.exports = defineConfig({
               target: 'http://localhost:8084', // this is where spring boot runs; change accordingly
               ws: true,
               changeOrigin: true
-        }
+          },    
+          '/runproxy': {
+                target: 'http://localhost:8084', // this is where spring boot runs; change accordingly
+                ws: true,
+                changeOrigin: true
+          }
     }
   },
   transpileDependencies: [

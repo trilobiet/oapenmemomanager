@@ -23,6 +23,8 @@ import org.hibernate.annotations.Type;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -73,7 +75,7 @@ public class Task implements Serializable {
 	@JoinColumn(name = "id_script")
 	private Script script;
 	
-	@JsonIgnore
+	@JsonProperty(access = Access.READ_ONLY)
 	public LocalDate getNextUpdate() {
 		
 		if (latestLog == null) return startDate;
@@ -90,7 +92,7 @@ public class Task implements Serializable {
 		}	
 	}
 	
-	@JsonIgnore
+	@JsonProperty(access = Access.READ_ONLY)
 	public String getFrequencyAsText() {
 		
 		switch (frequency) {
@@ -102,7 +104,7 @@ public class Task implements Serializable {
 		}
 	}
 	
-	@JsonIgnore
+	@JsonProperty(access = Access.READ_ONLY)
     public boolean getHasScript() {
     	
     	if ( script != null && StringUtils.hasText(script.getBody()) ) 

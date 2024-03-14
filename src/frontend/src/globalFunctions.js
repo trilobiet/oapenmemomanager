@@ -3,6 +3,20 @@
 
 export const globalfunctions = {
 
+	downloadResponse(response) {
+
+		//console.log("RESP: " + resp.headers)
+		const url = window.URL.createObjectURL(new Blob([response.data]));
+		const link = document.createElement('a');
+		link.href = url;
+		// Get filename from header like 'content-disposition: attachment; filename="SCELC_profile1_marc.xml"'
+		const match = response.headers['content-disposition'].match(/filename="([^"]+)"/);
+		link.setAttribute('download', match[1]);
+		document.body.appendChild(link);
+		link.click();    
+		//link.remove();        
+	},
+
 	flattenJSON: (obj={}, res={}, extraKey='') => {
 	
 		for(const key in obj) {

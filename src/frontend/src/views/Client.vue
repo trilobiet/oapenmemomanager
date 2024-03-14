@@ -2,6 +2,8 @@
 
   <div class="client-form">
 
+    <loading v-model:active="isLoading" is-full-page></loading>
+
     <v-container fluid>
 
       <v-card class="elevation-5" >
@@ -85,7 +87,7 @@
                      title="year">Y</v-chip>
                   </template>
 
-                  <template v-slot:[`item.latestLog.date`]="{ item }">
+                  <template v-slot:[`item.latestLog`]="{ item }">
                     <span v-if="item.latestLog" @click="showRunlog(item.id, item.fileName)" style="cursor:pointer" 
                       :class="item.latestLog.success? 'text-green-darken-3' : 'text-red-darken-2'">
                       {{ this.$func.formatDateTime(item.latestLog.date) }}
@@ -97,22 +99,21 @@
                   </template>
 
                   <template v-slot:[`item.download`]="{ item }">
-                    <a v-if="item.latestLog.success" :href="'/download/' + item.id + '/' + item.fileName">
+                    <a v-if="item.latestLog && item.latestLog.success" :href="'/download/' + item.id + '/' + item.fileName">
                       <v-icon class="text-blue-darken-1" icon="mdi-download">
                       </v-icon>  
                     </a>
                     <v-icon v-else class="text-grey-lighten-2" icon="mdi-download"/>
                   </template>
 
-                  <!--
-                  <template v-if=false v-slot:[`item.latestLog.date`]="{ item }">
-                    {{ item.latestLog.date }}
-                    <v-icon v-if="item.latestLog.success" color="green" icon="mdi-check-bold" size="small"/>
-                    <v-icon v-else color="red" icon="mdi-alert-circle" size="small"/>
-                  </template>-->
+                  <template v-slot:[`item.runTest`]="{ item }">
+                    <v-icon v-if="item.hasScript" color="primary" icon="mdi-flask-outline" size="large" @click="dryRunTask(item)"/>
+                    <v-icon v-else class="text-grey-lighten-2" icon="mdi-flask-outline" size="large" @click="dryRunTask(item)"/>
+                  </template>
 
                   <template v-slot:[`item.runNow`]="{ item }">
-                    <v-icon color="primary" icon="mdi-play-circle-outline" size="x-large" @click="runTask(item)"/>
+                    <v-icon v-if="item.hasScript" color="primary" icon="mdi-play-circle-outline" size="x-large" @click="confirmRunTask(item)"/>
+                    <v-icon v-else class="text-grey-lighten-2" icon="mdi-play-circle-outline" size="large"/>
                   </template>
 
                   <template v-slot:no-data>
@@ -149,8 +150,25 @@
 
     </v-container>
 
+    <!-- Dialog showing runlog -->
     <v-dialog width="90%" height="90%" maxHeight="90%" v-model="isShowRunlog" scrollable>
       <run-log :taskId="runLogTaskId" :taskName="runLogTaskName" @closeRunlog="this.isShowRunlog=false;"/>
+    </v-dialog>
+
+    <!-- Dialog showing run result -->
+    <v-dialog v-model="isShowRunDialog">
+      <v-card class="mx-auto" width="auto" max-width="90%" min-width="400">
+        <v-card-title :class="isRunDialogSuccess? 'bg-green':'bg-red'">
+          <v-icon v-if="isRunDialogSuccess" icon="mdi-check-circle-outline" />
+          <v-icon v-else icon="mdi-alert-circle-outline" />
+          {{ runDialogTitle }}
+        </v-card-title>
+        <v-card-text style="overflow:auto" v-html="runDialogText" />
+        <v-card-actions>
+          <v-spacer/>
+          <v-btn variant="tonal" text="Ok" @click="isShowRunDialog = false"></v-btn>
+        </v-card-actions>
+      </v-card>
     </v-dialog>
 
   </div>
@@ -160,10 +178,12 @@
 <script>
 
   import RunLog from './RunLog.vue';
+  import Loading from 'vue-loading-overlay';
+  import 'vue-loading-overlay/dist/css/index.css'; 
   
   export default {
 
-    components: { RunLog, },
+    components: { RunLog, Loading },
 
     data() {
       return {
@@ -171,16 +191,22 @@
         tasks: [],
         headers: [
           { title: "File name", key: "fileName", width:"10em"},
-          { title: "Completed", key: "hasScript", width: "1em", align: "center"},
+          { title: "Complete", key: "hasScript", width: "1em", align: "center"},
           { title: "Active", key: "active", width: "1em", align: "center"},
           { title: "Frequency", key: "frequency", align: "center" },
-          { title: "Last run (click for log)", key: "latestLog.date" },
+          { title: "Last run (click for log)", key: "latestLog" },
           { title: "Download", key: "download", align: "center" },
+          { title: "Test run", key: "runTest", align: "center" },
           { title: "Run now", key: "runNow", align: "center" },
         ],
         isShowRunlog: false,
         runLogTaskId: null,
         runLogTaskName: null,
+        isLoading: false,
+        isShowRunDialog: false,
+        isRunDialogSuccess: false,
+        runDialogText: "",
+        runDialogTitle: "",
       }      
     },
 
@@ -202,6 +228,8 @@
 
       loadClient() {
 
+        console.log("LOADING....")
+
         this.$axios.get(`/api/homedir/`+this.id)
           .then(resp => {
             this.client = resp.data;
@@ -214,7 +242,7 @@
           this.$axios.get(`/api/homedir/`+this.id+`/task`)
           .then(resp => {
             this.tasks = resp.data;
-            console.log("TASKS: " + this.tasks)
+            console.log("TASKS: " + JSON.stringify(this.tasks))
           })
           .catch(error => console.log(error))
           .finally(() => {} )
@@ -239,11 +267,65 @@
         this.isShowRunlog = true
       },
 
+      confirmRunTask(item) {
+
+        this.$root.$refs.confirm.open(
+          'Run task', 
+          'All previously generated data for this task will be overwritten! <br/><br/>Are you sure you want to continue?', 
+          { color: 'orange-darken-2', width: 400 }
+        ).then((confirm) => {
+          if (confirm) this.runTask(item)
+        })
+      },
+
       runTask(item) {
-        console.log("Run Task " + item.id)
-        // TODO implement
-        alert("Feature to be implemented in a future version")
-      }
+
+        this.isLoading = true;
+
+        this.$axios.get(`/runproxy/run/`+item.id)
+          .then(resp => {
+            console.log("RESP: " + resp.data)
+            this.runDialog(true, "Task completed successfully. Resulting export is available through the download button.")
+          })
+          .catch(error => {
+            this.runDialog(false, this.preformat(JSON.stringify(error)));
+          })
+          .finally(() => {
+            this.loadClient() // reload list
+            this.isLoading = false
+          })
+      },
+
+      dryRunTask(item) {
+
+        this.isLoading = true;
+
+        this.$axios.get('/runproxy/dryrun/'+item.id) 
+          .then(resp => {
+            this.runDialog(true, "Dry run completed successfully. Download will start shortly.")
+            this.$func.downloadResponse(resp)
+          })
+          .catch(error => {
+            var msg = JSON.stringify(error.response)
+            if(error.response.data.message) msg = error.response.data.message
+            this.runDialog(false, this.preformat(msg))
+          })
+          .finally(() => {
+            this.isLoading = false
+          })
+      },
+
+      runDialog(isSuccess, text) {
+
+        this.runDialogText = text
+        this.runDialogTitle = isSuccess? "success" : "fail"
+        this.isRunDialogSuccess = isSuccess
+        this.isShowRunDialog = true
+      },
+
+      preformat(string) {
+        return `Some things didn´t work out too well:<br/><br/><pre style="padding:1em;background:#f3f3f3;font-size:70%;">${string}</pre>`
+      },
 
     },
 

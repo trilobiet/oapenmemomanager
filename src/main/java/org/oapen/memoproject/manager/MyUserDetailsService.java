@@ -1,5 +1,6 @@
 package org.oapen.memoproject.manager;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -19,8 +20,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
  * in application.properties (Bcrypt)
  * https://bcrypt-generator.com/
  */
-public class MyUserDetailsService implements UserDetailsService {
+public class MyUserDetailsService implements UserDetailsService, Serializable {
 	
+	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LoggerFactory.getLogger(MyUserDetailsService.class);
 	private static final String PASSWORD_KEY = ".admin.password"; 
 	
