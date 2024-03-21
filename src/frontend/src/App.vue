@@ -63,8 +63,8 @@
     <site-footer />
 
   </v-app>
-</template>
 
+</template>
 
 <script>
 
@@ -84,129 +84,4 @@ export default {
   }
 };
 </script>
-
-
-<style lang="scss">
-
-  // font Roboto
-  @import '../node_modules/@fontsource/roboto/400.css';
-  @import '../node_modules/@fontsource/roboto/500.css';
-  @import '../node_modules/@fontsource/roboto/700.css';
-
-  .bg-actions {
-    padding: 20px 0 !important;
-    .v-btn { 
-      color: #1565c0; 
-    }  
-  }
-
-  // application wide v-data-table styling
-  .v-data-table {
-
-    th {
-      background: #f4f2f6;
-      white-space: nowrap;
-      max-width: 25em;
-      //overflow: hidden;
-      border-bottom: none !important;
-
-      span {
-        text-overflow: ellipsis;
-        font-weight: bold;
-        font-size: 90%;
-      }
-    }
-
-    td {
-      @media (min-width:600px) {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-
-        &.td-title {
-          max-width: 25em;
-        }
-      }
-    }
-
-    .v-data-table-footer {
-      padding: 5px;
-      background: #f8f4fb;
-    }
-
-    .v-field {
-      border-radius: 0;
-    }
-
-    .v-data-table__td {
-      overflow: hidden;
-      white-space: wrap;
-    }
-
-  }
-
-  #oapen-query-preview,
-  #oapen-script-preview {
-    position: relative;
-    white-space: pre;
-    overflow: auto;
-    overflow-x: hidden;
-    text-overflow: ellipsis;
-    font-family: monospace;
-    font-size: 85%;
-    background: #fff;
-    padding: 0 17px 17px;
-    color: #666666;
-    border-bottom: dotted 2px #fff;
-    background: #555;
-    color: #eee;
-    height: 20em;
-
-    &::before {
-      position: sticky;
-      content: 'preview';
-      display: block;
-      top: 0; 
-      margin-left: -17px; 
-      margin-right: -17px;
-      margin-bottom: 1em;
-      background: #F8F8FA;
-      padding: 2px 17px;
-      border-radius: 0px;
-      color: #666;
-      font-family: "Roboto", sans-serif;
-      line-height: 1.8;
-    }
-  }
-
-  .oapen-readonly-name input {
-    cursor: pointer !important;
-  }
-
-  .ace_editor {
-    font-size: 13px;
-    line-height: 1.4;
-    height: 100%;
-  }
-
-  a[target='memoweb'] {
-    text-decoration: none;
-    margin-right: 5px;
-    vertical-align: inherit;
-  }
-
-  .oapen-script-refs-table .v-table__wrapper{
-      overflow-x: hidden;
-
-      code pre {
-        display:block;
-        padding: 10px;
-        font-size:80%;
-      }
-  }
-
-
-
-
-</style>
 

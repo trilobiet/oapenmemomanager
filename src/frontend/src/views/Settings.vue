@@ -212,7 +212,7 @@ export default {
     cancelForm () {
       this.dialog = false
       this.setDefault();   
-      console.log("Dialog canceled")   
+      //console.log("Dialog canceled")   
     },
 
     saveSetting () {

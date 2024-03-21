@@ -54,7 +54,6 @@ public class SettingController {
     	// Sample request body:
     	// {"key":"a","value":"b"}
     	
-    	System.out.println(setting);
     	return settingRepository.save(setting);
 	}
 	

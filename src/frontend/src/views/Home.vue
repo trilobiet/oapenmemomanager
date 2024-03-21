@@ -33,9 +33,9 @@
             calculate-widths>
 
             <template v-slot:[`item.name`]="{ item }">
-              <span style="cursor:pointer" @click="editClient(item)"
-                class="text-blue-darken-4"
-              >{{item.name}}</span>
+              <div style="cursor:pointer" @click="editClient(item)" class="oapen-home-client-name text-blue-darken-4">
+                {{item.name}}
+              </div>
             </template> 
 
             <template v-slot:[`item.emptyScriptsCount`]="{ item }">
@@ -44,10 +44,12 @@
             </template>
 
             <template v-slot:[`item.url`]="{ item }">
-              <a :href="$func.getClientUrl(item.username)" target="memoweb">
-                {{$func.getClientPath(item.username)}}
-              </a>
-              <v-icon icon="mdi-open-in-new" size="x-small"/>
+              <div class="oapen-home-client-home">
+                <a :href="$func.getClientUrl(item.username)" target="memoweb">
+                  {{$func.getClientPath(item.username)}}
+                </a><v-icon icon="mdi-open-in-new" size="x-small"/>
+              </div>
+              
             </template> 
 
             <template v-slot:[`item.passedTaskCount`]="{ item }">
@@ -133,13 +135,13 @@ export default {
     getHeaders() {
 
       let arr = [
-        { title: "Name", key: "name" },
-        { title: "Completed", key: "emptyScriptsCount" , align: "center"},
-        { title: "Client home", key: "url" },
-				{ title: "User name", key: "username" },
-        { title: "Tasks", key: "taskCount", align: "end" },
-        { title: "Success", key: "passedTaskCount", align: "center" },
-        { title: "Fail", key: "failedTaskCount", align: "center" },
+        { title: "name", key: "name", width: "25em"},
+        { title: "complete", key: "emptyScriptsCount" , align: "center"},
+        { title: "client home", key: "url" },
+				{ title: "user name", key: "username" },
+        { title: "tasks", key: "taskCount", align: "end" },
+        { title: "success", key: "passedTaskCount", align: "center" },
+        { title: "fail", key: "failedTaskCount", align: "center" },
       ];
 
       return arr;
@@ -159,3 +161,15 @@ export default {
 }; 
 </script>
 
+<style>
+
+  .oapen-home-client-name {
+    max-width: 30em;
+    white-space: nowrap; overflow:hidden; text-overflow: ellipsis;
+  }
+
+  .oapen-home-client-home {
+    white-space: nowrap; overflow:hidden; text-overflow: ellipsis;
+  }
+
+</style>

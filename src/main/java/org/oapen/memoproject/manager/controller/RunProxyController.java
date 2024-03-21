@@ -8,7 +8,6 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -67,8 +66,6 @@ public class RunProxyController {
 		
 		try {
 			ResponseEntity<?> responseEntity = restTemplate.getForEntity(uri, String.class);
-			HttpHeaders q = responseEntity.getHeaders();
-			//System.out.println(q);
 			return responseEntity;
 			
 		} catch (HttpStatusCodeException e) {
@@ -85,7 +82,6 @@ public class RunProxyController {
 			error.put("message", e.getMessage());
 			
 			return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
-			
 		}
 
 	}

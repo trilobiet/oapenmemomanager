@@ -248,7 +248,7 @@ import router from '@/router';
 
         this.$root.$refs.confirm.open(
             'Delete client', 
-            'This client will irreversely be deleted! <br/><br/>Are you sure you want to continue?', 
+            'This client will be deleted irreversibly! <br/><br/>Are you sure you want to continue?', 
             { color: 'orange-darken-2', width: 400 }
           ).then((confirm) => {
             if (confirm) this.deleteClient()

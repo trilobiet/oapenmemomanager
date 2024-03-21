@@ -327,7 +327,7 @@ export default {
 
       this.$root.$refs.confirm.open(
           'Delete script', 
-          'This library script will irreversely be deleted! <br/><br/>Are you sure you want to continue?', 
+          'This library script will be deleted irreversibly! <br/><br/>Are you sure you want to continue?', 
           { color: 'orange-darken-2', width: 400 }
         ).then((confirm) => {
           if (confirm) this.deleteScript()

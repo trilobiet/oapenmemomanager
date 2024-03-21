@@ -74,41 +74,34 @@
               <v-row>
                 <v-col cols="12" sm="6">
 
-                  <div class="text-subtitle-2 text-grey-darken-2">
+                  <div class="text-subtitle-2 text-grey-darken-2 mb-2">
                     <v-icon icon="mdi-language-python" class="mr-1"/>
                     {{ task.script.name || 'new script'}}
                   </div>
 
-                  <v-btn class="my-3" variant="tonal" width="100%" color="primary" prepend-icon="mdi-language-python" @focus="showEditorPython()">
-                    open script editor
-                  </v-btn>
-
-                  <div id="oapen-script-preview">
+                  <div id="oapen-script-preview" @click="showEditorPython()">
                     {{ task.script.body || '[no content]' }}
                   </div>
 
                 </v-col>
                 <v-col cols="12" sm="6">
 
-                  <div class="text-subtitle-2 text-grey-darken-2">
+                  <div class="text-subtitle-2 text-grey-darken-2 mb-2">
                     <v-icon icon="mdi-database-search" class="mr-1"/>
                     {{ !task.script.query.name ? 'new' : 'queries.'+task.script.query.name }}
                   </div>
 
-                  <v-btn class="my-3" variant="tonal" width="100%" color="primary" prepend-icon="mdi-database-search" @focus="showEditorSql()">
-                    open query editor
-                  </v-btn>
-
-                  <div id="oapen-query-preview">
+                  <div id="oapen-query-preview" @click="showEditorSql()">
                     {{ task.script.query.body || '[no content]' }}
                   </div>
 
                 </v-col>
               </v-row>
 
-              <v-dialog fullscreen v-model="isEditor">
+              <!-- Dialog: Fullscreen Python/SQL editor -->
+              <v-dialog fullscreen v-model="isEditor" >
 
-                <v-card>
+                <v-card class="bg-grey-darken-3">
 
                   <v-card-title v-if="isEditorPython">
                     <v-container fluid class="pb-0">
@@ -120,8 +113,13 @@
                         <v-col>
                           <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn @click="showEditorSql()" class="bg-primary px-4">switch to SQL view</v-btn>
-                            <v-btn variant="outlined" color="primary" @click="closeEditors()" title="exit fullscreen">
+                            <v-btn @click="this.showLibrary=true" class="bg-primary px-4">
+                              <v-icon icon="mdi-language-python" class="mr-1"/>browse libraries
+                            </v-btn>
+                            <v-btn @click="showEditorSql()" class="bg-primary px-4">
+                              <v-icon icon="mdi-database-search" class="mr-1"/>switch to SQL view
+                            </v-btn>
+                            <v-btn @click="closeEditors()" title="exit fullscreen" class="bg-primary px-4">
                               <v-icon size="25" icon="mdi-exit-to-app"/>
                             </v-btn>
                           </v-card-actions>    
@@ -140,8 +138,10 @@
                         <v-col>
                           <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn @click="showEditorPython()" class="bg-primary px-4">switch to Python view</v-btn>
-                            <v-btn variant="outlined" color="primary" @click="closeEditors()" title="exit fullscreen">
+                            <v-btn @click="showEditorPython()" class="bg-primary px-4">
+                              <v-icon icon="mdi-language-python" class="mr-1"/>&nbsp;switch to Python view
+                            </v-btn>
+                            <v-btn @click="closeEditors()" title="exit fullscreen" class="bg-primary px-4">
                               <v-icon size="25" icon="mdi-exit-to-app"/>
                             </v-btn>
                           </v-card-actions>  
@@ -159,6 +159,11 @@
                   </v-card-text>
 
                 </v-card>
+
+                <!-- Dialog: Inspect libraries -->
+                <v-dialog v-model="showLibrary" width="800" max-width="90%" max-height="80%" scrollable>
+                  <library-quick @cancel="cancelLibraryDialog"/>
+                </v-dialog>  
 
               </v-dialog>
 
@@ -238,10 +243,12 @@ import 'ace-builds/src-noconflict/theme-one_dark';
 // eslint-disable-next-line no-unused-vars
 import router from '@/router';
 
+import LibraryQuick from '@/views/LibraryQuick.vue';
+
 export default {
 
   components: {
-    VAceEditor,
+    VAceEditor, LibraryQuick
   },
 
   data() {
@@ -269,6 +276,7 @@ export default {
       alert: this.$alert.NONE, // ERROR,INFO,SUCCESS,WARNING,NONE
       alertMsg: "",
       alertDetail: "",
+      showLibrary: false
     }
   },
 
@@ -428,7 +436,7 @@ export default {
 
       this.$root.$refs.confirm.open(
           'Delete task', 
-          'This task will irreversely be deleted! <br/><br/>Are you sure you want to continue?', 
+          'This task will be deleted irreversibly! <br/><br/>Are you sure you want to continue?', 
           { color: 'orange-darken-2', width: 400 }
         ).then((confirm) => {
           if (confirm) this.deleteTask()
@@ -481,6 +489,10 @@ export default {
 
     showAlertDetail() {
       alert(JSON.stringify(this.alertDetail))
+    },
+
+    cancelLibraryDialog() {
+      this.showLibrary = false;
     },
 
   }

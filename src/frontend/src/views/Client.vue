@@ -60,15 +60,15 @@
                 <v-data-table :headers="headers" :items="tasks" hover >
 
                   <template v-slot:[`item.fileName`]="{ item }">
-                    <v-icon color="#999" :icon="$func.extensionIcon($func.getExtension(item.fileName))" size="small" class="mr-2"/>
-                    <span style="cursor:pointer" @click="editTask(item)"
-                      class="text-blue-darken-4"
-                    >{{item.fileName}}</span>
+                    <span style="white-space: nowrap;cursor:pointer" @click="editTask(item)" class="text-blue-darken-4">
+                      <v-icon color="#999" :icon="$func.extensionIcon($func.getExtension(item.fileName))" size="small" class="mr-2"/>
+                      {{item.fileName}}
+                    </span>
                   </template> 
 
                   <template v-slot:[`item.hasScript`]="{ item }">
                     <v-icon v-if="item.hasScript" color="green" icon="mdi-circle" size="x-small"/>
-                    <v-icon v-else color="orange" icon="mdi-circle-half-full" size="x-small"/>
+                    <v-icon v-else color="orange" icon="mdi-circle-half-full" size="x-small" title="No script provided"/>
                   </template>
                 
                   <template v-slot:[`item.active`]="{ item }">
@@ -108,7 +108,7 @@
 
                   <template v-slot:[`item.runTest`]="{ item }">
                     <v-icon v-if="item.hasScript" color="primary" icon="mdi-flask-outline" size="large" @click="dryRunTask(item)"/>
-                    <v-icon v-else class="text-grey-lighten-2" icon="mdi-flask-outline" size="large" @click="dryRunTask(item)"/>
+                    <v-icon v-else class="text-grey-lighten-2" icon="mdi-flask-outline" size="large"/>
                   </template>
 
                   <template v-slot:[`item.runNow`]="{ item }">
@@ -157,13 +157,13 @@
 
     <!-- Dialog showing run result -->
     <v-dialog v-model="isShowRunDialog">
-      <v-card class="mx-auto" width="auto" max-width="90%" min-width="400">
+      <v-card class="mx-auto" width="800" max-width="90%" min-width="400">
         <v-card-title :class="isRunDialogSuccess? 'bg-green':'bg-red'">
           <v-icon v-if="isRunDialogSuccess" icon="mdi-check-circle-outline" />
           <v-icon v-else icon="mdi-alert-circle-outline" />
           {{ runDialogTitle }}
         </v-card-title>
-        <v-card-text style="overflow:auto" v-html="runDialogText" />
+        <v-card-text v-html="runDialogText"></v-card-text>
         <v-card-actions>
           <v-spacer/>
           <v-btn variant="tonal" text="Ok" @click="isShowRunDialog = false"></v-btn>
@@ -190,14 +190,14 @@
         client: {},
         tasks: [],
         headers: [
-          { title: "File name", key: "fileName", width:"10em"},
-          { title: "Complete", key: "hasScript", width: "1em", align: "center"},
-          { title: "Active", key: "active", width: "1em", align: "center"},
-          { title: "Frequency", key: "frequency", align: "center" },
-          { title: "Last run (click for log)", key: "latestLog" },
-          { title: "Download", key: "download", align: "center" },
-          { title: "Test run", key: "runTest", align: "center" },
-          { title: "Run now", key: "runNow", align: "center" },
+          { title: "export name", key: "fileName", width:"10em"},
+          { title: "complete", key: "hasScript", width: "1em", align: "center"},
+          { title: "active", key: "active", width: "1em", align: "center"},
+          { title: "frequency", key: "frequency", align: "center" },
+          { title: "last run (click for log)", key: "latestLog" },
+          { title: "download", key: "download", align: "center" },
+          { title: "test run", key: "runTest", align: "center" },
+          { title: "run now", key: "runNow", align: "center" },
         ],
         isShowRunlog: false,
         runLogTaskId: null,
@@ -324,11 +324,22 @@
       },
 
       preformat(string) {
-        return `Some things didn´t work out too well:<br/><br/><pre style="padding:1em;background:#f3f3f3;font-size:70%;">${string}</pre>`
+        return `Some things didn´t work out too well:<br/><br/><pre class="pre-run-msg">${string}</pre>`
       },
 
     },
 
   }
 
-  </script>
+</script>
+
+<style>
+
+.pre-run-msg {
+    overflow:auto;
+    padding:1em;
+    background:#f3f3f3;
+    font-size:70%;
+}
+
+</style>

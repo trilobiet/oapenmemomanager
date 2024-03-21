@@ -14,8 +14,11 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import * as labsComponents  from 'vuetify/labs/components'
 
-import "@mdi/font/css/materialdesignicons.css";
-import "@fortawesome/fontawesome-free/css/all.css";
+import "@mdi/font/css/materialdesignicons.css"
+import "@fortawesome/fontawesome-free/css/all.css"
+
+// global custom styles
+import "@/styles/globals.scss"
 
 // global custom tags
 import MyFormHeader from "@/components/MyFormHeader.vue";

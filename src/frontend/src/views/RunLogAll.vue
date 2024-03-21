@@ -80,8 +80,8 @@ export default {
       headers: [
         { title: "date", key: "date", width: "10em" },
         { title: "success", key: "success", width: "3em" },
-        { title: "client", key: "client", width: "3em", style: "background:green"},
-        { title: "task", key: "task"},
+        { title: "client", key: "client", width: "15em"},
+        { title: "task", key: "task", width: "10em"},
         { title: "message", key: "shortMessage", width: "auto" },
         { title: "", key: "data-table-expand" },
       ],
@@ -119,7 +119,9 @@ export default {
   }
 
   .oapen-log-client-name {
-    max-width:10em; overflow:hidden; text-overflow: ellipsis;
+    max-width: 15em;
+    white-space: nowrap; overflow:hidden; text-overflow: ellipsis;
   }
+
 
 </style>

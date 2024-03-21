@@ -95,8 +95,8 @@ export default {
     getHeaders() {
 
       let arr = [
-        { title: "Name", key: "name" },
-				{ title: "# Refering scripts", key: "references" },
+        { title: "scripts", key: "name" },
+				{ title: "# refering scripts", key: "references" },
       ];
 
       return arr;

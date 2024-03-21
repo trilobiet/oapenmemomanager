@@ -12,7 +12,7 @@
 
 	<groupId>org.oapen.memoproject</groupId>
 	<artifactId>manager</artifactId>
-	<version>0.0.1</version>
+	<version>1.0.0</version>
 	<name>managerapplication</name>
 	<description>OAPEN Management Application for MEMO Project</description>
 

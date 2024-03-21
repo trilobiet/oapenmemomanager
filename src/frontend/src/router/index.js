@@ -8,6 +8,7 @@ import Client from "@/views/Client.vue";
 import ClientForm from "@/views/forms/ClientForm.vue";
 import TaskForm from "@/views/forms/TaskForm.vue";
 import Library from "@/views/Library.vue";
+import LibraryQuick from "@/views/LibraryQuick.vue";
 import LibraryQueryForm from "@/views/forms/LibraryQueryForm.vue";
 import LibraryScriptForm from "@/views/forms/LibraryScriptForm.vue";
 import Settings from "@/views/Settings.vue";
@@ -51,6 +52,11 @@ const routes = [
     path: "/library",
     name: "library",
     component: Library,
+  },
+  {
+    path: "/libraryquick",
+    name: "libraryQuick",
+    component: LibraryQuick,
   },
   {
     path: "/query",
