@@ -1,6 +1,8 @@
 <template>
   <div class="task-form">
 
+    <loading v-model:active="isLoading" is-full-page></loading>
+
     <v-container fluid>
 
       <v-form ref="taskForm" v-model="isValidForm" validate-on="lazy input">
@@ -98,6 +100,18 @@
                 </v-col>
               </v-row>
 
+              <v-row v-if="!isNew">
+                <v-col>
+                  <v-card variant="outlined" color="green-darken-2">
+                    <v-card-item>
+                      <v-btn @click="dryRunTask(task)" text="Dry run" prepend-icon="mdi-flask-outline" variant="tonal" class="mr-2"/>
+                      <v-btn v-if="isDryRunSuccess" text="Download result" :href="'/download/tmp/' + client.username + '_' + task.fileName"
+                        prepend-icon="mdi-download" variant="tonal"/>
+                    </v-card-item> 
+                  </v-card>                  
+                </v-col>
+              </v-row>    
+
               <!-- Dialog: Fullscreen Python/SQL editor -->
               <v-dialog fullscreen v-model="isEditor" >
 
@@ -181,12 +195,19 @@
                 </v-col>
               </v-row>
 
+              <!-- Alert showing SAVE success/failure -->
               <v-row v-if="alert !== this.$alert.NONE">
                 <v-col>
-                  <v-alert :type="alert" v-model="alert" closable @click:close="alert == this.$alert.NONE">
+                  <v-alert :type="alert" closable @click:close="alert == this.$alert.NONE">
                     <span v-if="alert == this.$alert.ERROR" @click="showAlertDetail">{{ alertMsg }}</span>
                     <span v-else>{{ alertMsg }}</span>
                   </v-alert>
+                </v-col>
+              </v-row>
+
+              <v-row v-if="!isNew">
+                <v-col class="px-4 text-grey-darken-1 text-caption">
+                  Last edited by {{ task.updatedBy }} on {{ task.updatedAt }}
                 </v-col>
               </v-row>
 
@@ -226,6 +247,22 @@
 
     </v-container>
 
+    <!-- Dialog showing run result -->
+    <v-dialog v-model="isShowRunDialog">
+      <v-card class="mx-auto" width="800" max-width="90%" min-width="400">
+        <v-card-title :class="isRunDialogSuccess? 'bg-green':'bg-red'">
+          <v-icon v-if="isRunDialogSuccess" icon="mdi-check-circle-outline" />
+          <v-icon v-else icon="mdi-alert-circle-outline" />
+          {{ runDialogTitle }}
+        </v-card-title>
+        <v-card-text v-html="runDialogText"></v-card-text>
+        <v-card-actions>
+          <v-spacer/>
+          <v-btn variant="tonal" text="Ok" @click="isShowRunDialog = false"></v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </div>
 </template>
     
@@ -242,13 +279,13 @@ import 'ace-builds/src-noconflict/theme-github_dark';
 import 'ace-builds/src-noconflict/theme-one_dark';
 // eslint-disable-next-line no-unused-vars
 import router from '@/router';
-
 import LibraryQuick from '@/views/LibraryQuick.vue';
+import Loading from 'vue-loading-overlay';
 
 export default {
 
   components: {
-    VAceEditor, LibraryQuick
+    VAceEditor, LibraryQuick, Loading
   },
 
   data() {
@@ -273,10 +310,16 @@ export default {
       isEditor: false,
       isEditorSql: false,
       isEditorPython: false,
+      isLoading: false,
+      isDryRunSuccess: false,
       alert: this.$alert.NONE, // ERROR,INFO,SUCCESS,WARNING,NONE
       alertMsg: "",
       alertDetail: "",
-      showLibrary: false
+      showLibrary: false,
+      isShowRunDialog: false,
+      isRunDialogSuccess: false,
+      runDialogText: "",
+      runDialogTitle: "",
     }
   },
 
@@ -307,11 +350,11 @@ export default {
       }
     },
 
-    /*alert(new_val){ // auto close alert after 5 secs
+    alert(new_val){ // auto close alert after 5 secs
       if(new_val){
-        setTimeout(()=>{this.alert=""},5000)
+        setTimeout(()=>{this.alert=this.$alert.NONE},5000)
       }
-    },*/
+    }
 
   },
 
@@ -407,15 +450,17 @@ export default {
         if (this.isNew) postUrl = '/api/homedir/' + this.clientid + '/task';
 
         this.$axios.post(postUrl, taskToSave)
-          .then(resp => {
-            console.log(resp)
+          .then((resp) => {
+            console.log("SAVE: " + resp.data.id)
             this.alert = this.$alert.SUCCESS;
             this.alertMsg = "Task saved";
-            //setTimeout(() => { router.push({ name: 'client', params: { id: this.client.id } }) }, 1000);
-            setTimeout(() => { router.go(-1) }, 1000);
+            this.id = resp.data.id
+            this.isNew = false
+            this.loadTask();
+            router.replace({ name: 'taskEdit', params: { id: resp.data.id } })
           })
           .catch(err => {
-            console.log(err)
+            // console.log(err)
             this.alert = this.$alert.ERROR;
             this.alertMsg = err.message;
             this.alertDetail = err
@@ -423,7 +468,6 @@ export default {
           .finally(() => {
             console.log("Ready.")
           })
-
       }
       else {
         this.alert = this.$alert.ERROR;
@@ -494,6 +538,41 @@ export default {
     cancelLibraryDialog() {
       this.showLibrary = false;
     },
+
+    dryRunTask(item) {
+
+      this.isLoading = true;
+      const url = `/runproxy/run/` + item.id + "?dry=true";
+      console.log("URL: " + url)
+
+      this.$axios.get(url)
+        .then((resp) => {
+          console.log("RESP: " + resp.data)
+          this.isDryRunSuccess = true
+          this.runDialog(true, "Dry run completed successfully. Resulting export is available through the download button.")
+        })
+        .catch(error => {
+          var msg = JSON.stringify(error.response)
+          if(error.response.data.message) msg = error.response.data.message
+          this.runDialog(false, this.preformat(msg));
+          //this.runDialog(false, this.preformat(JSON.stringify(error)));
+        })
+        .finally(() => {
+          this.isLoading = false
+        })
+    },
+
+    runDialog(isSuccess, text) {
+
+      this.runDialogText = text
+      this.runDialogTitle = isSuccess? "success" : "fail"
+      this.isRunDialogSuccess = isSuccess
+      this.isShowRunDialog = true
+    },
+
+    preformat(string) {
+      return `Some things didn´t work out too well:<br/><br/><pre class="pre-run-msg">${string}</pre>`
+    },    
 
   }
 }

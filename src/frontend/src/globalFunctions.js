@@ -5,8 +5,9 @@ export const globalfunctions = {
 
 	downloadResponse(response) {
 
-		//console.log("RESP: " + resp.headers)
-		const url = window.URL.createObjectURL(new Blob([response.data]));
+		// console.log("RESP: " + response.headers['content-type'])
+		const data = response.headers['content-type'].startsWith("application/json")? JSON.stringify(response.data) : response.data
+		const url = window.URL.createObjectURL(new Blob([data]));
 		const link = document.createElement('a');
 		link.href = url;
 		// Get filename from header like 'content-disposition: attachment; filename="SCELC_profile1_marc.xml"'
@@ -113,6 +114,7 @@ export const globalfunctions = {
 				case "xml": 
 				case "onix": 
 				case "marcxml": return "mdi-xml"
+				case "json": return "mdi-code-json"
 				case "rss": return "mdi-rss"
 				case "xls": 
 				case "xlsm": return "mdi-microsoft-excel"
@@ -169,6 +171,23 @@ export const globalfunctions = {
 	formatDate(dt) {
 
 		return dt.replace(/T.*/, "")
-	}
+	},
+
+	uuid: function (separator) {
+    /// <summary>
+    ///    Creates a unique id for identification purposes.
+    /// </summary>
+    /// <param name="separator" type="String" optional="true">
+    /// The optional separator for grouping the generated segmants: default "-".    
+    /// </param>
+
+    var delim = separator || "";
+
+    function S4() {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    }
+
+    return (S4() + S4() + delim + S4() + delim + S4() + delim + S4() + delim + S4() + S4() + S4());
+	},
 
 }

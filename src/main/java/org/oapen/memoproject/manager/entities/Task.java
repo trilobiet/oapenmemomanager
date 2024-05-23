@@ -22,7 +22,6 @@ import org.hibernate.annotations.JoinFormula;
 import org.hibernate.annotations.Type;
 import org.springframework.util.StringUtils;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
@@ -39,9 +38,9 @@ import lombok.ToString;
 @Setter @Getter @ToString 
 @RequiredArgsConstructor 
 @NoArgsConstructor // JPA needs this 
-@EqualsAndHashCode(onlyExplicitlyIncluded=true)
+@EqualsAndHashCode(onlyExplicitlyIncluded=true, callSuper=false)
 @Table(name = "task")
-public class Task implements Serializable {
+public class Task extends Auditable implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	

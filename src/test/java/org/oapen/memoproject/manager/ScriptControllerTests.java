@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -20,18 +21,21 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper; 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule; 
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,classes = Application.class)
 @AutoConfigureMockMvc(addFilters = false /* bypass security */)
 @EnableAutoConfiguration(exclude=SecurityAutoConfiguration.class)
+@WithMockUser(username = "test", password = "test")
 public class ScriptControllerTests {
 	
 	@Autowired
@@ -42,6 +46,15 @@ public class ScriptControllerTests {
 	
 	@InjectMocks
 	private ScriptController scriptController;
+	
+	private ObjectMapper om;
+	
+	@BeforeEach
+	private void setup(){
+		
+		om = new ObjectMapper();
+		om.registerModule(new JavaTimeModule());
+	}	
 
 	@Test 
 	void givenScripts_whenSaveAllAndGet_thenSortedByName() throws Exception {
@@ -62,7 +75,6 @@ public class ScriptControllerTests {
 		
 		MvcResult res = resultActions.andReturn();
 		
-		ObjectMapper om = new ObjectMapper();
 		// https://stackoverflow.com/questions/6349421/how-to-use-jackson-to-deserialise-an-array-of-objects
 		List<Script> lst = om.readValue(res.getResponse().getContentAsString(), new TypeReference<List<Script>>(){});
 		
@@ -102,7 +114,6 @@ public class ScriptControllerTests {
 		
 		MvcResult res = resultActions.andReturn();
 		
-		ObjectMapper om = new ObjectMapper();
 		// https://stackoverflow.com/questions/6349421/how-to-use-jackson-to-deserialise-an-array-of-objects
 		List<Script> lst = om.readValue(res.getResponse().getContentAsString(), new TypeReference<List<Script>>(){});
 		

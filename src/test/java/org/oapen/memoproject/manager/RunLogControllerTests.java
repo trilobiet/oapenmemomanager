@@ -24,6 +24,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -37,6 +38,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,classes = Application.class)
 @AutoConfigureMockMvc(addFilters = false /* bypass security */)
 @EnableAutoConfiguration(exclude=SecurityAutoConfiguration.class)
+@WithMockUser(username = "test", password = "test")
 public class RunLogControllerTests {
 
 	@Autowired
@@ -57,10 +59,13 @@ public class RunLogControllerTests {
 		
     	String NAME = "test name";
     	String USERNAME = RandomStringUtils.randomAlphabetic(10);
+    	String ACCESSKEY = RandomStringUtils.randomAlphabetic(10);
+    	
     	int SIZE = 20;
 
     	// We need a homedir to serve as owner of the tasks
     	Homedir hNew = new Homedir(USERNAME, NAME);
+    	hNew.setAccessKey(ACCESSKEY);
     	homedirRepository.save(hNew);
     	
     	Task tNew = new Task("File name","ext",hNew);

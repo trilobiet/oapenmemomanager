@@ -1,8 +1,6 @@
 package org.oapen.memoproject.manager.entities;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,8 +14,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -38,10 +34,10 @@ import lombok.ToString;
 @Setter @Getter @ToString 
 @RequiredArgsConstructor 
 @NoArgsConstructor // JPA needs this 
-@EqualsAndHashCode(onlyExplicitlyIncluded=true)
+@EqualsAndHashCode(onlyExplicitlyIncluded=true, callSuper=false)
 @Table(name = "homedir")
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class Homedir implements UserDetails, Serializable  { 
+public class Homedir extends Auditable implements Serializable  { 
 
 	private static final long serialVersionUID = 1L;
 	
@@ -53,8 +49,8 @@ public class Homedir implements UserDetails, Serializable  {
 	
 	@Column(nullable = false, unique = true)
 	@NonNull
-	private String username; 
-
+	private String username;
+	
 	@Column(nullable = false)
 	@NonNull
 	private String name; 
@@ -62,7 +58,7 @@ public class Homedir implements UserDetails, Serializable  {
 	@JsonProperty(access = Access.WRITE_ONLY) // exclude for display! 
 	private String password;
 	
-	@Column(unique = true)
+	@Column(unique = true, nullable = false)
 	private String accessKey;
 	private boolean isEditable;
 	
@@ -113,27 +109,6 @@ public class Homedir implements UserDetails, Serializable  {
     	
     	else return 0L;
     }
-    
-    
-    
-	// UserDetails methods =======================================
-
-	@Override @JsonIgnore
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return Collections.emptySet();
-	}
-
-	@Override @JsonIgnore
-	public boolean isAccountNonExpired() { return true;	}
-
-	@Override @JsonIgnore
-	public boolean isAccountNonLocked() { return true;	}
-
-	@Override @JsonIgnore
-	public boolean isCredentialsNonExpired() { return true; }
-
-	@Override @JsonIgnore
-	public boolean isEnabled() { return true; }
 	
 }
 

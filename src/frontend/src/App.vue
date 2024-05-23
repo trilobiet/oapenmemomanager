@@ -33,7 +33,7 @@
           <v-list-item :to="{ name: 'alllogs' }">
             <v-list-item-title>Run Logs</v-list-item-title>
           </v-list-item>
-          <v-list-item :to="{ name: 'settings' }">
+          <v-list-item :to="{ name: 'admin' }" v-if="user.admin">
             <v-list-item-title>Settings</v-list-item-title>
           </v-list-item>
 
@@ -60,6 +60,7 @@
 
     </v-main>
 
+    <!-- Include footer template -->
     <site-footer />
 
   </v-app>

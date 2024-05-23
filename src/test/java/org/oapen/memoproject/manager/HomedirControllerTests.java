@@ -21,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -33,6 +34,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,classes = Application.class)
 @AutoConfigureMockMvc(addFilters = false /* bypass security */) 
 @EnableAutoConfiguration(exclude=SecurityAutoConfiguration.class)
+@WithMockUser(username = "test", password = "test")
 public class HomedirControllerTests {
 
 	@Autowired
@@ -58,10 +60,11 @@ public class HomedirControllerTests {
 	void givenHomedirAndPassword_whenSaveEncryptedAndGet_thenPasswordsMatch() throws Exception {
 		
 		String USERNAME = RandomStringUtils.randomAlphabetic(10);
-		String PASSWORD = RandomStringUtils.randomAlphabetic(10); 				
+		String PASSWORD = RandomStringUtils.randomAlphabetic(10); 		
+		String ACCESSKEY = RandomStringUtils.randomAlphabetic(10);
 		
 		// Json represents a task on homedir together with a script
-		String json = "{\"username\":\"" + USERNAME + "\",\"name\":\"Pietje\","
+		String json = "{\"username\":\"" + USERNAME + "\",\"name\":\"Pietje\",\"accessKey\":\"" + ACCESSKEY + "\","
 			+ "\"password\":\"" + PASSWORD + "\",\"notes\":\"blablabla\" }";
 		
 		ResultActions resultActions = mvc.perform(

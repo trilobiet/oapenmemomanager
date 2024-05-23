@@ -35,11 +35,12 @@
 
                 <v-col>
 
-                  <v-btn class="my-3" variant="tonal" width="100%" color="primary" prepend-icon="mdi-language-python" @focus="showEditor()">
-                    open script editor
-                  </v-btn>
+                  <div class="text-subtitle-2 text-grey-darken-2 mb-2">
+                    <v-icon icon="mdi-language-python" class="mr-1"/>
+                    {{ script.name || 'new script'}}
+                  </div>
 
-                  <div id="oapen-script-preview">
+                  <div id="oapen-script-preview" @click="showEditor()">
                     {{ script.body ? script.body : '[no content]' }}
                   </div>
 
@@ -47,9 +48,10 @@
 
               </v-row>
 
+              <!-- Editor popup -->
               <v-dialog fullscreen v-model="isEditor">
 
-                <v-card>
+                <v-card class="bg-grey-darken-3">
 
                   <v-card-title>
                     <v-container fluid class="pb-0">
@@ -61,7 +63,7 @@
                         <v-col>
                           <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn variant="outlined" color="primary" @click="closeEditor()" title="exit fullscreen">
+                            <v-btn @click="closeEditor()" title="exit fullscreen" class="bg-primary px-4">
                               <v-icon size="25" icon="mdi-exit-to-app"/>
                             </v-btn>
                           </v-card-actions>  
@@ -132,6 +134,12 @@
                     <span v-if="alert == this.$alert.ERROR" @click="showAlertDetail">{{ alertMsg }}</span>
                     <span v-else>{{ alertMsg }}</span>
                   </v-alert>
+                </v-col>
+              </v-row>
+
+              <v-row v-if="!isNew">
+                <v-col class="px-4 text-grey-darken-1 text-caption">
+                  Last edited by {{ script.updatedBy }} on {{ script.updatedAt }}
                 </v-col>
               </v-row>
 

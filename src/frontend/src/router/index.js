@@ -14,6 +14,7 @@ import LibraryScriptForm from "@/views/forms/LibraryScriptForm.vue";
 import Settings from "@/views/Settings.vue";
 import SessionExpired from "@/views/SessionExpired.vue";
 import RunLogAll from "@/views/RunLogAll.vue";
+import Admin from "@/views/Admin.vue";
 
 import axios from 'axios'
 
@@ -48,15 +49,16 @@ const routes = [
     name: "taskNew",
     component: TaskForm,
   },
+  { 
+    // popup while editing a script in Task view
+    path: "/libraryquick",
+    name: "libraryQuick",
+    component: LibraryQuick,
+  },
   {
     path: "/library",
     name: "library",
     component: Library,
-  },
-  {
-    path: "/libraryquick",
-    name: "libraryQuick",
-    component: LibraryQuick,
   },
   {
     path: "/query",
@@ -93,6 +95,12 @@ const routes = [
     name: "sessionexpired",
     component: SessionExpired,
   },
+  {
+    path: "/admin",
+    name: "admin",
+    component: Admin,
+  },
+
 ];
 
 const router = createRouter({

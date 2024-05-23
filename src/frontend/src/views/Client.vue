@@ -57,10 +57,10 @@
 
             <v-row>
               <v-col>
-                <v-data-table :headers="headers" :items="tasks" hover >
+                <v-data-table :headers="headers" :items="tasks" hover>
 
                   <template v-slot:[`item.fileName`]="{ item }">
-                    <span style="white-space: nowrap;cursor:pointer" @click="editTask(item)" class="text-blue-darken-4">
+                    <span style="white-space: nowrap;cursor:pointer" @click="editTask(item)" :class="item.active?'text-blue-darken-4':'text-grey'">
                       <v-icon color="#999" :icon="$func.extensionIcon($func.getExtension(item.fileName))" size="small" class="mr-2"/>
                       {{item.fileName}}
                     </span>
@@ -99,16 +99,11 @@
                   </template>
 
                   <template v-slot:[`item.download`]="{ item }">
-                    <a v-if="item.latestLog && item.latestLog.success" :href="'/download/' + item.id + '/' + item.fileName">
+                    <a v-if="item.latestLog && item.latestLog.success" :href="'/download/' + client.username + '/' + item.fileName">
                       <v-icon class="text-blue-darken-1" icon="mdi-download">
                       </v-icon>  
                     </a>
                     <v-icon v-else class="text-grey-lighten-2" icon="mdi-download"/>
-                  </template>
-
-                  <template v-slot:[`item.runTest`]="{ item }">
-                    <v-icon v-if="item.hasScript" color="primary" icon="mdi-flask-outline" size="large" @click="dryRunTask(item)"/>
-                    <v-icon v-else class="text-grey-lighten-2" icon="mdi-flask-outline" size="large"/>
                   </template>
 
                   <template v-slot:[`item.runNow`]="{ item }">
@@ -196,9 +191,9 @@
           { title: "frequency", key: "frequency", align: "center" },
           { title: "last run (click for log)", key: "latestLog" },
           { title: "download", key: "download", align: "center" },
-          { title: "test run", key: "runTest", align: "center" },
           { title: "run now", key: "runNow", align: "center" },
         ],
+        pageNum: 2,
         isShowRunlog: false,
         runLogTaskId: null,
         runLogTaskName: null,
@@ -212,7 +207,7 @@
 
     mounted() {
 
-      console.log("MOUNTED: "+ this.$route.params.id)
+      //console.log("MOUNTED: "+ this.$route.params.id)
       if (this.$route.params.id) {
         this.id = this.$route.params.id;
         this.loadClient();
@@ -234,7 +229,7 @@
           .then(resp => {
             this.client = resp.data;
             this.title = this.client.name;
-            console.log("CLIENT: " + this.client.name)
+            //console.log("CLIENT: " + this.client.name)
           })
           .catch(error => console.log(error))
           .finally(() => {} )
@@ -242,7 +237,7 @@
           this.$axios.get(`/api/homedir/`+this.id+`/task`)
           .then(resp => {
             this.tasks = resp.data;
-            console.log("TASKS: " + JSON.stringify(this.tasks))
+            //console.log("TASKS: " + JSON.stringify(this.tasks))
           })
           .catch(error => console.log(error))
           .finally(() => {} )
@@ -281,36 +276,22 @@
       runTask(item) {
 
         this.isLoading = true;
+        const url = `/runproxy/run/` + item.id;
+        //console.log("URL: " + url)
 
-        this.$axios.get(`/runproxy/run/`+item.id)
-          .then(resp => {
+        this.$axios.get(url)
+          .then((resp) => {
             console.log("RESP: " + resp.data)
             this.runDialog(true, "Task completed successfully. Resulting export is available through the download button.")
           })
           .catch(error => {
-            this.runDialog(false, this.preformat(JSON.stringify(error)));
+            var msg = JSON.stringify(error.response)
+            if(error.response.data.message) msg = error.response.data.message
+            this.runDialog(false, this.preformat(msg));
+            //this.runDialog(false, this.preformat(JSON.stringify(error)));
           })
           .finally(() => {
             this.loadClient() // reload list
-            this.isLoading = false
-          })
-      },
-
-      dryRunTask(item) {
-
-        this.isLoading = true;
-
-        this.$axios.get('/runproxy/dryrun/'+item.id) 
-          .then(resp => {
-            this.runDialog(true, "Dry run completed successfully. Download will start shortly.")
-            this.$func.downloadResponse(resp)
-          })
-          .catch(error => {
-            var msg = JSON.stringify(error.response)
-            if(error.response.data.message) msg = error.response.data.message
-            this.runDialog(false, this.preformat(msg))
-          })
-          .finally(() => {
             this.isLoading = false
           })
       },

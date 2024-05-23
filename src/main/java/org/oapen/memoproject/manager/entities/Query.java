@@ -25,9 +25,9 @@ import lombok.ToString;
 @Setter @Getter @ToString
 @RequiredArgsConstructor 
 @NoArgsConstructor // JPA needs this 
-@EqualsAndHashCode(onlyExplicitlyIncluded=true)
+@EqualsAndHashCode(onlyExplicitlyIncluded=true, callSuper=false)
 @Table(name = "query")
-public class Query implements Serializable {
+public class Query extends Auditable implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	

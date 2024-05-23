@@ -40,7 +40,18 @@
                       <v-icon icon="mdi-auto-fix" @click="client.username = $func.normalizeName(client.name)"/> 
                     </template>
                   </v-text-field>
-                  <div class="text-caption mx-4 text-grey-darken-1">export directory: /{{ client.username }}</div>
+                </v-col>
+
+                <v-col cols="12" lg="4" md="6" sm="12">
+                  <v-text-field label="accesskey" v-model="client.accessKey" readonly bg-color="transparent" class="text-blue-grey-lighten-1">
+                    <template v-slot:append-inner>
+                      <v-icon icon="mdi-auto-fix" @click="client.accessKey = $func.uuid()" color="black"/> 
+                    </template>
+                  </v-text-field>
+                  <div class="text-caption mt-0 mb-5">
+                    Only recreate when a previous version has been compromised.
+                    When recreated external users must update links to private exports.
+                  </div>
                 </v-col>
 
               </v-row>  
@@ -91,10 +102,16 @@
 
               <v-row v-if="alert!==this.$alert.NONE">
                 <v-col>
-                  <v-alert :type="alert" v-model="alert" closable @click:close="alert==this.$alert.NONE">
+                  <v-alert :type="alert" closable @click:close="alert==this.$alert.NONE">
                     <span v-if="alert==this.$alert.ERROR" @click="showAlertDetail">{{alertMsg}}</span>
                     <span v-else>{{alertMsg}}</span>
                   </v-alert>
+                </v-col>
+              </v-row>
+
+              <v-row v-if="!isNew">
+                <v-col class="px-4 text-grey-darken-1 text-caption">
+                  Last edited by {{ client.updatedBy }} on {{ client.updatedAt }}
                 </v-col>
               </v-row>
 
@@ -165,7 +182,10 @@ import router from '@/router';
         this.id = this.$route.params.id;
         this.loadClient();
       }  
-      else this.isNew = true;
+      else {
+        this.isNew = true;
+        this.client.accessKey = this.$func.uuid();
+      }  
 
     },
 
@@ -175,11 +195,11 @@ import router from '@/router';
         if (newVal==false) this.client.password = ''
       },
       
-      /*alert(new_val){ // auto close alert after 5 secs
+      alert(new_val){ // auto close alert after 5 secs
         if(new_val){
           setTimeout(()=>{this.alert=this.$alert.NONE},5000)
         }
-      } */       
+      }       
 
     },  
 
@@ -225,10 +245,10 @@ import router from '@/router';
         if(this.$refs.clientForm.validate()) {
 
           this.$axios.post(`/api/homedir`, this.client)
-          .then( resp => {
+          .then( () => {
             this.alert = this.$alert.SUCCESS;
             this.alertMsg = "Client saved";
-            setTimeout(() => {router.push({ name: 'client', params: {id: resp.data.id} })}, 1000);
+            //setTimeout(() => {router.push({ name: 'client', params: {id: resp.data.id} })}, 1000);
           })
           .catch( err => {
             this.alert = this.$alert.ERROR;

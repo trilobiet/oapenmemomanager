@@ -19,9 +19,9 @@ import lombok.ToString;
 @Setter @Getter @ToString 
 @RequiredArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded=true)
+@EqualsAndHashCode(onlyExplicitlyIncluded=true, callSuper=false)
 @Table(name = "setting")
-public class Setting implements Serializable {
+public class Setting extends Auditable implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -34,5 +34,4 @@ public class Setting implements Serializable {
 	@Column(name="`value`",nullable = false) // quote reserved words!
 	@NonNull
 	private String value;
-	
 }

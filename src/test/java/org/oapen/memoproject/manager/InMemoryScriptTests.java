@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.oapen.memoproject.manager.entities.Homedir;
@@ -21,10 +20,12 @@ import org.oapen.memoproject.manager.jpa.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
+@WithMockUser (username = "test", password = "test")
 public class InMemoryScriptTests {
 	
 	@Autowired
@@ -74,9 +75,11 @@ public class InMemoryScriptTests {
     	
     	String NAME = "test name";
     	String USERNAME = RandomStringUtils.randomAlphabetic(10);
+    	String ACCESSKEY = RandomStringUtils.randomAlphabetic(10);
     	
     	// We need a homedir to serve as owner of the tasks
     	Homedir hNew = new Homedir(USERNAME, NAME);
+    	hNew.setAccessKey(ACCESSKEY);
     	hNew = homedirRepository.save(hNew);
     	
     	Task tNew = new Task("File Name","ext",hNew);

@@ -22,10 +22,12 @@ import org.oapen.memoproject.manager.jpa.RunLogRepository;
 import org.oapen.memoproject.manager.jpa.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
+@WithMockUser(username = "test", password = "test")
 public class InMemoryTaskTests {
 	
 	@Autowired
@@ -42,9 +44,11 @@ public class InMemoryTaskTests {
     	
     	String NAME = "test name";
     	String USERNAME = RandomStringUtils.randomAlphabetic(10);
+    	String ACCESSKEY = RandomStringUtils.randomAlphabetic(10);
 
     	// We need a homedir to serve as owner of the tasks
     	Homedir hNew = new Homedir(USERNAME, NAME);
+    	hNew.setAccessKey(ACCESSKEY);
     	homedirRepository.save(hNew);
     	
     	Task tNew = new Task("File name","ext",hNew);
@@ -64,9 +68,11 @@ public class InMemoryTaskTests {
     	
     	String NAME = "test name";
     	String USERNAME = RandomStringUtils.randomAlphabetic(10);
+    	String ACCESSKEY = RandomStringUtils.randomAlphabetic(10);
 
     	// We need a homedir to serve as owner of the tasks
     	Homedir hNew = new Homedir(USERNAME, NAME);
+    	hNew.setAccessKey(ACCESSKEY);
     	UUID id = homedirRepository.save(hNew).getId();
     	
     	Task t1 = new Task("File1","ext",hNew);
@@ -88,10 +94,12 @@ public class InMemoryTaskTests {
     	
     	String NAME = "test name";
     	String USERNAME = RandomStringUtils.randomAlphabetic(10);
+    	String ACCESSKEY = RandomStringUtils.randomAlphabetic(10);
     	String FILENAME = RandomStringUtils.randomAlphabetic(10);
 
     	// We need a homedir to serve as owner of the tasks
     	Homedir hNew = new Homedir(USERNAME, NAME);
+    	hNew.setAccessKey(ACCESSKEY);
     	homedirRepository.save(hNew);
     	
     	Task tNew = new Task(FILENAME,"ext",hNew);
@@ -111,9 +119,11 @@ public class InMemoryTaskTests {
 		
     	String NAME = "test name";
     	String USERNAME = RandomStringUtils.randomAlphabetic(10);
+    	String ACCESSKEY = RandomStringUtils.randomAlphabetic(10);
 
     	// We need a homedir to serve as owner of the tasks
     	Homedir hNew = new Homedir(USERNAME, NAME);
+    	hNew.setAccessKey(ACCESSKEY);
     	homedirRepository.save(hNew);
     	
     	Task tNew = new Task("File name","ext",hNew);
@@ -131,12 +141,14 @@ public class InMemoryTaskTests {
 		
     	String HOMEDIRNAME = RandomStringUtils.randomAlphabetic(10);
     	String USERNAME = RandomStringUtils.randomAlphabetic(10);
+    	String ACCESSKEY = RandomStringUtils.randomAlphabetic(10);
     	String TASK = RandomStringUtils.randomAlphabetic(10);
     	String SCRIPT = RandomStringUtils.randomAlphabetic(10);
     	String QUERY = RandomStringUtils.randomAlphabetic(10);
 
     	// We need a homedir to serve as owner of the tasks
     	Homedir hNew = new Homedir(USERNAME, HOMEDIRNAME);
+    	hNew.setAccessKey(ACCESSKEY);
     	homedirRepository.save(hNew);
     	
     	Task tNew = new Task(TASK, "ext", hNew);

@@ -5,7 +5,7 @@
       <v-btn color="#334" rounded variant="text" class="ma-2" :to="{ name: 'home' }">home</v-btn>
       <v-btn color="#334" rounded variant="text" class="ma-2" :to="{ name: 'library' }">library</v-btn>
       <v-btn color="#334" rounded variant="text" class="ma-2" :to="{ name: 'alllogs' }">run logs</v-btn>
-      <v-btn color="#334" rounded variant="text" class="ma-2" :to="{ name: 'settings' }">settings</v-btn>
+      <v-btn color="#334" rounded variant="text" class="ma-2" :to="{ name: 'admin' }" v-if="user.admin">settings</v-btn>
       <v-btn color="#334" rounded variant="text" class="ma-2" href="/logout?logout">logout</v-btn>
 
       <v-col class="pa-2 py-8 text-center credits" cols="12">
@@ -24,6 +24,11 @@
 
 <script>
 export default {
+  computed: {
+    user(){
+      return this.$store.getters.getUser 
+    }
+  }
 };
 </script>
 
@@ -43,6 +48,5 @@ export default {
     text-decoration: none;
     opacity: 1;
   }
-
 
 </style>

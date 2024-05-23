@@ -1,11 +1,13 @@
 package org.oapen.memoproject.manager.controller;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Optional;
 
-import org.oapen.memoproject.manager.entities.Export;
-import org.oapen.memoproject.manager.jpa.ExportRepository;
+import org.oapen.memoproject.manager.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.ResponseEntity.BodyBuilder;
@@ -20,26 +22,31 @@ import org.springframework.web.bind.annotation.RestController;
 public class DownloadController {
 	
 	@Autowired
-	ExportRepository exportRepository;
+	FileService fileService;
 	
-    @GetMapping(value = "/{idTask}/{fileName}")
+    @GetMapping(value = "/{dirName}/{fileName}")
     @ResponseBody
-    public ResponseEntity<String> getFile(
-    		@PathVariable String idTask,
+    public ResponseEntity<?> getFile(
+    		@PathVariable String dirName,
     		@PathVariable String fileName
     	) throws IOException {
     	
-    	Optional<Export> oExport = exportRepository.findByIdTask(idTask);
+    	
+    	Optional<Pair<InputStream, String>> oExport = fileService.getExport(dirName,fileName);
     	
     	if (oExport.isPresent()) {
     		
-    		Export export = oExport.get();
+    		Pair<InputStream, String> export = oExport.get();
     		
 			BodyBuilder bb = ResponseEntity.ok()
-				.header("Content-Type", export.getMimetype() + ";charset=utf-8")
+				.header("Content-Type", export.getSecond() + ";charset=utf-8")
+				.header("Cache-Control", "no-store")
 				.header("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 
-			return bb.body(export.getContent());
+				// No need to close, Spring handles this
+				InputStreamResource res = new InputStreamResource(export.getFirst());
+				
+			return bb.body(res);
     	} 
     	else {
     		// NOT FOUND 

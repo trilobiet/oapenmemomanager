@@ -85,7 +85,7 @@ const promises = [
 
 	// Once we get here we already have a browser session (Spring Boot),
 	// so we only need to ask the api who is the logged in user. 
-	axios.get('/api/user')
+	axios.get('/api/signedinuser')
 		.then(resp => store.commit("setUser",resp.data))
 		.catch(() => {}),
 

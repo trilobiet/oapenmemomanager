@@ -27,7 +27,7 @@
 
           <!-- single-expand show-expand item-key="username" -->  
           <v-data-table  
-            :sort-by="['name','references']" hover 
+            :sort-by="['name','references']" hover items-per-page="5"
             :loading="loading" :search="tableSearch" 
             :headers="headers" :items="scripts"   
             calculate-widths>

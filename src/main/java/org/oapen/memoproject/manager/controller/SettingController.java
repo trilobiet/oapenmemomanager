@@ -5,6 +5,7 @@ import java.util.List;
 import org.oapen.memoproject.manager.entities.Setting;
 import org.oapen.memoproject.manager.jpa.SettingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
+@PreAuthorize("hasAuthority('admin')")
 public class SettingController {
 
 	@Autowired

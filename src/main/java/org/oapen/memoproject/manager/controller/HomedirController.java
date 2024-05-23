@@ -69,7 +69,7 @@ public class HomedirController {
     		BCryptPasswordEncoder enc = new BCryptPasswordEncoder();
     		homedir.setPassword(enc.encode(newPw));
     	}
-    	
+
     	homedir = homedirRepository.save(homedir);
     	return homedir;
 	}

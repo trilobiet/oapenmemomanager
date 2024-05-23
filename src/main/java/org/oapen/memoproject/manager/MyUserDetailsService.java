@@ -1,15 +1,13 @@
 package org.oapen.memoproject.manager;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Optional;
 
-import org.oapen.memoproject.manager.entities.Setting;
-import org.oapen.memoproject.manager.jpa.SettingRepository;
+import org.oapen.memoproject.manager.entities.User;
+import org.oapen.memoproject.manager.jpa.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,53 +22,16 @@ public class MyUserDetailsService implements UserDetailsService, Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LoggerFactory.getLogger(MyUserDetailsService.class);
-	private static final String PASSWORD_KEY = ".admin.password"; 
-	
+
 	@Autowired
-	SettingRepository settingRepository;
+	private UserRepository userRepository;
 	
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(String username) {
 		
-		return new UserDetails() {
-
-			private static final long serialVersionUID = 1L;
-			
-			@Override
-			public boolean isEnabled() {
-				// Key must be present in table 'setting'
-				return settingRepository.findByKey(PASSWORD_KEY).isPresent(); 
-			}
-			
-			@Override
-			public String getPassword() {
-				
-				Optional<Setting> op = settingRepository.findByKey(PASSWORD_KEY);
-				if (op.isPresent()) return op.get().getValue();
-				else {
-					logger.error("No admin defined - provide key '.admin.password' in table 'setting'");
-					throw new RuntimeException("No admin defined");
-				}
-			}
-
-			@Override
-			public String getUsername() {
-				return "administrator";
-			}
-
-			@Override
-			public Collection<? extends GrantedAuthority> getAuthorities() { return null; }
-			
-			@Override
-			public boolean isAccountNonExpired()  { return true; }
-			
-			@Override
-			public boolean isAccountNonLocked() {  return true; }
-
-			@Override
-			public boolean isCredentialsNonExpired() { return true; }
-		};
-
+		Optional<User> user = userRepository.findByUsername(username);
+		logger.info("User login: " + user);
+		return user.orElseThrow(() ->  new UsernameNotFoundException("User '" + username + "' not found"));
 	}
 
 }		

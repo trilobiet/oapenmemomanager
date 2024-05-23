@@ -28,6 +28,12 @@
             </v-col>
           </v-row>  
 
+          <v-row v-if="!isNew">
+            <v-col class="px-4 text-grey-darken-1 text-caption">
+              Last edited by {{ setting.updatedBy }} on {{ setting.updatedAt }}
+            </v-col>
+          </v-row>
+          
         </v-container>
 
       </v-card-text>
@@ -47,11 +53,12 @@
             </v-col>
 
             <v-col class="text-right">
-                <v-btn @click="cancel" text="Cancel"/>
-                <v-btn @click="save" text="Save" :disabled="!isValidForm"/>
+              <v-btn @click="cancel" text="Cancel"/>
+              <v-btn @click="save" text="Save" :disabled="!isValidForm"/>
             </v-col>
 
           </v-row>   
+
         </v-container>
 
       </v-card-actions>

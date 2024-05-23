@@ -35,11 +35,12 @@
 
                 <v-col>
 
-                  <v-btn class="my-3" variant="tonal" width="100%" color="primary" prepend-icon="mdi-database-search" @focus="showEditor()">
-                    open query editor
-                  </v-btn>
+                  <div class="text-subtitle-2 text-grey-darken-2 mb-2">
+                    <v-icon icon="mdi-database-search" class="mr-1"/>
+                    {{ query.name || 'new query'}}
+                  </div>
 
-                  <div id="oapen-query-preview">
+                  <div id="oapen-query-preview" @click="showEditor()">
                     {{ query.body ? query.body : '[no content]' }}
                   </div>
 
@@ -47,9 +48,10 @@
 
               </v-row>
 
+              <!-- Editor popup -->
               <v-dialog fullscreen v-model="isEditor">
 
-                <v-card>
+                <v-card class="bg-grey-darken-3">
 
                   <v-card-title>
                     <v-container fluid class="pb-0">
@@ -61,7 +63,7 @@
                         <v-col>
                           <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn variant="outlined" color="primary" @click="closeEditor()" title="exit fullscreen">
+                            <v-btn @click="closeEditor()" title="exit fullscreen" class="bg-primary px-4">
                               <v-icon size="25" icon="mdi-exit-to-app"/>
                             </v-btn>
                           </v-card-actions>  
@@ -132,6 +134,12 @@
                     <span v-if="alert == this.$alert.ERROR" @click="showAlertDetail">{{ alertMsg }}</span>
                     <span v-else>{{ alertMsg }}</span>
                   </v-alert>
+                </v-col>
+              </v-row>
+
+              <v-row v-if="!isNew">
+                <v-col class="px-4 text-grey-darken-1 text-caption">
+                  Last edited by {{ query.updatedBy }} on {{ query.updatedAt }}
                 </v-col>
               </v-row>
 

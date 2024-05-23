@@ -35,10 +35,10 @@ import lombok.ToString;
 @Setter @Getter @ToString 
 @RequiredArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded=true) 
+@EqualsAndHashCode(onlyExplicitlyIncluded=true, callSuper=false) 
 @Table(name = "script")
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class Script implements Serializable {
+public class Script extends Auditable implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -54,7 +54,7 @@ public class Script implements Serializable {
     
 	@Column(nullable=false, unique=true)
 	@NonNull
-	private String name;
+	private String name; 
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable=false)
