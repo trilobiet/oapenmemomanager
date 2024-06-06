@@ -3,6 +3,10 @@
 
 export const globalfunctions = {
 
+	/*
+		Currently this function is not used. No downloadable data is directly streamed to vue. 
+		Downloadable files are saved server side and can then be downloaded as streams.
+	*/
 	downloadResponse(response) {
 
 		// console.log("RESP: " + response.headers['content-type'])
@@ -165,7 +169,8 @@ export const globalfunctions = {
 
 	formatDateTime(dt) {
 
-		return dt.replace("T", "\xa0")
+		if (dt) return dt.replace("T", "\xa0")
+		else return "burp";
 	},
 
 	formatDate(dt) {

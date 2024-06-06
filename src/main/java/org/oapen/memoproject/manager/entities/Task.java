@@ -44,14 +44,12 @@ public class Task extends Auditable implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	public enum TaskFrequency {	Y, M, W, D }
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO) //.SEQUENCE?
 	@Type(type="uuid-char")
 	@EqualsAndHashCode.Include
     private UUID id; 
-    
+	
 	@Column(nullable = false)
 	@NonNull
 	private String fileName, extension;
@@ -74,34 +72,23 @@ public class Task extends Auditable implements Serializable {
 	@JoinColumn(name = "id_script")
 	private Script script;
 	
+	
 	@JsonProperty(access = Access.READ_ONLY)
 	public LocalDate getNextUpdate() {
 		
-		if (latestLog == null) return startDate;
-		else {
-			LocalDate d = latestLog.getDate().toLocalDate();
-
-			switch (frequency) {
-			
-				case W: return d.plusWeeks(1);
-				case M: return d.plusMonths(1);
-				case Y: return d.plusYears(1);
-				default: return d.plusDays(1);
-			}
-		}	
+		LocalDate now = LocalDate.now();
+		long unitsBetween = frequency.getChronoUnit().between(startDate, now) + 1;
+		LocalDate dt = startDate.plus(unitsBetween, frequency.getChronoUnit());
+		return dt;
 	}
+	
 	
 	@JsonProperty(access = Access.READ_ONLY)
 	public String getFrequencyAsText() {
 		
-		switch (frequency) {
-		
-			case W: return "weekly";
-			case M: return "monthly";
-			case Y: return "yearly";
-			default: return "daily";
-		}
+		return frequency.name();
 	}
+
 	
 	@JsonProperty(access = Access.READ_ONLY)
     public boolean getHasScript() {
@@ -111,6 +98,7 @@ public class Task extends Auditable implements Serializable {
     	else 
     		return false;
     }
+	
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinFormula("(SELECT rl.id FROM runlog rl WHERE rl.id_task = id ORDER BY rl.date DESC LIMIT 1)")

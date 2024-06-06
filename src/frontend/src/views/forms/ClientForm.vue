@@ -216,7 +216,8 @@ import router from '@/router';
           username: [
             v => !!v || "Value is required",
             v => (v && this.$func.isValidUserName(v)) || "Value can only contain A-Z, a-z, 0-9 and _",
-            v => (v && v.length >= 3) || "Value cannot be shorter than 3 characters"
+            v => (v && v.length >= 3) || "Value cannot be shorter than 3 characters",
+            v => (v && v != 'tmp') || "Value cannot be 'tmp'",
           ],
           password: [
             v => !!v || "Value is required",

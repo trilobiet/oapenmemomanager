@@ -118,7 +118,7 @@ public class UserController {
 	    		user.setPassword(enc.encode(newPw));
 	    	}
 			
-	    	user = userRepository.save(user);
+	    	user = userRepository.save(user); 
     	}
     	
     	return user;

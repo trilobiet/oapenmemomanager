@@ -13,6 +13,7 @@ spring.datasource.password=******
 logging.file.name=${user.home}/[...]/logs/oapen_memo-manager.log
 logging.level.root=INFO
 logging.level.oapen.memoproject.manager=INFO
+logging.logback.rollingpolicy.max-history=40
 
 path.exports=${user.home}/oapen/oapenmemo/exports/
 

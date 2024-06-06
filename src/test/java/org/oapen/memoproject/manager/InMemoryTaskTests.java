@@ -16,7 +16,7 @@ import org.oapen.memoproject.manager.entities.RunLog;
 import org.oapen.memoproject.manager.entities.Script;
 import org.oapen.memoproject.manager.entities.Script.ScriptType;
 import org.oapen.memoproject.manager.entities.Task;
-import org.oapen.memoproject.manager.entities.Task.TaskFrequency;
+import org.oapen.memoproject.manager.entities.TaskFrequency;
 import org.oapen.memoproject.manager.jpa.HomedirRepository;
 import org.oapen.memoproject.manager.jpa.RunLogRepository;
 import org.oapen.memoproject.manager.jpa.TaskRepository;
@@ -60,7 +60,7 @@ public class InMemoryTaskTests {
     	
     	assertTrue(tasks.size() == 1);
     	assertEquals(hNew, tasks.get(0).getHomedir());
-    	assertEquals("daily", tasks.get(0).getFrequencyAsText());
+    	assertEquals("D", tasks.get(0).getFrequency().name());
     }
 	
 	@Test

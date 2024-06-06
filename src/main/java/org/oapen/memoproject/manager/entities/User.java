@@ -25,8 +25,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Getter @Setter @ToString
 @Entity
+@Setter @Getter @ToString
 @Table(name = "user")
 public class User extends Auditable implements UserDetails, Serializable {
 	

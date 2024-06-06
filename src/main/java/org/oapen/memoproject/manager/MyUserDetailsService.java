@@ -30,7 +30,7 @@ public class MyUserDetailsService implements UserDetailsService, Serializable {
 	public UserDetails loadUserByUsername(String username) {
 		
 		Optional<User> user = userRepository.findByUsername(username);
-		logger.info("User login: " + user);
+		logger.info("User found by username " + username + ": " + user + " (when username is found, login may still fail when password is incorrect)");
 		return user.orElseThrow(() ->  new UsernameNotFoundException("User '" + username + "' not found"));
 	}
 

@@ -16,11 +16,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 	basePackages = "org.oapen.memoproject.manager"
 )
 @PropertySource("classpath:application.properties")
-@EnableJpaAuditing(auditorAwareRef="auditorProvider") // keep track of user and time for jpa operations
+@EnableJpaAuditing(auditorAwareRef = "auditorProvider") // keep track of user and time for jpa operations 
 public class JpaConfig {
 	
 	@Bean
 	AuditorAware<String> auditorProvider() {
+		
 		return new AuditorAwareImpl();
 	}
 }
@@ -32,6 +33,7 @@ class AuditorAwareImpl implements AuditorAware<String> {
 	public Optional<String> getCurrentAuditor() {
 
 		String u = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-		return Optional.of(u);
+		// System.out.println("Current Auditor: " + u);
+		return Optional.of(u); 
 	}
 }

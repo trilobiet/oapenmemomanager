@@ -143,6 +143,10 @@
             v => this.validateUsernameFree(v) || 'Username is already in use. Choose another username.',
             v => (v && this.$func.isValidUserName(v)) || 'Username may only contain A-Z, a-z, 0-9 and _',
           ],
+          password: [
+            v => !!v || "Value is required",
+            v => (v && v.length >= 8) || "Value cannot be shorter than 8 characters"
+          ],
           fullname: [
             v => !!v || 'Full name is required'
           ]

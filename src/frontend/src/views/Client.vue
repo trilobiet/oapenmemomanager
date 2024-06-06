@@ -85,6 +85,11 @@
                      title="month">M</v-chip>
                     <v-chip v-else-if="item.frequency=='Y'" style="font-weight:bold" size="small" variant="flat" color="indigo-darken-4"
                      title="year">Y</v-chip>
+                     <span class="text-caption ml-2" style="color:#aaa">/ {{ item.startDate }}</span>
+                  </template>
+
+                  <template v-slot:[`item.nextUpdate`]="{ item }">
+                    <span :class="item.active?'text-blue-darken-4':'text-grey'" v-text="item.nextUpdate"/> 
                   </template>
 
                   <template v-slot:[`item.latestLog`]="{ item }">
@@ -116,6 +121,11 @@
                   </template>                  
 
                 </v-data-table>
+
+                <div class="ma-4 text-caption">
+                  * Running a task manually does not interfere with the next scheduled running date.
+                </div>
+
               </v-col>
             </v-row>
 
@@ -186,9 +196,10 @@
         tasks: [],
         headers: [
           { title: "export name", key: "fileName", width:"10em"},
-          { title: "complete", key: "hasScript", width: "1em", align: "center"},
           { title: "active", key: "active", width: "1em", align: "center"},
-          { title: "frequency", key: "frequency", align: "center" },
+          { title: "complete", key: "hasScript", width: "1em", align: "center"},
+          { title: "frequency/start date", key: "frequency", align: "left" },
+          { title: "next run *", key: "nextUpdate" },
           { title: "last run (click for log)", key: "latestLog" },
           { title: "download", key: "download", align: "center" },
           { title: "run now", key: "runNow", align: "center" },

@@ -1,5 +1,6 @@
 package org.oapen.memoproject.manager.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -108,7 +109,13 @@ public class TaskController {
     	// Content-type: application/json
     	// Sample request body:
     	// {"id":"8f6f600f-7837-497b-8a28-999736be531c","fileName":"my_export","extension":"xml",
-    	// "startDate":"2023-10-31","frequency":"M","public":false,"active":false}    	
+    	// "startDate":"2023-10-31","frequency":"M","public":false,"active":false}   
+    	
+    	/* Force an update even when no fields have changed. Normally Hibernate sets this field, but it will
+    	 * not update or save anything unless the data is dirty. However both child Script and its child Query
+    	 * may have been edited and in that case we want the auditor to be saved (updatedBy and updatedAt).
+    	 */
+    	task.setUpdatedAt(LocalDateTime.now());
     	
    		return taskRepository.save(task);
 	}

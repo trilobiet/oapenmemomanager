@@ -109,6 +109,13 @@
                         prepend-icon="mdi-download" variant="tonal"/>
                     </v-card-item> 
                   </v-card>                  
+                  <div class="text-grey ml-4 my-2">
+                    <v-icon icon="mdi-hand-pointing-right mr-2"/>
+                    <span class="text-caption">
+                      Save task before dry running.
+                      When a tasks aborts with a timeout or network error, wait a few moments and retry.
+                    </span>
+                  </div>  
                 </v-col>
               </v-row>    
 
@@ -207,7 +214,7 @@
 
               <v-row v-if="!isNew">
                 <v-col class="px-4 text-grey-darken-1 text-caption">
-                  Last edited by {{ task.updatedBy }} on {{ task.updatedAt }}
+                  Last edited by {{ task.updatedBy }} on {{ $func.formatDateTime(task.updatedAt) }}
                 </v-col>
               </v-row>
 
@@ -545,17 +552,23 @@ export default {
       const url = `/runproxy/run/` + item.id + "?dry=true";
       console.log("URL: " + url)
 
-      this.$axios.get(url)
+      this.$axios.get(url, {timeout:120000})
         .then((resp) => {
           console.log("RESP: " + resp.data)
           this.isDryRunSuccess = true
           this.runDialog(true, "Dry run completed successfully. Resulting export is available through the download button.")
         })
         .catch(error => {
-          var msg = JSON.stringify(error.response)
-          if(error.response.data.message) msg = error.response.data.message
-          this.runDialog(false, this.preformat(msg));
-          //this.runDialog(false, this.preformat(JSON.stringify(error)));
+          console.log(error)
+          if (error.response) {
+            var msg = JSON.stringify(error.response)
+            if(error.response.data.message) msg = error.response.data.message
+            this.runDialog(false, this.preformat(msg));
+          }
+          else {
+            // not tested ...
+            this.runDialog(false, this.preformat(JSON.stringify(error)));
+          }
         })
         .finally(() => {
           this.isLoading = false
