@@ -1,11 +1,7 @@
 # oapenmemomanager
 
-## db settings
-
-The `export.content` field is a LONGTEXT field. In mysqld.cnf set the `max_allowed_packet` to a sufficiently high value (128M) to be able to write large outputs to this field.
-
-After updating, restart mysql server:
-
-`systemctl restart mysql`
 
 
+
+TODO client name `tmp` cannot be created (it is a reserved name for the dry run directory) trying it will result in a warning and
+the record cannot be saved (however `TMP` is allowed since the system is built for case sensitive file systems).
