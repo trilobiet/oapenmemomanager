@@ -160,13 +160,76 @@ When the task finishes successfully the result can be downloaded immediately. Fa
 > TIP: queries can best be tested in an external application (e.g. MySQL Workbench) before pasting them in the MEMO query editor.
 > An external application may provide better feedback on query performance, duration and SQL syntax errors.
 
-Trying to dry-run a task during a scheduled period is prevented and will result in an error message.
+Trying to dry-run a task during a scheduled period is prevented and will result in an error message (settings `taskRunner.busy.starttime`
+and `taskRunner.busy.hours` in MEMO Taskmanager).
 
 *Running*:
 
-Tasks can also be run for real from the client's task overview (click `run now` in the tasks table). 
-Note that tasks being run from here will overwrite output from any previously run task, either run manually 
-or scheduled by the Taskrunner. Running a task manually through the `run now` button does not interfere with its schedule.
+Tasks can also be run live on production from the client's task overview (click `run now` in the tasks table). 
+**Note:** Tasks being run from here will overwrite output from any previously run task, either run manually 
+or scheduled by the Taskrunner. The overwritten output is also immediately visible to the customer in the MEMO Client web. 
+Running a task manually through the `run now` button does not interfere with its schedule.
+
+
+#### Task running schedule
+
+A Task runs first on its start date and then according to schedule daily, weekly, monthly or yearly. Task frequencies are defined as DAY, WEEK, MONTH or YEAR. Only activated tasks run. When a task is activated *after* its start date it will run for the first time on the next scheduled date relative to its start date.
+
+When a Task's frequency is defined as MONTH or YEAR then that Task will only run when the day of month defined in the Task's start date exists in the current month.
+
+> A Task with `startDate = 2024-02-29` and frequency `YEAR` will start in February 2024 and then run only every 4 years, so in February 2028, 2032 etc.
+
+> A Task with `startDate = 2024-01-31` and frequency `MONTH` will run in January, March, May, July, August, October and December, but not in February, April, June, September and November.
+    
+So to be sure, monthly and yearly tasks must have their start date set on any day from the interval 1 until 28.
+
+**Note:** When a task is skipped for some reason (network or service down) the task will not run until the next scheduled date. So the scheduler will not make up for skipped tasks. You need to run the task manually or wait for the next scheduled run.
+
+
+#### Task export visibility
+
+Tasks are private by default. This means that in order to download the task's output, the key (client field `access key`) must be appended to the export URL. Tasks that are set public do not require an access key and a public link appears in MEMO Client Web.
+
+
+### Managing Library Queries and Scripts
+
+Library scripts and queries can be used to share functionality between tasks. For instance, database connection data that is shared by queries in multiple tasks can be wrapped in a centralized library script that can easily be updated should the connection parameters change.
+
+> Library queries must be written as pure SQL, not as Python code. When imported they will be automatically rewritten to a Python string. 
+
+See above ('Including library ...') for instructions on how to include library scripts and queries into the main Python script.
+
+Library queries and scripts feature a list of tasks that include them. Only when this list is empty can the library item be deleted.
+
+
+### Managing Settings and users
+
+Settings are key-value pairs for use elsewhere. They have no use in the Task Manager. 
+
+Predefined settings:
+
+| setting                 | usage                                                                                  |
+|-------------------------|----------------------------------------------------------------------------------------|
+| `clients.contact.email` | Used by MEMO Client Web: displays application manager contact address for MEMO clients |
+
+
+Users with the `administrator` privilege can create and manage other users. Passwords can only be generated here. They must be copied immediately after creation and communicated to the user. Once saved, passwords are encrypted and can not be deciphered. Users have no means of setting passwords themselves. 
+
+A System Super Administrator is always available and cannot be deleted. Its password must be set during database install using BCrypt hashing (https://bcrypt-generator.com/).
+
+
+## Annex: MEMO Database installation
+
+MEMO runs on MySQL v 8.0 or higher. All 3 applications (MEMO Manager, MEMO Client web and MEMO Task Manager) need access to this database.
+
+The database create script can be found [here](./dev/db/oapen_memo_create_MYSQL.sql).
+
+For the System Super Administrator to be able to login to MEMO Manager and create other users a default account has been created.
+
+    user: administrator
+     pwd: secret
+     
+**It is strongly advised to create a new unique Super Administrator password. This password must be BCrypt hashed (https://bcrypt-generator.com/) and its hashed form stored in the database before taking the system to production.**
 
 
 
