@@ -1,3 +1,4 @@
+
 # oapenmemomanager
 
 MEMO Manager provides the environment to create and manage 
@@ -85,7 +86,7 @@ Tasks consist of a script and a query, together with fields defining when and wi
 
 The given task extension must match the file output, so to inform users correctly of the type of file being served.
 
-> Queries must be written as pure SQL, not as Python code. When imported they will be automatically rewritten to a Python string. 
+> Queries must be written as pure SQL, not as Python code. When imported they will be automatically rewritten to a Python string variable named `query`. This variable `query` can then be used in Python code (whether or not prefixed with an alias).
 
 
 #### Writing main Python script
@@ -118,6 +119,14 @@ Example:
     # Task name   : Some_Report.xml
     
     from queries.abc_corp import some_report_xml
+    ...
+    cursor.execute(some_report_xml_rss.query)
+    
+Or, when using an alias    
+
+    from queries.abc_corp import some_report_xml as my_alias
+    ...
+    cursor.execute(my_alias.query)
 
 
 #### Including library query in main Python script
@@ -131,6 +140,16 @@ Example:
     # Library query name : full_text_search
     
     from queries import full_text_search
+    
+Or, when using an alias    
+
+    from queries import full_text_search as my_alias
+    ...
+    cursor.execute(my_alias.query)
+    
+    
+> Clicking the `BROWSE LIBRARIES` button opens a library popup screen that allows you to select a library and copy 
+its import statements to be pasted in the main script.  
 
 
 #### Including library script in main Python script
@@ -144,6 +163,18 @@ Example:
     # Library script name : mysql_connect
 
     from sniplets import mysql_connect
+    ...
+    connection = mysql_connect.connection
+    
+Or, when using an alias    
+
+    from sniplets import mysql_connect as my_alias
+    ...
+    connection = my_alias.connection
+    
+
+> Clicking the `BROWSE LIBRARIES` button opens a library popup screen that allows you to select a library and copy 
+its import statements to be pasted in the main script.  
 
 
 #### Running tasks from the manager
@@ -229,9 +260,5 @@ For the System Super Administrator to be able to login to MEMO Manager and creat
     user: administrator
      pwd: secret
      
-**It is strongly advised to create a new unique Super Administrator password. This password must be BCrypt hashed (https://bcrypt-generator.com/) and its hashed form stored in the database before taking the system to production.**
-
-
-
-
+**It is strongly advised to create a new unique Super Administrator password. This password must be BCrypt hashed [https://bcrypt-generator.com/](https://bcrypt-generator.com/) and its hashed form stored in the database before taking the system to production.**
 
