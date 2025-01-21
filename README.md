@@ -137,19 +137,48 @@ Library queries can be included using this scheme:
 
 Example:
 
-    # Library query name : full_text_search
+    # Library query name: full_text_search
     
     from queries import full_text_search
     
-Or, when using an alias    
-
-    from queries import full_text_search as my_alias
-    ...
-    cursor.execute(my_alias.query)
-    
-    
 > Clicking the `BROWSE LIBRARIES` button opens a library popup screen that allows you to select a library and copy 
 its import statements to be pasted in the main script.  
+
+
+#### Parameterized queries
+
+Since (library) queries are wrapped in a Python String variable, they can be parameterized. Parameterized queries can be abstracted to not contain specific filter terms and thus be more widely applicable.
+
+Example: A library query looking for titles from a single publisher (defined by `title.handle_publisher`)
+and a given year (`title.year_available`):
+
+	# Library query titles_publisher_year
+      
+	SELECT 
+		*
+	FROM 
+		title
+	WHERE 
+		handle_publisher = '{pub_handle}'
+		AND year_available = {pub_year}
+	
+This query can then be called from a script as follows (publisher **20.500.12345/12345** and year **2025**):
+
+    from queries import titles_publisher_year
+    from sniplets import mysql_connect
+    
+    pub_query = titles_publisher_year.query.format(
+    	pub_handle = "20.500.12345/12345",
+    	pub_year = 2025
+    )
+    
+    # connect and query
+    connection = mysql_connect.connection
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute(pub_query)
+    records = cursor.fetchall()
+
+
 
 
 #### Including library script in main Python script
@@ -166,15 +195,30 @@ Example:
     ...
     connection = mysql_connect.connection
     
-Or, when using an alias    
-
-    from sniplets import mysql_connect as my_alias
-    ...
-    connection = my_alias.connection
-    
-
 > Clicking the `BROWSE LIBRARIES` button opens a library popup screen that allows you to select a library and copy 
 its import statements to be pasted in the main script.  
+
+
+#### Multiple includes and aliases
+
+Multiple query or sniplet includes can be combined in a single import statement (following standard Python syntax):
+
+    from queries import some_query as a_query, another_query, yet_anotherquery
+    ...
+    cursor.execute(a_query.query)
+    ...
+    cursor.execute(another_query.query)
+    ...
+    cursor.execute(yet_anotherquery.query)
+
+
+
+    from sniplets import mysql_connect as connect, mysql_connect_remote as remote_connect
+    ...
+    this_connection = connect.connection
+    ...
+    that_connection = remote_connect.connection
+
 
 
 #### Running tasks from the manager
