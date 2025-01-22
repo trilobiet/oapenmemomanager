@@ -220,6 +220,44 @@ Multiple query or sniplet includes can be combined in a single import statement 
     that_connection = remote_connect.connection
 
 
+#### Developing and testing tasks
+
+Developing and testing of tasks can best be kept out of a live system. When testing locally make sure no packages are imported that are not part of the live Python installation. See Taskrunner readme for an overview of imported packages.
+
+Anywhere on your development machine create a file structure like this (mimicking the taskrunner generated structure):
+
+    [root dev directory]
+       |
+       |-- queries
+       |      |-- ...
+       |
+       |-- sniplets
+       |      |-- ...
+       |
+       |-- mainscript.py
+       
+> Note: import paths for queries and sniplets are relative to the root dev directory.       
+
+Queries or library queries to be imported must be converted to a (multi-line) string named `query`.
+
+So, a query like 
+
+    SELECT
+    	*
+    FROM	
+    	some_table
+    	
+goes in a file like this
+
+	query = '''
+    SELECT
+    	*
+    FROM	
+    	some_table
+    '''	
+    	
+> Note: Don't do this on production. On production any input in a query labeled field is automatically converted to a string named `query` by the Taskrunner.    	
+
 
 #### Running tasks from the manager
 
