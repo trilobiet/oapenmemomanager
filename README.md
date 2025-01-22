@@ -222,7 +222,7 @@ Multiple query or sniplet includes can be combined in a single import statement 
 
 #### Developing and testing tasks
 
-Developing and testing of tasks can best be kept out of a live system. When testing locally make sure no packages are imported that are not part of the live Python installation. See Taskrunner readme for an overview of imported packages.
+Developing and testing of tasks can best be kept out of a live system. When testing locally make sure no packages are imported that are not part of the live Python installation. See [Taskrunner documentation](https://github.com/trilobiet/oapenmemotaskrunner/blob/main/README.md) (section 'A Docker image to run Python scripts') for an overview of imported packages.
 
 Anywhere on your development machine create a file structure like this (mimicking the taskrunner generated structure):
 
