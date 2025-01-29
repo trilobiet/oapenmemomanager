@@ -61,17 +61,17 @@ After login the Clients screen appears. Clients can be created and managed here.
 
 Clients are defined by
  
-* client name   
+* **client name**   
   Free text field 	
-* user name   
+* **user name**   
   This value is used for sining in as well as the name for the exports directory for this client. Certain restrictions are in place  
   on the characters to be used (user name can only contain A-Z, a-z, 0-9 and _).
-* access key   
+* **access key**   
   A 32-character hex key to be included on urls with restricted access
-* password   
+* **password**   
   Passwords can only be generated here. They must be copied immediately after creation and communicated to the user. Once saved, passwords
   are encrypted and can not be deciphered. Users have no means of setting passwords themselves.
-* notes   
+* **notes**   
   Any text that must be stored along with the client.
 
 A client can only be removed when there are no tasks attached.
@@ -82,7 +82,7 @@ the record cannot be saved (`TMP` however is allowed since the system is built f
 
 ### Managing Tasks
 
-Tasks consist of a script and a query, together with fields defining when and with what frequency the task will be run.
+Tasks consist of a main Python script and a(n optional) query, together with fields defining when and with what frequency the task will be run.
 
 The given task extension must match the file output, so to inform users correctly of the type of file being served.
 
@@ -91,7 +91,7 @@ The given task extension must match the file output, so to inform users correctl
 
 #### Writing main Python script
 
-The main Python script must always provide a `print` statement printing out the desired output as if it were sent to the console. 
+The main Python script must always provide `print` statements printing out the desired output to the (Docker container) console. 
 When the Taskrunner runs a task, output sent to the console by the script will be picked up by the Java container and processed further.
 
 So a typical script looks like this:
@@ -104,6 +104,36 @@ So a typical script looks like this:
        
     if __name__ == '__main__':
        print(myfunc())   
+       
+       
+NOTE: When generating large exports, to prevent the Python process from consuming to much memory, it may be preferable to regularly flush data to the console, rather than collecting all output in a variable and print all data at the end of the report generation. See the example below:
+
+    [imports]
+    
+    def myfunc():
+    
+       ...
+
+       for row in rows:
+          print(row)
+
+       ...
+       
+    if __name__ == '__main__':
+       myfunc()   
+
+
+> All output printed to the console will be collected and included in the export when the Python process finishes.
+ 
+
+
+#### Python library imports
+
+MEMO Manager Python scripts can import Python code from two sources:
+
+1. libraries that are installed on the host System, which is a Docker image. 
+Packages not already available here (like `numpy`) require a new Docker image to be built and installed (add the appropriate `pip3 install` line to the Docker file en run `docker build`). See [Taskrunner documentation](https://github.com/trilobiet/oapenmemotaskrunner/blob/main/README.md) (section 'A Docker image to run Python scripts') for an overview of imported packages and instructions on how to build a new image. 
+2. libraries that are part of the MEMO Manager Library (scripts and queries). Library scripts themselves can import available libraries as referred to under 1.
 
 
 #### Including main query in main Python script
@@ -168,8 +198,8 @@ This query can then be called from a script as follows (publisher **20.500.12345
     from sniplets import mysql_connect
     
     pub_query = titles_publisher_year.query.format(
-    	pub_handle = "20.500.12345/12345",
-    	pub_year = 2025
+       pub_handle = "20.500.12345/12345",
+       pub_year = 2025
     )
     
     # connect and query
@@ -177,7 +207,6 @@ This query can then be called from a script as follows (publisher **20.500.12345
     cursor = connection.cursor(dictionary=True)
     cursor.execute(pub_query)
     records = cursor.fetchall()
-
 
 
 
