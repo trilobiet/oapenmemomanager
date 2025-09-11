@@ -39,8 +39,7 @@
             </template> 
 
             <template v-slot:no-data>
-              No data available. Your session may have expired.
-              <br/><a href="/login">Login again to start a new session</a>
+              No data available.
             </template>                  
 
           </v-data-table>

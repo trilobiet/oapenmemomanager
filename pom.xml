@@ -12,9 +12,9 @@
 
 	<groupId>org.oapen.memoproject</groupId>
 	<artifactId>manager</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 	<name>managerapplication</name>
-	<description>OAPEN Management Application for MEMO Project</description>
+	<description>Management Application for MEMO Project</description>
 
 	<properties>
 		<java.version>11</java.version>
@@ -72,7 +72,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<scope>provided</scope>
+			<version>1.18.30</version><!--$NO-MVN-MAN-VER$-->
 		</dependency>
 		
 		<dependency>
@@ -230,6 +230,19 @@
 				</executions>
 
 			</plugin>
+			
+			<!-- To prevent sensitive data from ending up in the jar, exclude all application-*.properties files. 
+			We will use an external application.properties instead. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>**/application-*.properties*</exclude>
+					</excludes>
+				</configuration>
+			</plugin>			
+			
 
 		</plugins>
 

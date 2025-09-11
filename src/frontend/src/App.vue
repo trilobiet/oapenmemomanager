@@ -1,10 +1,11 @@
 <template>
   <v-app id="main" :style="{ background: $vuetify.theme.themes[theme].background }">
 
-    <v-app-bar app color="#2c84bf" dark class="px-4">
+    <v-app-bar app dark class="px-4">
 
       <div class="d-flex align-center">
-        <v-img alt="Vuetify Logo" class="shrink mr-2" contain src="./assets/oapenlogo-white.png"
+        <!-- customassets is set through spring boot application properties path -->  
+        <v-img alt="Vuetify Logo" class="shrink mr-2" contain src="customassets/logo_s.png"
           transition="scale-transition" width="70" />
       </div>
 
@@ -76,12 +77,15 @@ export default {
   name: 'App',
   data: () => ({ drawer: null }),
   computed: {
+    
     theme() {
       return (this.$vuetify.theme.dark) ? 'dark' : 'light'
     },
+
     user(){
       return this.$store.getters.getUser 
-    }
+    },
+    
   }
 };
 </script>

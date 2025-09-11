@@ -89,6 +89,10 @@ const promises = [
 		.then(resp => store.commit("setUser",resp.data))
 		.catch(() => {}),
 
+	axios.get('/api/clientconfig')
+		.then(resp => store.commit("setClientConfig",resp.data))
+		.catch(() => {console.log('Cannot load client custom config...')}),
+
 ]
 
 const alert = {

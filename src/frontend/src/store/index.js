@@ -4,6 +4,7 @@ export default new Vuex.Store({
 
     state: {
         user: null,    
+        clientConfig: null,
     },
 
     mutations: {
@@ -16,6 +17,11 @@ export default new Vuex.Store({
             state.user = payload
             console.log("SET USER: " + JSON.stringify(state.user)) 
         },
+
+        setClientConfig(state,payload) {
+            state.clientConfig = payload
+            console.log("SET CLIENT CONFIG: " + JSON.stringify(state.clientConfig)) 
+        },    
     },
 
     //actions: { },
@@ -24,6 +30,10 @@ export default new Vuex.Store({
 
         getUser(state) {
             return state.user
+        },
+
+        getClientConfig(state) {
+            return state.clientConfig
         },
     },
 

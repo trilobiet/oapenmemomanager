@@ -19,6 +19,7 @@ As user oapen:
 --------------
 
 Copy jar to deployment path /home/oapenmemo
+Provide external application.properties (copy from application-prod.properties)
 
 Update symlink (user oapen):
 - rm manager.jar

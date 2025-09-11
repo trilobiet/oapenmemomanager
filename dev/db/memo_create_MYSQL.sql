@@ -1,8 +1,8 @@
-CREATE DATABASE  IF NOT EXISTS `oapen_memo` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `oapen_memo`;
+CREATE DATABASE  IF NOT EXISTS `[name]_memo` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `[name]_memo`;
 -- MySQL dump 10.13  Distrib 8.0.40, for Linux (x86_64)
 --
--- Host: 104.248.34.253    Database: oapen_memo
+-- Host: localhost    Database: [name]_memo
 -- ------------------------------------------------------
 -- Server version	8.0.40-0ubuntu0.20.04.1
 
@@ -170,15 +170,9 @@ CREATE TABLE `user` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 /* Default password is 'secret' -> change this after installation! */
-INSERT INTO `oapen_memo`.`user` (`id`, `username`, `password`, `editable`, `fullname`, `admin`) VALUES ('d67f5ae5-15d3-4fa7-96a5-b1b209ef284f', 'administrator', '$2a$12$58tDPaTKlyKkY.A.NXzcce6i1nbBH1JmbFZu2V.fs54hdRfyA42LS', '0', 'System Administrator', '1');
+INSERT INTO `user` (`id`, `username`, `password`, `editable`, `fullname`, `admin`) VALUES ('d67f5ae5-15d3-4fa7-96a5-b1b209ef284f', 'administrator', '$2a$12$58tDPaTKlyKkY.A.NXzcce6i1nbBH1JmbFZu2V.fs54hdRfyA42LS', '0', 'System Administrator', '1');
 
---
--- Dumping events for database 'oapen_memo'
---
 
---
--- Dumping routines for database 'oapen_memo'
---
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

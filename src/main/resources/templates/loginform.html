@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:tiles="http://www.thymeleaf.org">
   <head>
-    <title tiles:fragment="title">OAPEN MEMO Management Login</title>
+    <title tiles:fragment="title">MEMO Management Login</title>
     <link rel="icon" href="/favicon.ico">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,500">
     <style>
@@ -70,15 +70,15 @@
     		<tr>
     			<td>
 			        <form name="f" th:action="@{/login}" method="post">            
-			        	<img class="logo" src="https://oapen.org/static-assets/images/layout/oapenlogo%2001%20colour%20-%20open%20access.png"/>  
+			        	<img class="logo" src="customassets/logo.png"/>  
 			        	<h2>MEMO Management</h2>
-			        	<h3>for Oapen</h3>
+			        	<h3>for Library Collections</h3>
 			        	<div> 
 			                <table>
 			                	<tr th:if="${param.error}">
 			                		<td colspan="2" class="alert">
 			                			Invalid login credentials.<br/>
-			                			Please correct, or contact the application manager at Oapen.
+			                			Please correct, or contact your application manager.
 			                		</td>
 			                	</tr>
 			                	<tr th:if="${param.msglogout}">

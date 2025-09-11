@@ -45,8 +45,8 @@
 
             <template v-slot:[`item.url`]="{ item }">
               <div class="oapen-home-client-home">
-                <a :href="$func.getClientUrl(item.username)" target="memoweb">
-                  {{$func.getClientPath(item.username)}}
+                <a :href="clientConfig.clientsUrl + 'clients/' + item.username" target="memoweb">
+                  {{'clients/' + item.username}}
                 </a><v-icon icon="mdi-open-in-new" size="x-small"/>
               </div>
               
@@ -110,7 +110,12 @@ export default {
 
     userNames() {
       return this.clients.map(i => i.username)
-    }
+    },
+
+    clientConfig(){
+      return this.$store.getters.getClientConfig
+    },
+
   },
 
   mounted() {

@@ -53,7 +53,7 @@ public class SecurityConfig {
 			//.cors().and()
 			.csrf().disable() 
 			.authorizeRequests()
-			.antMatchers("/assets/**","/file/**","/favicon.ico")
+			.antMatchers("/assets/**","/customassets/**","/file/**","/favicon.ico")
             	.permitAll()
 			.anyRequest().authenticated()
 				.and()
