@@ -65,7 +65,7 @@ This application must be installed as a service.
 - Create a symlink `ln -s manager-x.y.z.jar manager.jar`;
 - In `/etc/systemd/system` create a file named `oapen-memo-manager-website.service`. See
   [Readme-memomanagersite-service.txt](./Readme-memomanagersite-service.txt) for an example.  
-- Create a mapping on your web server to access the application from the internet.   
+- Choose a **free** internal port and create a mapping on your web server to access the application from the internet.   
   (NGINX example below for 'memomanager.oapen.org', internal port 8084):
         
         server {
