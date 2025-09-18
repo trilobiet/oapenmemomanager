@@ -1,8 +1,16 @@
 
-body {
-	
+@charset "UTF-8";
+/*@import url("https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap&subset=latin-ext");*/
+
+html {
+    font-family: Arial, sans-serif;
+}
+
+.login h2, .login h3 {
+	color: #5A82B3;
 }
 
 .v-app-bar {
-	background: #F48010 !important;
+	background: orange !important;	
+	color: white !important;
 }	

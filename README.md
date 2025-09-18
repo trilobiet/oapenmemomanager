@@ -50,7 +50,8 @@ The directory targeted in `path.customresources` must contain 3 files:
 - `logo.png`   
    The logo shown on the login screen;
 - `logo_s.png`   
-   The logo in the main application bar (top left).     
+   The logo in the main application bar (top left). 
+- `favicon.ico`       
 
 
 ## Installation and running

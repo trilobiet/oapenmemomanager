@@ -33,7 +33,9 @@
             <v-row>
               <v-col class="px-7">
                 <strong>Client home:</strong><br/>
-                <a :href="$func.getClientUrl(client.username)" target="memoweb">{{$func.getClientUrl(client.username)}}</a>
+                
+                <a :href="clientConfig.clientsUrl + 'clients/' + client.username" 
+                 target="memoweb">{{clientConfig.clientsUrl + 'clients/' + client.username}}</a>
                 <v-icon icon="mdi-open-in-new" size="x-small"/>
               </v-col>
             </v-row>  
@@ -227,6 +229,10 @@
     },
 
     computed: {
+
+      clientConfig(){
+        return this.$store.getters.getClientConfig
+      },
 
     },
 

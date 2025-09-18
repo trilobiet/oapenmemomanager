@@ -2,12 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:tiles="http://www.thymeleaf.org">
   <head>
     <title tiles:fragment="title">MEMO Management Login</title>
-    <link rel="icon" href="/favicon.ico">
+    <link rel="icon" href="/customassets/favicon.ico">
+	<link rel="stylesheet" href="/customassets/custom.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,500">
     <style>
     	html, body, body>div {
     		height: 100%;
-    		font-family: Roboto, sans-serif;
     	}
     	table.wrapper {
     		height: 100%;
@@ -56,7 +56,6 @@
     	h2, h3 {
     		line-height: 1.5;	
     		margin: 0;
-    		color: #a43735;
     	}
     	button {
     		padding:.5em 2em; 
@@ -64,7 +63,7 @@
     	}
     </style>
   </head>
-  <body>
+  <body class="login">
     <div tiles:fragment="content">
     	<table class="wrapper">
     		<tr>

@@ -74,11 +74,6 @@ export const globalfunctions = {
 			
 	},
 
-	getClientUrl(username) {
-
-		return 'https://memo.oapen.org/clients/' + username
-	},
-
 	getClientPath(username) {
 
 		return '/clients/' + username
