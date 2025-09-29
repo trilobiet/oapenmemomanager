@@ -117,7 +117,7 @@ Tasks consist of a main Python script and a(n optional) query, together with fie
 
 The given task extension must match the file output, so to inform users correctly of the type of file being served.
 
-> Queries must be written as pure SQL, not as Python code. When imported they will be automatically rewritten to a Python string variable named `query`. This variable `query` can then be used in Python code (whether or not prefixed with an alias).
+> Queries must be written as pure SQL, not as Python code. When imported they will be automatically rewritten to a Python string variable named `query`. This variable `query` can then be used in Python code (whether or not aliased).
 
 
 #### Writing main Python script
@@ -204,6 +204,9 @@ Example:
     
 > Clicking the `BROWSE LIBRARIES` button opens a library popup screen that allows you to select a library and copy 
 its import statements to be pasted in the main script.  
+
+
+Though it is possible to import queries from other clients' tasks, this creates unmonitored dependencies. If the included query changes, or when the included task name changes or is deleted, the including task will change as well - or even stop functioning - without notice. It is therefore recommended to define shared queries in the library or just copy/paste them to each implementing task. Library queries keep track of their usage, so you can see where changes will have effect.
 
 
 #### Parameterized queries
@@ -331,7 +334,8 @@ does not interfere with its schedule nor will it overwrite any previously genera
 When the task finishes successfully the result can be downloaded immediately. Failed tasks provide an error message. 
 
 > TIP: queries can best be tested in an external application (e.g. MySQL Workbench) before pasting them in the MEMO query editor.
-> An external application may provide better feedback on query performance, duration and SQL syntax errors.
+> An external application may provide better feedback on query performance, duration and SQL syntax errors. Also stuck queries may
+> affect overall system performance, so it's always wise to test them locally before running them in production.
 
 Trying to dry-run a task during a scheduled period is prevented and will result in an error message (settings `taskRunner.busy.starttime`
 and `taskRunner.busy.hours` in MEMO Taskmanager).
